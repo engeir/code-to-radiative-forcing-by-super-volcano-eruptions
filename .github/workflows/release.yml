@@ -17,7 +17,7 @@ jobs:
       - uses: google-github-actions/release-please-action@v3
         id: release
         with:
-          release-type: simple
+          release-type: python
           package-name: paper-volcanic-forcings-figures
           extra-files: |
             README.md
