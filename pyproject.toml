@@ -7,7 +7,12 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.scripts]
+generate-figs = "paper1_code.scripts.gen_figs:main"
 generate-fig1 = "paper1_code.scripts.gen_fig1:main"
+generate-fig2 = "paper1_code.scripts.gen_fig2:main"
+generate-fig3 = "paper1_code.scripts.gen_fig3:main"
+generate-fig4 = "paper1_code.scripts.gen_fig4:main"
+generate-fig5 = "paper1_code.scripts.gen_fig5:main"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"

@@ -281,10 +281,14 @@ def main():
     waveform_integrate(files, save=save)
     waveform_max(files, save=save)
     if save:
-        HERE = pathlib.Path(__file__).parent
+        HERE = pathlib.Path(__file__)
+        next = False
         for parents in HERE.parents:
-            if parents.name == "paper1-code":
+            if next:
                 SAVE_PATH = parents / "generated_files"
+                break
+            if parents.name == "src":
+                next = True
         if not SAVE_PATH.exists():
             SAVE_PATH.mkdir(parents=True)
         cosmoplots.combine(
