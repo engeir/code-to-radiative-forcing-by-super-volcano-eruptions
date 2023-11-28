@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/engeir/paper1-code/compare/v0.1.0...v0.1.1) (2023-11-28)
+
+
+### Documentation
+
+* **README:** set up structure ([#5](https://github.com/engeir/paper1-code/issues/5)) ([8cfbcf8](https://github.com/engeir/paper1-code/commit/8cfbcf85623022dc6b650f130205b17f821c19ea))
+
 ## 0.1.0 (2023-11-28)
 
 
