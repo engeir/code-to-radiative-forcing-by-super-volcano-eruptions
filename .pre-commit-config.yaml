@@ -19,28 +19,28 @@ repos:
         name: ruff_format
         stages: [commit]
         language: system
-        entry: poetry run ruff format src tests assets
+        entry: poetry run ruff format src tests
         types: [python]
 
       - id: ruff
         name: ruff
         stages: [commit]
         language: system
-        entry: poetry run ruff src tests assets
+        entry: poetry run ruff src tests
         types: [python]
 
       - id: xdoctest
         name: xdoctest
         stages: [commit]
         language: system
-        entry: poetry run xdoctest src tests assets
+        entry: poetry run xdoctest src tests
         types: [python]
 
       - id: pydocstringformatter
         name: pydocstringformatter
         stages: [commit]
         language: system
-        entry: poetry run pydocstringformatter src tests assets
+        entry: poetry run pydocstringformatter src tests
         types: [python]
 
       - id: mypy
@@ -51,10 +51,10 @@ repos:
         types: [python]
         require_serial: true
 
-      # - id: pytest
-      #   name: pytest
-      #   stages: [commit]
-      #   language: system
-      #   entry: poetry run pytest tests
-      #   types: [python]
-      #   pass_filenames: false
+      - id: pytest
+        name: pytest
+        stages: [commit]
+        language: system
+        entry: poetry run pytest tests
+        types: [python]
+        pass_filenames: false

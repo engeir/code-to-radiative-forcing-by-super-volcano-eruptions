@@ -1,12 +1,19 @@
 """Configuration file for `ensemble_run_analysis`."""
 
-import os
+import pathlib
+from typing import Literal
 
-HOME = os.path.expanduser("~")
-DATA_DIR_ROOT = os.path.join(
-    "/media", "een023", "LaCie", "een023", "cesm", "model-runs"
+HOME = pathlib.Path().home()
+DATA_DIR_ROOT = (
+    pathlib.Path("/media") / "een023" / "LaCie" / "een023" / "cesm" / "model-runs"
 )
 
+# Means are found by calculating the mean of the control runs:
+## TREFHT = era.pre_made.control_trefht()[0].mean()
+MEANS: dict[Literal["TREFHT", "AEROD_v"], float] = {
+    "TREFHT": 287.37903283,
+    "AEROD_v": 0.11947094220873525,
+}
 DATA_ATTRS = [
     "TREFHT850forcing-control",
     "TREFHTB1850C5CN",

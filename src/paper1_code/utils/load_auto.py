@@ -151,6 +151,7 @@ class FindFiles:
         return result
 
     def __len__(self) -> int:
+        """Return the number of matched files."""
         if self._matched_files is None:
             raise ValueError("No files have been matched yet.")
         else:
