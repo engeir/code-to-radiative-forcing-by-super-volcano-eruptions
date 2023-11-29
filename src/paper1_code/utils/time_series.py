@@ -1,6 +1,7 @@
 """Functions that modify (lists of) xarray DataArrays."""
 
-from typing import overload
+from collections import Counter
+from typing import Literal, overload
 
 import cftime
 import matplotlib.pyplot as plt
@@ -13,7 +14,7 @@ def shift_arrays(
     arrays: list[xr.DataArray],
     weighted_ends: float = 1.0,
     ens: str | None = None,
-    daily=True,
+    daily: bool = True,
     custom: int = 0,
 ) -> list[xr.DataArray]:
     """Shift arrays to make the eruption occur on Feb. 15, 1850.
@@ -25,7 +26,7 @@ def shift_arrays(
     weighted_ends : float
         Place a weighting on the first and fifth arrays, since they both contribute to
         the same seasonal cycle.
-    ens : str, optional
+    ens : str | None
         Choose to shift any list of arrays according to the given ens value. Possible
         values are 'ens1', 'ens2', 'ens3', 'ens4' and 'ens5'.
     daily : bool
@@ -103,7 +104,7 @@ def mean_flatten(arrays: xr.DataArray, dims: list[str] | None = None) -> xr.Data
 def mean_flatten(
     arrays: list[xr.DataArray] | xr.DataArray,
     dims: list[str] | None = None,
-    lat="lat",
+    lat: str = "lat",
 ) -> list[xr.DataArray] | xr.DataArray:
     """Average over all longitudes/zonal dimension.
 
@@ -111,7 +112,7 @@ def mean_flatten(
     ----------
     arrays : list[xr.DataArray] | xr.DataArray
         A list of xarray DataArrays to average over.
-    dims : list[str], optional
+    dims : list[str] | None
         A list of strings with the dimensions that should be averaged out. Default is
         ["lon", "time"].
     lat : str
@@ -198,11 +199,6 @@ def remove_seasonality(
     -------
     list[xr.DataArray] | xr.DataArray
         An object of the same arrays as the input, but modified
-
-    Raises
-    ------
-    NameError
-        If a seasonality removing strategy is not found.
     """
     if isinstance(arrays, xr.DataArray):
         return _remove_seasonality_fourier(arrays.copy(), freq, radius, plot)
@@ -222,7 +218,7 @@ def _remove_seasonality_fourier(
     ----------
     arr : xr.DataArray
         An xarray DataArray.
-    frequency : float
+    freq : float
         Give a custom frequency that should be removed. Default is 1.
     radius : float
         Give a custom radius that should be removed. Default is 0.01.
@@ -282,3 +278,163 @@ def _remove_seasonality_fourier(
     arr.data[: len(new_f_clean)] = new_f_clean
 
     return arr[:]
+
+
+def dt2float(
+    arr: np.ndarray | xr.CFTimeIndex, days_in_year: int = 365
+) -> xr.CFTimeIndex:
+    """Set new time coordinates to floats from an array of datetime objects.
+
+    Parameters
+    ----------
+    arr : np.ndarray | xr.CFTimeIndex
+        Array that should be re-set
+    days_in_year : int
+        Number of days in the year used by the xr.CFTimeIndex object
+
+    Returns
+    -------
+    xr.CFTimeIndex
+        Input array with re-set time coordinates as cftime_range
+    """
+    if not isinstance(arr, xr.CFTimeIndex):
+        arr = xr.CFTimeIndex(arr)
+    x_out: xr.CFTimeIndex = arr.map(lambda x: x.toordinal() / days_in_year)
+    return x_out
+
+
+def float2dt(arr: xr.CFTimeIndex | np.ndarray, freq: str = "D") -> xr.CFTimeIndex:
+    """Set new time coordinates with daily frequency from array of floats.
+
+    The function assumes that the original time coordinates is a simple floating point
+    number array, with one event per day in a 'noleap' calendar, starting on January 1.
+
+    Parameters
+    ----------
+    arr : xr.CFTimeIndex | np.ndarray
+        Array that should be re-set
+    freq : str
+        The frequency of the datetime array. 'D' gives daily and 'MS' gives monthly,
+        beginning of the month. See
+        https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases
+        for a full list of allowed frequencies.
+
+    Returns
+    -------
+    xr.CFTimeIndex
+        Input array with re-set time coordinates as cftime_range
+    """
+    init = int(arr[0])
+    init_str = "0" * (4 - len(str(init))) + str(init)
+    return xr.cftime_range(
+        start=init_str, periods=len(arr), calendar="noleap", freq=freq
+    )
+
+
+@overload
+def get_median(
+    arrays: list[xr.DataArray], xarray: Literal[True]
+) -> tuple[np.ndarray, np.ndarray]:
+    ...
+
+
+@overload
+def get_median(arrays: list[xr.DataArray], xarray: Literal[False]) -> xr.DataArray:
+    ...
+
+
+def get_median(
+    arrays: list[xr.DataArray], xarray: bool = False
+) -> tuple[np.ndarray, np.ndarray] | xr.DataArray:
+    """Get the median across all arrays in `arrays`.
+
+    Parameters
+    ----------
+    arrays : list[xr.DataArray]
+        A list of xarray DataArrays to shift.
+    xarray : bool
+        Return the array as a data array, using the meta data of the first element of
+        ``arrays``.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray] | xr.DataArray
+        First and second axis with the median of the arrays.
+
+    Notes
+    -----
+    The arrays are assumed to be correctly aligned, consider running `shift_arrays` on
+    them before obtaining the median from this function.
+    """
+    array = arrays[:]
+    x_ax = array[0].time.data
+    y_ax = np.zeros((len(array), len(array[0].data)))
+    for i, arr in enumerate(array):
+        y_ax[i, :] = arr[:].data
+    if xarray:
+        out = array[0].copy()
+        out.data = np.median(y_ax, axis=0)
+        out = out.assign_coords(time=x_ax)
+        out = out.assign_attrs(array[0].attrs)
+        return out
+    return x_ax, np.median(y_ax, axis=0)
+
+
+@overload
+def keep_whole_years(arrays: list[xr.DataArray], freq: str = "D") -> list[xr.DataArray]:
+    ...
+
+
+@overload
+def keep_whole_years(arrays: xr.DataArray, freq: str = "D") -> xr.DataArray:
+    ...
+
+
+def keep_whole_years(
+    arrays: list[xr.DataArray] | xr.DataArray,
+    freq: str = "D",
+) -> list[xr.DataArray] | xr.DataArray:
+    """Keep only whole years.
+
+    Useful as a pre-processing step before the ``weighted_year_avg`` function.
+
+    Parameters
+    ----------
+    arrays : list[xr.DataArray] | xr.DataArray
+        Array or a list of arrays to shorten.
+    freq : str
+        The frequency of the time coordinate
+
+    Returns
+    -------
+    list[xr.DataArray] | xr.DataArray
+        Same type as the input and shorten to only include full years.
+
+    Notes
+    -----
+    WARNING: This function uses the middle year as a reference of the "correct" number
+    of events in a given year. This means that if the time series include years of
+    irregular lengths, for example with leap years, this function will not work.
+    """
+    if isinstance(arrays, xr.DataArray):
+        return _keep_whole_years(arrays, freq=freq)
+    arr = arrays[:]
+    for i, v in enumerate(arr):
+        arr[i] = _keep_whole_years(v, freq=freq)
+    return arr[:]
+
+
+def _keep_whole_years(arr: xr.DataArray, freq: str = "D") -> xr.DataArray:
+    try:
+        _ = arr.time.dt.year
+    except Exception:
+        arr = arr.assign_coords(time=float2dt(arr.time, freq=freq))
+    counts = Counter(list(arr.time.dt.year.data))
+    # We here assume that the middle is not the edge (i.e., we should have an array
+    # spanning more than three years), and that the middle year has the correct amount
+    # of elements for any given year. This also means that calendars with leap days will
+    # note work.
+    norm_amount = list(counts.values())[len(list(counts)) // 2]
+    valid_years = [i for i, v in counts.items() if v == norm_amount]
+    arr = arr.sel(time=arr.time.dt.year.isin(valid_years))
+    return arr
