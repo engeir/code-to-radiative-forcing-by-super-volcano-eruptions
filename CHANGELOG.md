@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/engeir/paper1-code/compare/v0.1.1...v0.2.0) (2023-11-29)
+
+
+### Features
+
+* **figure:** finish creating figure 2 ([#7](https://github.com/engeir/paper1-code/issues/7)) ([1b96110](https://github.com/engeir/paper1-code/commit/1b96110cd4364b64c8371290d0b01e587e1814e8))
+
 ## [0.1.1](https://github.com/engeir/paper1-code/compare/v0.1.0...v0.1.1) (2023-11-28)
 
 
