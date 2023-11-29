@@ -10,8 +10,7 @@ def main():
     """Run the main program."""
     gen_fig1.main()
     gen_fig2.main()
-    with contextlib.suppress(NotImplementedError):
-        gen_fig3.main()
+    gen_fig3.main()
     with contextlib.suppress(NotImplementedError):
         gen_fig4.main()
     with contextlib.suppress(NotImplementedError):
