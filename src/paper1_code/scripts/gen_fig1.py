@@ -294,17 +294,18 @@ def waveform_integrate(
 def main():
     """Run the main program."""
     TMP = tempfile.TemporaryDirectory()
+    tmp_dir = pathlib.Path(TMP.name)
     save = True
     files = _load_all_files()
     wint = waveform_integrate(files, save=save)
     wmax = waveform_max(files, save=save)
     if save:
         SAVE_PATH = core.scripts.if_save.create_savedir()
-        wmax.savefig(pathlib.Path(TMP.name) / "compare-waveform-max")
-        wint.savefig(pathlib.Path(TMP.name) / "compare-waveform-integrate")
+        wmax.savefig(tmp_dir / "compare-waveform-max")
+        wint.savefig(tmp_dir / "compare-waveform-integrate")
         cosmoplots.combine(
-            pathlib.Path(TMP.name) / "compare-waveform-max.png",
-            pathlib.Path(TMP.name) / "compare-waveform-integrate.png",
+            tmp_dir / "compare-waveform-max.png",
+            tmp_dir / "compare-waveform-integrate.png",
         ).using(fontsize=50, gravity="southwest", pos=(5, 30)).in_grid(1, 2).save(
             SAVE_PATH / "compare-waveform.png"
         )

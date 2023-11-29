@@ -1003,6 +1003,25 @@ pyparsing = ">=2.3.1"
 python-dateutil = ">=2.7"
 
 [[package]]
+name = "matplotlib-label-lines"
+version = "0.7.0"
+description = "Label lines in matplotlib."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "matplotlib_label_lines-0.7.0-py3-none-any.whl", hash = "sha256:31f9ea9de749152d5ef2a1b5e400cba965ec4574bb8a32c30361dd32dd2bfd95"},
+    {file = "matplotlib_label_lines-0.7.0.tar.gz", hash = "sha256:db2ba7afe34a733f7c02d29b16217069cf412c12ce6a452991adb71b9c4fd16f"},
+]
+
+[package.dependencies]
+matplotlib = ">=2.0.2"
+more-itertools = "*"
+numpy = ">=1.16"
+
+[package.extras]
+test = ["matplotlib (==3.7.1)", "pytest (==7.3.1)", "pytest-cov (==4.0.0)", "pytest-mpl (==0.16.1)"]
+
+[[package]]
 name = "mccabe"
 version = "0.7.0"
 description = "McCabe checker, plugin for flake8"
@@ -1022,6 +1041,17 @@ python-versions = ">=3.7"
 files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
+]
+
+[[package]]
+name = "more-itertools"
+version = "10.1.0"
+description = "More routines for operating on iterables, beyond itertools"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "more-itertools-10.1.0.tar.gz", hash = "sha256:626c369fa0eb37bac0291bce8259b332fd59ac792fa5497b59837309cd5b114a"},
+    {file = "more_itertools-10.1.0-py3-none-any.whl", hash = "sha256:64e0735fcfdc6f3464ea133afe8ea4483b1c5fe3a3d69852e6503b43a0b222e6"},
 ]
 
 [[package]]
@@ -2042,4 +2072,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "52f70f73f9f01d9e00d0024f7690f5eb621af9ab6848ae1ffc780dc86c47ae0d"
+content-hash = "8fe71486bc2b0683a3a8a80a05548a35658f849e55f760eadbaa18473bfbc45d"

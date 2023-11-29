@@ -15,7 +15,7 @@ def shift_arrays(
     weighted_ends: float = 1.0,
     ens: str | None = None,
     daily: bool = True,
-    custom: int = 0,
+    custom: int | None = None,
 ) -> list[xr.DataArray]:
     """Shift arrays to make the eruption occur on Feb. 15, 1850.
 
@@ -31,7 +31,7 @@ def shift_arrays(
         values are 'ens1', 'ens2', 'ens3', 'ens4' and 'ens5'.
     daily : bool
         If the data has monthly resolution instead of daily, set this to False
-    custom : int
+    custom : int | None
         Choose a custom shift in days that will be applied to all arrays in the list. A
         positive number of 365 will for example shift all dates one year back: 1851 ->
         1850.
@@ -73,7 +73,7 @@ def shift_arrays(
             case _:
                 print("Don't know how to shift this array.")
                 shift = 0
-        shift = shift if custom == 0 else custom
+        shift = shift if custom is None else custom
         if isinstance(arr.time.data[0], float):
             array[i] = arr.shift(time=-shift).dropna("time")
         else:
@@ -332,14 +332,14 @@ def float2dt(arr: xr.CFTimeIndex | np.ndarray, freq: str = "D") -> xr.CFTimeInde
 
 
 @overload
-def get_median(
-    arrays: list[xr.DataArray], xarray: Literal[True]
-) -> tuple[np.ndarray, np.ndarray]:
+def get_median(arrays: list[xr.DataArray], xarray: Literal[True]) -> xr.DataArray:
     ...
 
 
 @overload
-def get_median(arrays: list[xr.DataArray], xarray: Literal[False]) -> xr.DataArray:
+def get_median(
+    arrays: list[xr.DataArray], xarray: Literal[False]
+) -> tuple[np.ndarray, np.ndarray]:
     ...
 
 
@@ -438,3 +438,38 @@ def _keep_whole_years(arr: xr.DataArray, freq: str = "D") -> xr.DataArray:
     valid_years = [i for i, v in counts.items() if v == norm_amount]
     arr = arr.sel(time=arr.time.dt.year.isin(valid_years))
     return arr
+
+
+def weighted_year_avg(da: xr.DataArray) -> xr.DataArray:
+    """Calculate a temporal mean, weighted by days in each month.
+
+    Parameters
+    ----------
+    da : xr.DataArray
+        Input data structure to do temporal average on
+
+    Returns
+    -------
+    xr.DataArray
+        The new data structure with time averaged data
+
+    Notes
+    -----
+    From
+    https://ncar.github.io/esds/posts/2021/yearly-averages-xarray/#wrap-it-up-into-a-function
+    """
+    # Determine the month length
+    month_length = da.time.dt.days_in_month
+    # Calculate the weights
+    wgts = month_length.groupby("time.year") / month_length.groupby("time.year").sum()
+    # Make sure the weights in each year add up to 1
+    np.testing.assert_allclose(wgts.groupby("time.year").sum(xr.ALL_DIMS), 1.0)
+    # Setup our masking for nan values
+    cond = da.isnull()
+    ones = xr.where(cond, 0.0, 1.0)
+    # Calculate the numerator
+    obs_sum = (da * wgts).resample(time="YS").sum(dim="time")
+    # Calculate the denominator
+    ones_out = (ones * wgts).resample(time="YS").sum(dim="time")
+    # Return the weighted average
+    return obs_sum / ones_out

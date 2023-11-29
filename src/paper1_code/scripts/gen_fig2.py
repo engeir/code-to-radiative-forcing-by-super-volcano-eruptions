@@ -14,115 +14,7 @@ import scipy
 import xarray as xr
 
 import paper1_code as core
-
-FINDER = core.utils.load_auto.FindFiles()
-
-
-def _set_aod_arrs() -> tuple[list[xr.DataArray], ...]:
-    control_match = FINDER.find("e_fSST1850", "control", "AODVISstdn", "h0", "ens0")
-    control = control_match.load()
-    control = core.utils.time_series.mean_flatten(control, dims=["lat", "lon"])
-
-    def remove_control(arrs: list) -> list:
-        # The control is so small it hardly has any effect, but we do it still for
-        # consistency
-        for i, arr in enumerate(arrs):
-            arr_, ctrl = xr.align(arr, control[0])
-            arr_.data = arr_.data - ctrl.data
-            arrs[i] = arr_
-        return arrs
-
-    data = FINDER.find(
-        "e_fSST1850",
-        {f"ens{i+1}" for i in range(4)},
-        {"strong", "medium", "medium-plus", "strong-highlat"},
-        "AODVISstdn",
-        "h0",
-    ).sort("attr", "ensemble")
-    m = data.copy().keep("medium").load()
-    mp = data.copy().keep("medium-plus").load()
-    s = data.copy().keep("strong").load()
-    h = data.copy().keep("strong-highlat").load()
-
-    s = core.utils.time_series.mean_flatten(s, dims=["lat", "lon"])
-    m = core.utils.time_series.mean_flatten(m, dims=["lat", "lon"])
-    mp = core.utils.time_series.mean_flatten(mp, dims=["lat", "lon"])
-    h = core.utils.time_series.mean_flatten(h, dims=["lat", "lon"])
-    s = remove_control(s)
-    m = remove_control(m)
-    mp = remove_control(mp)
-    h = remove_control(h)
-    s = core.utils.time_series.shift_arrays(s, daily=False)
-    mp = core.utils.time_series.shift_arrays(mp, daily=False)
-    m = core.utils.time_series.shift_arrays(m, daily=False)
-    h = core.utils.time_series.shift_arrays(h, custom=12)
-    h = core.utils.time_series.shift_arrays(h, daily=False)
-    for i, arr in enumerate(s):
-        s[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
-    for i, arr in enumerate(mp):
-        mp[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
-    for i, arr in enumerate(m):
-        m[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
-    for i, arr in enumerate(h):
-        h[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
-    return m, mp, s, h
-
-
-def _set_toa_arrs() -> tuple[list[xr.DataArray], ...]:
-    control_data = FINDER.find(
-        "e_fSST1850", "ens0", "control", "h0", ["FLNT", "FSNT"]
-    ).sort("attr", "ensemble")
-    control = control_data.load()
-    control = core.utils.time_series.mean_flatten(control, dims=["lat", "lon"])
-
-    def difference_and_remove_control(arrs: list) -> list:
-        stop = len(arrs) // 2
-        for i, arr in enumerate(arrs):
-            if i > stop - 1:
-                arrs = arrs[:stop]
-                break
-            fsnt, flnt, ctrl_fsnt, ctrl_flnt = xr.align(
-                arrs[i + stop], arr, control[1], control[0]
-            )
-            flnt.data = fsnt.data - flnt.data - (ctrl_fsnt.data - ctrl_flnt.data)
-            flnt = flnt.assign_attrs(attr="RF")
-            arrs[i] = flnt
-        return arrs
-
-    data = FINDER.find(
-        "e_fSST1850",
-        {f"ens{i+1}" for i in range(4)},
-        {"strong", "medium", "medium-plus", "strong-highlat"},
-        {"FLNT", "FSNT"},
-        "h0",
-    ).sort("attr", "ensemble")
-    m_ = data.copy().keep("medium").load()
-    mp_ = data.copy().keep("medium-plus").load()
-    s_ = data.copy().keep("strong").load()
-    h_ = data.copy().keep("strong-highlat").load()
-    s_ = core.utils.time_series.mean_flatten(s_, dims=["lat", "lon"])
-    m_ = core.utils.time_series.mean_flatten(m_, dims=["lat", "lon"])
-    mp_ = core.utils.time_series.mean_flatten(mp_, dims=["lat", "lon"])
-    h_ = core.utils.time_series.mean_flatten(h_, dims=["lat", "lon"])
-    # Find difference and subtract control
-    s_ = difference_and_remove_control(s_)
-    m_ = difference_and_remove_control(m_)
-    mp_ = difference_and_remove_control(mp_)
-    h_ = difference_and_remove_control(h_)
-    s_ = core.utils.time_series.shift_arrays(s_, daily=False)
-    mp_ = core.utils.time_series.shift_arrays(mp_, daily=False)
-    m_ = core.utils.time_series.shift_arrays(m_, daily=False)
-    h_ = core.utils.time_series.shift_arrays(h_, custom=12)
-    h_ = core.utils.time_series.shift_arrays(h_, daily=False)
-    for i, arr in enumerate(s_):
-        s_[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
-    for i, arr in enumerate(mp_):
-        mp_[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
-    for i, arr in enumerate(m_):
-        m_[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
-    for i, arr in enumerate(h_):
-        h_[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
-    return m_, mp_, s_, h_
+from paper1_code.scripts import load_data as core_load
 
 
 def _array_leginizer(ax: mpl.axes.Axes) -> mpl.axes.Axes:
@@ -169,7 +61,7 @@ def _normalize_peaks(
             array = scipy.signal.savgol_filter(tup[0][i].data, win_length, 3)
             if tup[2] == "aod":
                 scaled_array = tup[0][i] / array.max()
-            elif tup[2] == "toa":
+            elif tup[2] == "rf":
                 scaled_array = -tup[0][i] / array.min()
             arrs.append(scaled_array)
             peaks.append(tup[1][i] / tup[1][i])
@@ -185,23 +77,23 @@ def plot_arrays() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
     tuple[mpl.figure.Figure, mpl.figure.Figure]
         The figures returned are
         - AOD normalized
-        - TOA normalized
+        - RF normalized
     """
-    # AOD data and TOA data
-    aod_m, aod_mp, aod_s, aodh = _set_aod_arrs()
-    aod = aod_m + aod_mp + aod_s + aodh
+    # AOD data and RF data
+    aod_m, aod_mp, aod_s, aod_h = core_load._set_aod_arrs()
+    aod = aod_m + aod_mp + aod_s + aod_h
     aod = core.utils.time_series.shift_arrays(aod, custom=1)
-    rf_m, rf_mp, rf_s, rf_h = _set_toa_arrs()
-    toa = rf_m + rf_mp + rf_s + rf_h
-    toa = core.utils.time_series.shift_arrays(toa, custom=1)
+    rf_m, rf_mp, rf_s, rf_h = core_load._set_rf_arrs()
+    rf = rf_m + rf_mp + rf_s + rf_h
+    rf = core.utils.time_series.shift_arrays(rf, custom=1)
     # Check that they include the same items
     aod = core.utils.time_series.keep_whole_years(aod, freq="MS")
-    toa = core.utils.time_series.keep_whole_years(toa, freq="MS")
-    for i, (arr1, arr2) in enumerate(zip(aod, toa, strict=True)):
+    rf = core.utils.time_series.keep_whole_years(rf, freq="MS")
+    for i, (arr1, arr2) in enumerate(zip(aod, rf, strict=True)):
         aod[i] = arr1[: int(4 * 12)]
-        toa[i] = arr2[: int(4 * 12)]
+        rf[i] = arr2[: int(4 * 12)]
     aod_full = aod
-    toa_full = toa
+    rf_full = rf
     for i, array in enumerate(aod_full):
         aod_array_ = array.assign_coords(
             time=array.time.data - datetime.timedelta(days=1850 * 365)
@@ -209,20 +101,20 @@ def plot_arrays() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
         aod_full[i] = aod_array_.assign_coords(
             time=core.utils.time_series.dt2float(aod_array_.time.data)
         )
-    for i, array in enumerate(toa_full):
+    for i, array in enumerate(rf_full):
         rf_array_: xr.DataArray = array.assign_coords(
             time=array.time.data - datetime.timedelta(days=1850 * 365)
         )
-        toa_full[i] = rf_array_.assign_coords(
+        rf_full[i] = rf_array_.assign_coords(
             time=core.utils.time_series.dt2float(rf_array_.time.data)
         )
     aod_p = [1] * len(aod_full)
-    toa_p = [1] * len(toa_full)
-    newaod_, newtoa_ = _normalize_peaks(
-        2, (aod_full, aod_p, "aod"), (toa_full, toa_p, "toa")
+    rf_p = [1] * len(rf_full)
+    newaod_, newrf_ = _normalize_peaks(
+        2, (aod_full, aod_p, "aod"), (rf_full, rf_p, "rf")
     )
     newaod, _ = newaod_
-    newtoa, _ = newtoa_
+    newrf, _ = newrf_
 
     # AOD normal
     fig1 = plt.figure()
@@ -235,7 +127,7 @@ def plot_arrays() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
     # RF normal
     fig2 = plt.figure()
     ax = plt.gca()
-    for t in newtoa:
+    for t in newrf:
         t.plot(ax=ax)
     ax = _array_leginizer(ax)
     plt.xlabel(r"Time after eruption $[\mathrm{year}]$")
@@ -246,15 +138,16 @@ def plot_arrays() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
 def main():
     """Run the main program."""
     TMP = tempfile.TemporaryDirectory()
+    tmp_dir = pathlib.Path(TMP.name)
     save = True
     aod, rf = plot_arrays()
     if save:
         SAVE_PATH = core.scripts.if_save.create_savedir()
-        aod.savefig(pathlib.Path(TMP.name) / "aod_arrays_normalized")
-        rf.savefig(pathlib.Path(TMP.name) / "toa_arrays_normalized")
+        aod.savefig(tmp_dir / "aod_arrays_normalized")
+        rf.savefig(tmp_dir / "rf_arrays_normalized")
         cosmoplots.combine(
-            pathlib.Path(TMP.name) / "aod_arrays_normalized.png",
-            pathlib.Path(TMP.name) / "toa_arrays_normalized.png",
+            tmp_dir / "aod_arrays_normalized.png",
+            tmp_dir / "rf_arrays_normalized.png",
         ).using(fontsize=50).in_grid(1, 2).save(
             SAVE_PATH / "arrays_combined_normalized.png"
         )
