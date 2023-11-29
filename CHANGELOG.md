@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/engeir/paper1-code/compare/v0.3.0...v0.3.1) (2023-11-29)
+
+
+### Bug Fixes
+
+* **docs:** incorrect function call used in docstring example ([b49832d](https://github.com/engeir/paper1-code/commit/b49832d2bfb0e1f59bd4ec405a72a62bae8ceaa8))
+* **tests:** xdoctest was not running on the files ([#13](https://github.com/engeir/paper1-code/issues/13)) ([b49832d](https://github.com/engeir/paper1-code/commit/b49832d2bfb0e1f59bd4ec405a72a62bae8ceaa8))
+
 ## [0.3.0](https://github.com/engeir/paper1-code/compare/v0.2.0...v0.3.0) (2023-11-29)
 
 
