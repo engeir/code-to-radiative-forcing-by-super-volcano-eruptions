@@ -181,7 +181,7 @@ def gregory_paper() -> _GregoryPaper:
     The `with_` methods without any parameters is equivalent to passing all possible
     parameters.
 
-    >>> volmip_volc_pinatubo_full().with_ensemble().with_vars().load(True)
+    >>> gregory_paper().with_ensemble().with_vars().load(True)
     """
     return _GregoryPaper()
 

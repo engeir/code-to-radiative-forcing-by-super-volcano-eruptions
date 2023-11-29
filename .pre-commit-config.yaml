@@ -33,7 +33,7 @@ repos:
         name: xdoctest
         stages: [commit]
         language: system
-        entry: poetry run xdoctest src tests
+        entry: poetry run xdoctest
         types: [python]
 
       - id: pydocstringformatter
