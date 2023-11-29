@@ -15,6 +15,11 @@ import paper1_code as core
 class FindFiles:
     """Find files that match a pre-defined regular expression.
 
+    Parameters
+    ----------
+    ft : str
+        file type to look for
+
     Attributes
     ----------
     _compset : set containing all component setups
@@ -27,8 +32,11 @@ class FindFiles:
     _bad_files : files that were candidates but that did not match the regex
     _matched_files : files that have been looked up among the files found with the regex
     _sort_order : tuple with the sorting that is applied to the files
-    ft : file type to look for
-    root_path : path to where all files are located
+
+    Raises
+    ------
+    ConnectionError
+        If the files cannot be found the hard disk might not be mounted
 
     Examples
     --------
@@ -218,12 +226,17 @@ class FindFiles:
 
         Parameters
         ----------
-        attributes : str
+        *attributes : str
             Attributes to sort by. The most global sorting is the first parameter, while
             the most local sorting is the last parameter.
         arrays : list[xr.DataArray] | None
             An optional list of xarray DataArrays to sort. If None, the matched files
             are used in the sorting.
+
+        Returns
+        -------
+        list[xr.DataArray] | Self
+            Returns a list if `arrays` was given, or `self` otherwise
         """
         # We re-set the sort order every time this is called.
         self._sort_order = attributes
@@ -292,7 +305,7 @@ class FindFiles:
 
         Parameters
         ----------
-        args : str | Iterable[str]
+        *args : str | Iterable[str]
             Name of a group item or several items that must be found in any given file,
             or an iterable of items that are all part of one group where at least one
             should be found. Run ``self.avail()`` to see all available groups and their
@@ -300,8 +313,13 @@ class FindFiles:
 
         Returns
         -------
-        self
+        Self
             The object itself.
+
+        Raises
+        ------
+        AttributeError
+            If no files were found from the attempted match
         """
         # Unset the sorting.
         self._sort_order = None
@@ -344,15 +362,13 @@ class FindFiles:
 
         Parameters
         ----------
-        files : list[tuple[str, str, str, str, str, str]]
-            A list of found files, represented by their unique groups in tuples.
-        args : str
+        *args : str
             Name of a group that should be removed. Names that refer to the same group
             are accepted, as well as names referring to different groups.
 
         Returns
         -------
-        self
+        Self
             The object itself.
         """
         if self._matched_files is None:
@@ -372,16 +388,14 @@ class FindFiles:
 
         Parameters
         ----------
-        files : list[tuple[str, str, str, str, str, str]]
-            A list of found files, represented by their unique groups in tuples
-        args : str | Iterable[str]
+        *args : str | Iterable[str]
             Name of a group or several groups that must be found in any given file, or
             an iterable of strings that are all part of one group where at least one
             should be found.
 
         Returns
         -------
-        self
+        Self
             The object itself.
         """
         if self._matched_files is None:
@@ -418,17 +432,24 @@ class FindFiles:
 
         Parameters
         ----------
-        found_files : tuple[str, str, str, str, str, str]
+        *found_files : tuple[str, str, str, str, str, str]
             Any number of tuples that were the output of the
             ``self.find`` method.
-        ft : Optional[str]
+        ft : str | None
             File type that should be returned. Default is '.nc'.
+        check_existance : bool
+            Whether to check if the files exists or not
 
         Returns
         -------
         list[pathlib.Path]
             Files that were re-created and that exists are placed in a list and
             returned.
+
+        Raises
+        ------
+        FileNotFoundError
+            If a file is not found
         """
         if ft is None:
             ft = self.ft
@@ -459,10 +480,10 @@ class FindFiles:
 
         Parameters
         ----------
-        files : tuple[str, str, str, str, str, str]
+        *files : tuple[str, str, str, str, str, str]
             Any number of files, represented as tuples with six elements that uniquely
             specify the file path.
-        ft : Optional[str]
+        ft : str | None
             File type that should be returned. Default is '.nc'.
 
         Returns
@@ -470,6 +491,11 @@ class FindFiles:
         list[xr.DataArray]
             The same number of objects are returned as was given, but loaded as
             xr.DataArray objects.
+
+        Raises
+        ------
+        ValueError
+            If no files have been matched yet, there is no point in loading
         """
         if ft is None:
             ft = self.ft

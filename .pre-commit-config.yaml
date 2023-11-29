@@ -51,6 +51,14 @@ repos:
         types: [python]
         require_serial: true
 
+      - id: pydoclint
+        name: pydoclint
+        stages: [commit]
+        language: system
+        entry: poetry run pydoclint src tests
+        types: [python]
+        require_serial: true
+
       - id: pytest
         name: pytest
         stages: [commit]
