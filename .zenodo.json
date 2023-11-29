@@ -1,0 +1,26 @@
+{
+    "creators": [
+        {
+            "orcid": "0000-0001-6709-8688",
+            "affiliation": "UiT The Arctic University of Norway",
+            "name": "Enger, Eirik Rolland"
+        }
+    ],
+
+    "license": "MIT",
+
+    "title": "Accompanying code to parameter scan",
+
+    "related_identifiers": [
+        {
+            "scheme": "doi",
+            "identifier": "",
+            "relation": "isDocumentedBy",
+            "resource_type": "publication-article"
+        }
+    ],
+
+    "keywords": ["volcano", "eruption", "aerosol optical depth", "radiative forcing"],
+
+    "grants": [{"id":""}]
+}
