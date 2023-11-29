@@ -13,21 +13,20 @@ files = [
 
 [[package]]
 name = "attrs"
-version = "23.1.0"
+version = "21.4.0"
 description = "Classes Without Boilerplate"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 files = [
-    {file = "attrs-23.1.0-py3-none-any.whl", hash = "sha256:1f28b4522cdc2fb4256ac1a020c78acf9cba2c6b461ccd2c126f3aa8e8335d04"},
-    {file = "attrs-23.1.0.tar.gz", hash = "sha256:6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015"},
+    {file = "attrs-21.4.0-py2.py3-none-any.whl", hash = "sha256:2d27e3784d7a565d36ab851fe94887c5eccd6a463168875832a1be79c82828b4"},
+    {file = "attrs-21.4.0.tar.gz", hash = "sha256:626ba8234211db98e869df76230a137c4c40a12d72445c45d5f5b716f076e2fd"},
 ]
 
 [package.extras]
-cov = ["attrs[tests]", "coverage[toml] (>=5.3)"]
-dev = ["attrs[docs,tests]", "pre-commit"]
-docs = ["furo", "myst-parser", "sphinx", "sphinx-notfound-page", "sphinxcontrib-towncrier", "towncrier", "zope-interface"]
-tests = ["attrs[tests-no-zope]", "zope-interface"]
-tests-no-zope = ["cloudpickle", "hypothesis", "mypy (>=1.1.1)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "pytest-xdist[psutil]"]
+dev = ["cloudpickle", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "six", "sphinx", "sphinx-notfound-page", "zope.interface"]
+docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
+tests = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "six", "zope.interface"]
+tests-no-zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "six"]
 
 [[package]]
 name = "bandit"
@@ -123,6 +122,22 @@ files = [
     {file = "cloudpickle-3.0.0-py3-none-any.whl", hash = "sha256:246ee7d0c295602a036e86369c77fecda4ab17b506496730f2f576d9016fd9c7"},
     {file = "cloudpickle-3.0.0.tar.gz", hash = "sha256:996d9a482c6fb4f33c1a35335cf8afd065d2a56e973270364840712d9131a882"},
 ]
+
+[[package]]
+name = "cmcrameri"
+version = "1.7"
+description = "Perceptually uniform colormaps by Fabio Crameri"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "cmcrameri-1.7-py3-none-any.whl", hash = "sha256:97f9ae687253bfdaab06081172db4ba14c6638eb3ca0a6c82a5874e99b6ee344"},
+    {file = "cmcrameri-1.7.tar.gz", hash = "sha256:581f459809ce1951bbd305b7992d56185bab33a79efd40059d414365ef97abfe"},
+]
+
+[package.dependencies]
+matplotlib = "*"
+numpy = "*"
+packaging = "*"
 
 [[package]]
 name = "colorama"
@@ -282,6 +297,17 @@ python-versions = "*"
 files = [
     {file = "distlib-0.3.7-py2.py3-none-any.whl", hash = "sha256:2e24928bc811348f0feb63014e97aaae3037f2cf48712d51ae61df7fd6075057"},
     {file = "distlib-0.3.7.tar.gz", hash = "sha256:9dafe54b34a028eafd95039d5e5d4851a13734540f1331060d31c9916e7147a8"},
+]
+
+[[package]]
+name = "docstring-parser-fork"
+version = "0.0.5"
+description = "Parse Python docstrings in reST, Google and Numpydoc format"
+optional = false
+python-versions = ">=3.6,<4.0"
+files = [
+    {file = "docstring_parser_fork-0.0.5-py3-none-any.whl", hash = "sha256:d521dea9b9cc6c60ab5569fa0c1115e3b84a83e6413266fb111a7c81cb935997"},
+    {file = "docstring_parser_fork-0.0.5.tar.gz", hash = "sha256:395ae8ee6a359e268670ebc4fe9a40dab917a94f6decd7cda8e86f9bea5c9456"},
 ]
 
 [[package]]
@@ -522,6 +548,16 @@ files = [
 
 [package.dependencies]
 flake8 = "*"
+
+[[package]]
+name = "fontawesomefree"
+version = "6.4.2"
+description = "Font Awesome Free"
+optional = false
+python-versions = "*"
+files = [
+    {file = "fontawesomefree-6.4.2-py3-none-any.whl", hash = "sha256:ceaff7efc4fc39dadff3c3ff7298a7a1095403110d373f22456bb1c34ab6db02"},
+]
 
 [[package]]
 name = "fonttools"
@@ -1137,6 +1173,17 @@ files = [
 ]
 
 [[package]]
+name = "palettable"
+version = "3.3.3"
+description = "Color palettes for Python"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "palettable-3.3.3-py2.py3-none-any.whl", hash = "sha256:74e9e7d7fe5a9be065e02397558ed1777b2df0b793a6f4ce1a5ee74f74fb0caa"},
+    {file = "palettable-3.3.3.tar.gz", hash = "sha256:094dd7d9a5fc1cca4854773e5c1fc6a315b33bd5b3a8f47064928facaf0490a8"},
+]
+
+[[package]]
 name = "pandas"
 version = "2.1.3"
 description = "Powerful data structures for data analysis, time series, and statistics"
@@ -1314,6 +1361,26 @@ docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline
 tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
 
 [[package]]
+name = "plastik"
+version = "0.5.0"
+description = "plastic surgery for plt"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "plastik-0.5.0-py3-none-any.whl", hash = "sha256:5cc21bee336a4a1390675c18650908bfb3d3ade0b376cb5f8a0aff69ff37457b"},
+    {file = "plastik-0.5.0.tar.gz", hash = "sha256:8257b4c7204cfdc7d4225211d55daeba11a4cb77f3d5120e43a49864e738789c"},
+]
+
+[package.dependencies]
+attrs = ">=21.4.0,<22.0.0"
+cmcrameri = ">=1.5,<2.0"
+importlib-metadata = ">=6.1.0,<7.0.0"
+matplotlib = ">=3.5.0,<4.0.0"
+numpy = ">=1.21.4,<2.0.0"
+palettable = ">=3.3.3,<4.0.0"
+pywaffle = ">=1.1.0,<2.0.0"
+
+[[package]]
 name = "platformdirs"
 version = "4.0.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -1385,6 +1452,24 @@ files = [
     {file = "pycodestyle-2.11.1-py2.py3-none-any.whl", hash = "sha256:44fe31000b2d866f2e41841b18528a505fbd7fef9017b04eff4e2648a0fadc67"},
     {file = "pycodestyle-2.11.1.tar.gz", hash = "sha256:41ba0e7afc9752dfb53ced5489e89f8186be00e599e712660695b7a75ff2663f"},
 ]
+
+[[package]]
+name = "pydoclint"
+version = "0.3.8"
+description = "A Python docstring linter that checks arguments, returns, yields, and raises sections"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pydoclint-0.3.8-py2.py3-none-any.whl", hash = "sha256:8e5e020071bb64056fd3f1d68f3b1162ffeb8a3fd6424f73fef7272dac62c166"},
+    {file = "pydoclint-0.3.8.tar.gz", hash = "sha256:5a9686a5fb410343e998402686b87cc07df647ea3ab92528c0b0cf8505584e44"},
+]
+
+[package.dependencies]
+click = ">=8.0.0"
+docstring-parser-fork = ">=0.0.5"
+
+[package.extras]
+flake8 = ["flake8 (>=4)"]
 
 [[package]]
 name = "pydocstringformatter"
@@ -1512,6 +1597,21 @@ files = [
 
 [package.dependencies]
 tokenize-rt = "<5"
+
+[[package]]
+name = "pywaffle"
+version = "1.1.0"
+description = "PyWaffle is an open source, MIT-licensed Python package for plotting waffle charts."
+optional = false
+python-versions = "*"
+files = [
+    {file = "pywaffle-1.1.0-py2.py3-none-any.whl", hash = "sha256:28d7e677fd28857279355cb51396a508837b462b3d52d28710f73e0f8da5e6c0"},
+    {file = "pywaffle-1.1.0.tar.gz", hash = "sha256:ac2deba1db4775d7b6381e8d75416dfda1e7286f3cf1436bad50fc0616ac2996"},
+]
+
+[package.dependencies]
+fontawesomefree = "*"
+matplotlib = "*"
 
 [[package]]
 name = "pyyaml"
@@ -1942,4 +2042,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.13"
-content-hash = "df5af6ddf5e8cdd68e15ed89d6f5559d4c590856c22b54a8c6fa30ce9e4596e3"
+content-hash = "52f70f73f9f01d9e00d0024f7690f5eb621af9ab6848ae1ffc780dc86c47ae0d"

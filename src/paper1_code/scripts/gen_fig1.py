@@ -4,6 +4,7 @@ import pathlib
 import tempfile
 
 import cosmoplots
+import matplotlib as mpl
 import numpy as np
 import scipy
 import xarray as xr
@@ -13,7 +14,6 @@ from matplotlib.legend_handler import HandlerLine2D
 
 import paper1_code as core
 
-TMP = tempfile.TemporaryDirectory()
 CLR = ["#1f77b4", "#ff7f0e", "#2ca02c"]
 MIN_PERCENTILE = 5
 MAX_PERCENTILE = 95
@@ -58,6 +58,11 @@ def _get_shifted_data(
 ) -> tuple[list[xr.DataArray], list[xr.DataArray], list[xr.DataArray]]:
     """Get shifted data from the medium, medium-plus and strong eruption simulations.
 
+    Parameters
+    ----------
+    files : core.utils.load_auto.FindFiles
+        An instance of FindFiles that contains the necessary files
+
     Returns
     -------
     medium : list[xr.DataArray]
@@ -85,7 +90,9 @@ def _get_shifted_data(
     return medium__, plus__, strong__
 
 
-def waveform_max(files: core.utils.load_auto.FindFiles, save: bool = False) -> None:
+def waveform_max(
+    files: core.utils.load_auto.FindFiles, save: bool = False
+) -> mpl.figure.Figure:
     """Compare shape of TREFHT variable from medium and strong eruption simulations.
 
     The seasonal effects are removed by finding the median across four realisations.
@@ -94,8 +101,15 @@ def waveform_max(files: core.utils.load_auto.FindFiles, save: bool = False) -> N
 
     Parameters
     ----------
+    files : core.utils.load_auto.FindFiles
+        An instance of FindFiles that contains the necessary files
     save : bool
         Save the plot.
+
+    Returns
+    -------
+    mpl.figure.Figure
+        The figure object that is created by the function
     """
     medium, plus, strong = _get_shifted_data(files)
     for i, s in enumerate(strong):
@@ -174,14 +188,12 @@ def waveform_max(files: core.utils.load_auto.FindFiles, save: bool = False) -> N
         },
         framealpha=0.6,
     )
-
-    if save:
-        plt.savefig(pathlib.Path(TMP.name) / "compare-waveform-max")
+    return plt.gcf()
 
 
 def waveform_integrate(
     files: core.utils.load_auto.FindFiles, save: bool = False
-) -> None:
+) -> mpl.figure.Figure:
     """Compare shape of TREFHT variable from medium and strong eruption simulations.
 
     The median across four realisations is computed, with shading given from the 25th
@@ -190,8 +202,15 @@ def waveform_integrate(
 
     Parameters
     ----------
+    files : core.utils.load_auto.FindFiles
+        An instance of FindFiles that contains the necessary files
     save : bool
         Save the plot.
+
+    Returns
+    -------
+    mpl.figure.Figure
+        The figure object that is created by the function
     """
     medium, plus, strong = _get_shifted_data(files)
     for i, s in enumerate(strong):
@@ -269,28 +288,20 @@ def waveform_integrate(
         },
         framealpha=0.6,
     )
-
-    if save:
-        plt.savefig(pathlib.Path(TMP.name) / "compare-waveform-integrate")
+    return plt.gcf()
 
 
 def main():
     """Run the main program."""
+    TMP = tempfile.TemporaryDirectory()
     save = True
     files = _load_all_files()
-    waveform_integrate(files, save=save)
-    waveform_max(files, save=save)
+    wint = waveform_integrate(files, save=save)
+    wmax = waveform_max(files, save=save)
     if save:
-        HERE = pathlib.Path(__file__)
-        next = False
-        for parents in HERE.parents:
-            if next:
-                SAVE_PATH = parents / "generated_files"
-                break
-            if parents.name == "src":
-                next = True
-        if not SAVE_PATH.exists():
-            SAVE_PATH.mkdir(parents=True)
+        SAVE_PATH = core.scripts.if_save.create_savedir()
+        wmax.savefig(pathlib.Path(TMP.name) / "compare-waveform-max")
+        wint.savefig(pathlib.Path(TMP.name) / "compare-waveform-integrate")
         cosmoplots.combine(
             pathlib.Path(TMP.name) / "compare-waveform-max.png",
             pathlib.Path(TMP.name) / "compare-waveform-integrate.png",
@@ -300,6 +311,7 @@ def main():
         if (fig1 := (SAVE_PATH / "compare-waveform.png")).exists():
             print(f"Successfully saved figure 1 to {fig1.resolve()}")
     plt.show()
+    TMP.cleanup()
 
 
 if __name__ == "__main__":
