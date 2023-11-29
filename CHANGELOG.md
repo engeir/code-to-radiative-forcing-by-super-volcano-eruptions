@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://github.com/engeir/paper1-code/compare/v0.2.0...v0.3.0) (2023-11-29)
+
+
+### Features
+
+* **figure:** finish creating figure 3 ([#11](https://github.com/engeir/paper1-code/issues/11)) ([a2b19bc](https://github.com/engeir/paper1-code/commit/a2b19bca651a9560919a649578f2875a1b676441))
+* **figure:** move general data load code out from fig2 ([a2b19bc](https://github.com/engeir/paper1-code/commit/a2b19bca651a9560919a649578f2875a1b676441))
+* **utils:** add weighted_year_avg function ([a2b19bc](https://github.com/engeir/paper1-code/commit/a2b19bca651a9560919a649578f2875a1b676441))
+
+
+### Code Refactoring
+
+* **figure:** use RF instead of TOA, more accurate ([a2b19bc](https://github.com/engeir/paper1-code/commit/a2b19bca651a9560919a649578f2875a1b676441))
+
+
 ## [0.2.0](https://github.com/engeir/paper1-code/compare/v0.1.1...v0.2.0) (2023-11-29)
 
 
