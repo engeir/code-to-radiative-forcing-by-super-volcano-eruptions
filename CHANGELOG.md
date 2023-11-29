@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/engeir/paper1-code/compare/v0.3.1...v0.3.2) (2023-11-29)
+
+
+### Documentation
+
+* **zenodo:** create .zenodo.json ([#15](https://github.com/engeir/paper1-code/issues/15)) ([0dcef0c](https://github.com/engeir/paper1-code/commit/0dcef0ca48b6134ac397bb081cee4525101cd0f8))
+
 ## [0.3.1](https://github.com/engeir/paper1-code/compare/v0.3.0...v0.3.1) (2023-11-29)
 
 
