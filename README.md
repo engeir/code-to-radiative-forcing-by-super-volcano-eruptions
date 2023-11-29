@@ -1,6 +1,6 @@
 # Accompanying code to parameter scan
 
-<sup>Latest version: v0.1.1</sup> <!-- x-release-please-version -->
+<sup>Latest version: v0.2.0</sup> <!-- x-release-please-version -->
 
 > Code to download and analyze data for a paper
 
