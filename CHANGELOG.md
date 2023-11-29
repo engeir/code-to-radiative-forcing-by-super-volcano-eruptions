@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.2.0](https://github.com/engeir/paper1-code/compare/v0.1.1...v0.2.0) (2023-11-29)
+
+
+### Features
+
+* **figure:** finish creating figure 2 ([#7](https://github.com/engeir/paper1-code/issues/7)) ([fb17cb1](https://github.com/engeir/paper1-code/commit/fb17cb13572c60f254664a86316a7084b104b4a1))
+* **utils:** add dt2float and float2dt functions ([fb17cb1](https://github.com/engeir/paper1-code/commit/fb17cb13572c60f254664a86316a7084b104b4a1))
+* **utils:** add get_median function ([fb17cb1](https://github.com/engeir/paper1-code/commit/fb17cb13572c60f254664a86316a7084b104b4a1))
+* **utils:** add keep_whole_year function ([fb17cb1](https://github.com/engeir/paper1-code/commit/fb17cb13572c60f254664a86316a7084b104b4a1))
+
+
+### Code Refactoring
+
+* **figure:** generalize figure 1 code ([fb17cb1](https://github.com/engeir/paper1-code/commit/fb17cb13572c60f254664a86316a7084b104b4a1))
+
+
+### Continuous Integration
+
+* **pre-commit:** add pydoclint ([fb17cb1](https://github.com/engeir/paper1-code/commit/fb17cb13572c60f254664a86316a7084b104b4a1))
+
 ## [0.1.1](https://github.com/engeir/paper1-code/compare/v0.1.0...v0.1.1) (2023-11-28)
 
 
