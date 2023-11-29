@@ -11,16 +11,5 @@
 
     "title": "Accompanying code to parameter scan",
 
-    "related_identifiers": [
-        {
-            "scheme": "doi",
-            "identifier": "",
-            "relation": "isDocumentedBy",
-            "resource_type": "publication-article"
-        }
-    ],
-
-    "keywords": ["volcano", "eruption", "aerosol optical depth", "radiative forcing"],
-
-    "grants": [{"id":""}]
+    "keywords": ["volcano", "eruption", "aerosol optical depth", "radiative forcing"]
 }
