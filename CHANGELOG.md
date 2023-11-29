@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/engeir/paper1-code/compare/v0.3.2...v0.3.3) (2023-11-29)
+
+
+### Bug Fixes
+
+* **zenodo:** fix the zenodo config, remove empty fields ([#17](https://github.com/engeir/paper1-code/issues/17)) ([ed2c95f](https://github.com/engeir/paper1-code/commit/ed2c95fa0b8e6480d31a5ec30427279369d9275b))
+
 ## [0.3.2](https://github.com/engeir/paper1-code/compare/v0.3.1...v0.3.2) (2023-11-29)
 
 
