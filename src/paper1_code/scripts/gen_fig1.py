@@ -291,7 +291,7 @@ def waveform_integrate(
     return plt.gcf()
 
 
-def main():
+def main(show_output: bool = False):
     """Run the main program."""
     TMP = tempfile.TemporaryDirectory()
     tmp_dir = pathlib.Path(TMP.name)
@@ -311,9 +311,12 @@ def main():
         )
         if (fig1 := (SAVE_PATH / "compare-waveform.png")).exists():
             print(f"Successfully saved figure 1 to {fig1.resolve()}")
-    plt.show()
+    if show_output:
+        plt.show()
+    else:
+        plt.close("all")
     TMP.cleanup()
 
 
 if __name__ == "__main__":
-    main()
+    main(show_output=True)
