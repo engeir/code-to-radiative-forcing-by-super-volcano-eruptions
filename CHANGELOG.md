@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.4.0](https://github.com/engeir/paper1-code/compare/v0.3.3...v0.4.0) (2023-11-30)
+
+
+### Features
+
+* **figure:** finish creating figure 4 ([#19](https://github.com/engeir/paper1-code/issues/19)) ([f1f3ca6](https://github.com/engeir/paper1-code/commit/f1f3ca6eec2b4d48d1a558a5d62d98110d329390))
+* **figure:** only show output when the scripts are run as __main__ ([f1f3ca6](https://github.com/engeir/paper1-code/commit/f1f3ca6eec2b4d48d1a558a5d62d98110d329390))
+* **utils:** add weighted_season_avg function ([f1f3ca6](https://github.com/engeir/paper1-code/commit/f1f3ca6eec2b4d48d1a558a5d62d98110d329390))
+
+
+### Code Refactoring
+
+* **figure:** move c2w data load to load_data module ([f1f3ca6](https://github.com/engeir/paper1-code/commit/f1f3ca6eec2b4d48d1a558a5d62d98110d329390))
+* **figure:** move m20 data load to load_data module ([f1f3ca6](https://github.com/engeir/paper1-code/commit/f1f3ca6eec2b4d48d1a558a5d62d98110d329390))
+* **figure:** move plot legends to config ([f1f3ca6](https://github.com/engeir/paper1-code/commit/f1f3ca6eec2b4d48d1a558a5d62d98110d329390))
+* **utils:** improve type hint of FindFiles.sort ([f1f3ca6](https://github.com/engeir/paper1-code/commit/f1f3ca6eec2b4d48d1a558a5d62d98110d329390))
+
 ## [0.3.3](https://github.com/engeir/paper1-code/compare/v0.3.2...v0.3.3) (2023-11-29)
 
 
