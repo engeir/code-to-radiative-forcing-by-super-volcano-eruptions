@@ -8,9 +8,7 @@ import warnings
 import cosmoplots
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
 import plastik
-import scipy
 import xarray as xr
 
 import paper1_code as core
@@ -47,26 +45,6 @@ def _array_leginizer(ax: mpl.axes.Axes) -> mpl.axes.Axes:
     ).get_frame().set_alpha(0.8)
     warnings.resetwarnings()
     return ax
-
-
-def _normalize_peaks(
-    scale_idx: int = 0, *args: tuple[list, list | np.ndarray, str]
-) -> tuple[list, ...]:
-    out: list[list] = []
-    win_length = 12
-    for tup in args:
-        arrs, peaks = [], []
-        assert len(tup[0]) == len(tup[1])
-        for i in range(len(tup[0])):
-            array = scipy.signal.savgol_filter(tup[0][i].data, win_length, 3)
-            if tup[2] == "aod":
-                scaled_array = tup[0][i] / array.max()
-            elif tup[2] == "rf":
-                scaled_array = -tup[0][i] / array.min()
-            arrs.append(scaled_array)
-            peaks.append(tup[1][i] / tup[1][i])
-        out.append([arrs, np.asarray(peaks)])
-    return tuple(out)
 
 
 def plot_arrays() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
@@ -108,13 +86,7 @@ def plot_arrays() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
         rf_full[i] = rf_array_.assign_coords(
             time=core.utils.time_series.dt2float(rf_array_.time.data)
         )
-    aod_p = [1] * len(aod_full)
-    rf_p = [1] * len(rf_full)
-    newaod_, newrf_ = _normalize_peaks(
-        2, (aod_full, aod_p, "aod"), (rf_full, rf_p, "rf")
-    )
-    newaod, _ = newaod_
-    newrf, _ = newrf_
+    newaod, newrf = core_load._normalize_peaks(2, (aod_full, "aod"), (rf_full, "rf"))
 
     # AOD normal
     fig1 = plt.figure()
@@ -135,7 +107,7 @@ def plot_arrays() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
     return fig1, fig2
 
 
-def main():
+def main(show_output: bool = False):
     """Run the main program."""
     TMP = tempfile.TemporaryDirectory()
     tmp_dir = pathlib.Path(TMP.name)
@@ -153,9 +125,12 @@ def main():
         )
         if (fig2 := (SAVE_PATH / "arrays_combined_normalized.png")).exists():
             print(f"Successfully saved figure 2 to {fig2.resolve()}")
-    plt.show()
+    if show_output:
+        plt.show()
+    else:
+        plt.close("all")
     TMP.cleanup()
 
 
 if __name__ == "__main__":
-    main()
+    main(show_output=True)

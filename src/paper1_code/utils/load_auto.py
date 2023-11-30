@@ -8,6 +8,7 @@ from typing import Self, overload
 
 import numpy as np
 import xarray as xr
+from xarray.core.types import T_Xarray
 
 import paper1_code as core
 
@@ -209,7 +210,7 @@ class FindFiles:
         return self._matched_files if self._matched_files is not None else []
 
     @overload
-    def sort(self, *attributes: str, arrays: list[xr.DataArray]) -> list[xr.DataArray]:
+    def sort(self, *attributes: str, arrays: list[T_Xarray]) -> list[T_Xarray]:
         pass
 
     @overload
@@ -217,8 +218,10 @@ class FindFiles:
         pass
 
     def sort(
-        self, *attributes: str, arrays: list[xr.DataArray] | None = None
-    ) -> list[xr.DataArray] | Self:
+        self,
+        *attributes: str,
+        arrays: list[T_Xarray] | None = None,
+    ) -> list[T_Xarray] | Self:
         """Sort a list of arrays based on their attributes.
 
         Sorting is done such that the first parameter is the most global sorting and the
@@ -229,13 +232,13 @@ class FindFiles:
         *attributes : str
             Attributes to sort by. The most global sorting is the first parameter, while
             the most local sorting is the last parameter.
-        arrays : list[xr.DataArray] | None
+        arrays : list[T_Xarray] | None
             An optional list of xarray DataArrays to sort. If None, the matched files
             are used in the sorting.
 
         Returns
         -------
-        list[xr.DataArray] | Self
+        list[T_Xarray] | Self
             Returns a list if `arrays` was given, or `self` otherwise
         """
         # We re-set the sort order every time this is called.
@@ -248,7 +251,7 @@ class FindFiles:
             return self._sort_tup(*attributes)
 
     @staticmethod
-    def _sort_xr(arrays: list[xr.DataArray], *attributes: str) -> list[xr.DataArray]:
+    def _sort_xr(arrays: list[T_Xarray], *attributes: str) -> list[T_Xarray]:
         """Sort a list of arrays based on their attributes."""
         # Check that the parameters are real attributes of the arrays.
         for a in attributes:
