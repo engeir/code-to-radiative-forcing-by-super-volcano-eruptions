@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/engeir/paper1-code/compare/v0.4.0...v0.4.1) (2023-11-30)
+
+
+### Documentation
+
+* **README:** add zenodo badge ([#21](https://github.com/engeir/paper1-code/issues/21)) ([678d304](https://github.com/engeir/paper1-code/commit/678d30446d2934f06e7014d76b64513c7a1e70b4))
+
 ## [0.4.0](https://github.com/engeir/paper1-code/compare/v0.3.3...v0.4.0) (2023-11-30)
 
 
