@@ -39,7 +39,7 @@ def _array_leginizer(ax: mpl.axes.Axes) -> mpl.axes.Axes:
             r"C2WN$\uparrow$",
             r"_C2WN$\uparrow$",
         ],
-        fontsize=6,
+        fontsize=core.config.FONTSIZE,
         loc="right",
         reverse=True,
     ).get_frame().set_alpha(0.8)
@@ -58,10 +58,10 @@ def plot_arrays() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
         - RF normalized
     """
     # AOD data and RF data
-    aod_m, aod_mp, aod_s, aod_h = core_load._set_aod_arrs()
+    aod_m, aod_mp, aod_s, aod_h = core_load.get_aod_arrs()
     aod = aod_m + aod_mp + aod_s + aod_h
     aod = core.utils.time_series.shift_arrays(aod, custom=1)
-    rf_m, rf_mp, rf_s, rf_h = core_load._set_rf_arrs()
+    rf_m, rf_mp, rf_s, rf_h = core_load.get_rf_arrs()
     rf = rf_m + rf_mp + rf_s + rf_h
     rf = core.utils.time_series.shift_arrays(rf, custom=1)
     # Check that they include the same items
@@ -86,7 +86,7 @@ def plot_arrays() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
         rf_full[i] = rf_array_.assign_coords(
             time=core.utils.time_series.dt2float(rf_array_.time.data)
         )
-    newaod, newrf = core_load._normalize_peaks(2, (aod_full, "aod"), (rf_full, "rf"))
+    newaod, newrf = core_load.normalize_peaks((aod_full, "aod"), (rf_full, "rf"))
 
     # AOD normal
     fig1 = plt.figure()

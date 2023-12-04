@@ -255,13 +255,13 @@ def get_rf_tambora() -> float:
 def plot_aod_vs_rf_avg() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
     """Plot yearly mean RF against AOD."""
     x_g16, aod_g16, rf_g16 = get_gregory_paper_data()
-    _, aod_c2w, rf_c2w = core_load._set_cesm2_avg()
+    _, aod_c2w, rf_c2w = core_load.get_c2w_aod_rf()
     aod_p, rf_p = get_aod_pinatubo(), get_rf_pinatubo()
     aod_j05, rf_j05 = get_aod_j05(), get_rf_j05()
     aod_t, rf_t = get_aod_tambora(), get_rf_tambora()
     aod_c2w_peak, rf_c2w_peak = (
-        core_load.get_aod_peak()[:3],
-        core_load.get_rf_peak()[:3],
+        core_load.get_aod_c2w_peaks()[:3],
+        core_load.get_rf_c2w_peaks()[:3],
     )
     # Create figures
     fig1 = plt.figure()
@@ -328,7 +328,7 @@ def plot_aod_vs_rf_avg() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
             "anchor_": (-0.01, -0.02, legend_width, 0.3),
             "alpha": 0.8,
             "ec": "gray",
-            "fontsize": 5,
+            "fontsize": core.config.FONTSIZE,
             "mode": "expand",
         }
         plastik.topside_legends(ax_, **kwargs)
