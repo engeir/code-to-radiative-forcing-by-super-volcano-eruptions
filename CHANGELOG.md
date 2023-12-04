@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.0](https://github.com/engeir/paper1-code/compare/v0.4.1...v0.5.0) (2023-12-04)
+
+
+### Features
+
+* **figure:** finish implementing figure 5 ([#23](https://github.com/engeir/paper1-code/issues/23)) ([fb13aea](https://github.com/engeir/paper1-code/commit/fb13aea8404a9627489c4ab8b73a5ce81c2b23cb))
+
+
+### Code Refactoring
+
+* **figure:** move fig1 functions into classes ([fb13aea](https://github.com/engeir/paper1-code/commit/fb13aea8404a9627489c4ab8b73a5ce81c2b23cb))
+* **utils:** move normalize_peaks to general figure load module ([fb13aea](https://github.com/engeir/paper1-code/commit/fb13aea8404a9627489c4ab8b73a5ce81c2b23cb))
+
 ## [0.4.1](https://github.com/engeir/paper1-code/compare/v0.4.0...v0.4.1) (2023-11-30)
 
 
