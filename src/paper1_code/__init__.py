@@ -3,9 +3,9 @@
 import matplotlib as mpl
 from importlib_metadata import version
 
-from paper1_code import config, scripts, utils
+from paper1_code import config, load, scripts, utils
 
-__all__ = ["utils", "config", "scripts"]
+__all__ = ["utils", "config", "scripts", "load"]
 
 __version__ = version(__package__)
 

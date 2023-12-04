@@ -12,99 +12,103 @@ import plastik
 import xarray as xr
 
 import paper1_code as core
-from paper1_code.scripts import load_data as core_load
 
 
-def _array_leginizer(ax: mpl.axes.Axes) -> mpl.axes.Axes:
-    c4 = plastik.colors.create_colorlist("cmc.batlow", 4)
-    c14 = [c4[0]] * 4 + [c4[1]] * 4 + [c4[3]] * 4 + [c4[2]] * 2
-    for n, c_ in zip(ax.get_lines(), c14, strict=False):
-        n.set_color(c_)
-    # Otherwise, it yells at me with UserWarning's cuz of the leading underscore
-    warnings.simplefilter("ignore")
-    ax.legend(
-        [
-            r"C2W$\downarrow$",
-            r"_C2W$\downarrow$",
-            r"_C2W$\downarrow$",
-            r"_C2W$\downarrow$",
-            "C2W$-$",
-            "_C2W$-$",
-            "_C2W$-$",
-            "_C2W$-$",
-            r"C2W$\uparrow$",
-            r"_C2W$\uparrow$",
-            r"_C2W$\uparrow$",
-            r"_C2W$\uparrow$",
-            r"C2WN$\uparrow$",
-            r"_C2WN$\uparrow$",
-        ],
-        fontsize=core.config.FONTSIZE,
-        loc="right",
-        reverse=True,
-    ).get_frame().set_alpha(0.8)
-    warnings.resetwarnings()
-    return ax
+class SetupNeededData:
+    """Class that loads all data used in the plotting procedures."""
+
+    def __init__(self):
+        aod_m, aod_mp, aod_s, aod_h = core.load.cesm2.get_aod_arrs()
+        self.aod = aod_m + aod_mp + aod_s + aod_h
+        rf_m, rf_mp, rf_s, rf_h = core.load.cesm2.get_rf_arrs()
+        self.rf = rf_m + rf_mp + rf_s + rf_h
 
 
-def plot_arrays() -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
-    """Plot the data that is used in other analysis methods.
+class DoPlotting:
+    """Class that takes care of all the plotting."""
 
-    Returns
-    -------
-    tuple[mpl.figure.Figure, mpl.figure.Figure]
-        The figures returned are
-        - AOD normalized
-        - RF normalized
-    """
-    # AOD data and RF data
-    aod_m, aod_mp, aod_s, aod_h = core_load.get_aod_arrs()
-    aod = aod_m + aod_mp + aod_s + aod_h
-    aod = core.utils.time_series.shift_arrays(aod, custom=1)
-    rf_m, rf_mp, rf_s, rf_h = core_load.get_rf_arrs()
-    rf = rf_m + rf_mp + rf_s + rf_h
-    rf = core.utils.time_series.shift_arrays(rf, custom=1)
-    # Check that they include the same items
-    aod = core.utils.time_series.keep_whole_years(aod, freq="MS")
-    rf = core.utils.time_series.keep_whole_years(rf, freq="MS")
-    for i, (arr1, arr2) in enumerate(zip(aod, rf, strict=True)):
-        aod[i] = arr1[: int(4 * 12)]
-        rf[i] = arr2[: int(4 * 12)]
-    aod_full = aod
-    rf_full = rf
-    for i, array in enumerate(aod_full):
-        aod_array_ = array.assign_coords(
-            time=array.time.data - datetime.timedelta(days=1850 * 365)
-        )
-        aod_full[i] = aod_array_.assign_coords(
-            time=core.utils.time_series.dt2float(aod_array_.time.data)
-        )
-    for i, array in enumerate(rf_full):
-        rf_array_: xr.DataArray = array.assign_coords(
-            time=array.time.data - datetime.timedelta(days=1850 * 365)
-        )
-        rf_full[i] = rf_array_.assign_coords(
-            time=core.utils.time_series.dt2float(rf_array_.time.data)
-        )
-    newaod, newrf = core_load.normalize_peaks((aod_full, "aod"), (rf_full, "rf"))
+    def __init__(self, print_summary: bool):
+        self.print_summary = print_summary
+        self.data = SetupNeededData()
 
-    # AOD normal
-    fig1 = plt.figure()
-    ax = plt.gca()
-    for a in newaod:
-        a.plot(ax=ax)
-    ax = _array_leginizer(ax)
-    plt.xlabel(r"Time after eruption $[\mathrm{year}]$")
-    plt.ylabel("Normalized \naerosol optical depth $[1]$")
-    # RF normal
-    fig2 = plt.figure()
-    ax = plt.gca()
-    for t in newrf:
-        t.plot(ax=ax)
-    ax = _array_leginizer(ax)
-    plt.xlabel(r"Time after eruption $[\mathrm{year}]$")
-    plt.ylabel("Normalized \nradiative forcing $[1]$")
-    return fig1, fig2
+    def _array_leginizer(self, ax: mpl.axes.Axes) -> mpl.axes.Axes:
+        c4 = plastik.colors.create_colorlist("cmc.batlow", 4)
+        c14 = [c4[0]] * 4 + [c4[1]] * 4 + [c4[3]] * 4 + [c4[2]] * 2
+        for n, c_ in zip(ax.get_lines(), c14, strict=False):
+            n.set_color(c_)
+        # Otherwise, it yells at me with UserWarning's cuz of the leading underscore
+        warnings.simplefilter("ignore")
+        ax.legend(
+            [
+                r"C2W$\downarrow$",
+                r"_C2W$\downarrow$",
+                r"_C2W$\downarrow$",
+                r"_C2W$\downarrow$",
+                "C2W$-$",
+                "_C2W$-$",
+                "_C2W$-$",
+                "_C2W$-$",
+                r"C2W$\uparrow$",
+                r"_C2W$\uparrow$",
+                r"_C2W$\uparrow$",
+                r"_C2W$\uparrow$",
+                r"C2WN$\uparrow$",
+                r"_C2WN$\uparrow$",
+            ],
+            fontsize=core.config.FONTSIZE,
+            loc="right",
+            reverse=True,
+        ).get_frame().set_alpha(0.8)
+        warnings.resetwarnings()
+        return ax
+
+    def plot_arrays(self) -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
+        """Plot the data that is used in other analysis methods.
+
+        Returns
+        -------
+        tuple[mpl.figure.Figure, mpl.figure.Figure]
+            The figures returned are
+            - AOD normalized
+            - RF normalized
+        """
+        # AOD data and RF data
+        aod = core.utils.time_series.shift_arrays(self.data.aod, custom=1)
+        rf = core.utils.time_series.shift_arrays(self.data.rf, custom=1)
+        # Check that they include the same items
+        aod = core.utils.time_series.keep_whole_years(aod, freq="MS")
+        rf = core.utils.time_series.keep_whole_years(rf, freq="MS")
+        for i, (arr1, arr2) in enumerate(zip(aod, rf, strict=True)):
+            aod[i] = arr1[: int(4 * 12)]
+            rf[i] = arr2[: int(4 * 12)]
+        for i, array in enumerate(aod):
+            aod_array_ = array.assign_coords(
+                time=array.time.data - datetime.timedelta(days=1850 * 365)
+            )
+            aod[i] = aod_array_.assign_coords(
+                time=core.utils.time_series.dt2float(aod_array_.time.data)
+            )
+        for i, array in enumerate(rf):
+            rf_array_: xr.DataArray = array.assign_coords(
+                time=array.time.data - datetime.timedelta(days=1850 * 365)
+            )
+            rf[i] = rf_array_.assign_coords(
+                time=core.utils.time_series.dt2float(rf_array_.time.data)
+            )
+        newaod, newrf = core.utils.time_series.normalize_peaks((aod, "aod"), (rf, "rf"))
+        fig2_a = self._plot_arrays(newaod, "Normalized \naerosol optical depth $[1]$")
+        fig2_b = self._plot_arrays(newrf, "Normalized \nradiative forcing $[1]$")
+        return fig2_a, fig2_b
+
+    def _plot_arrays(self, arrays, y_label):
+        result = plt.figure()
+        ax_a = result.gca()
+        for a in arrays:
+            ax_a.plot(a.time.data, a.data)
+        ax_a = self._array_leginizer(ax_a)
+        plt.xlabel(r"Time after eruption $[\mathrm{year}]$")
+        plt.ylabel(y_label)
+        return result
 
 
 def main(show_output: bool = False):
@@ -112,9 +116,10 @@ def main(show_output: bool = False):
     TMP = tempfile.TemporaryDirectory()
     tmp_dir = pathlib.Path(TMP.name)
     save = True
-    aod, rf = plot_arrays()
+    plotter = DoPlotting(show_output)
+    aod, rf = plotter.plot_arrays()
     if save:
-        SAVE_PATH = core.scripts.if_save.create_savedir()
+        SAVE_PATH = core.utils.if_save.create_savedir()
         aod.savefig(tmp_dir / "aod_arrays_normalized")
         rf.savefig(tmp_dir / "rf_arrays_normalized")
         cosmoplots.combine(
