@@ -10,15 +10,14 @@ import numpy as np
 import scipy
 
 import paper1_code as core
-from paper1_code.scripts import load_data as core_load
 
 
 class SetupNeededData:
     """Class that loads all data used in the plotting procedures."""
 
     def __init__(self):
-        self.text, self.aod, self.rf = core_load.get_c2w_aod_rf(freq="ses")
-        self.time_m20, self.aod_m20, self.rf_m20 = core_load.get_m20()
+        self.text, self.aod, self.rf = core.load.cesm2.get_c2w_aod_rf(freq="ses")
+        self.time_m20, self.aod_m20, self.rf_m20 = core.load.m20.get_m20()
 
 
 class DoPlotting:
@@ -154,11 +153,11 @@ class DoPlotting:
 
     def plot_ratio_scaled(self, with_m20_data: bool = False) -> mpl.figure.Figure:
         """Plot ratio between scaled AOD and RF during the first three years of the eruption."""
-        aod, rf = core_load.normalize_peaks(
+        aod, rf = core.utils.time_series.normalize_peaks(
             (self.data.aod, "aod"), (self.data.rf, "rf")
         )
         if with_m20_data:
-            aod_m20_, rf_m20_ = core_load.normalize_peaks(
+            aod_m20_, rf_m20_ = core.utils.time_series.normalize_peaks(
                 (self.data.aod_m20, "aod"), (self.data.rf_m20, "rf")
             )
             aod_m20 = np.asarray(aod_m20_)
@@ -188,7 +187,7 @@ def main(show_output: bool = False):
     ratio = plotter.plot_ratio(with_m20_data=True)
     scaled = plotter.plot_ratio_scaled(with_m20_data=True)
     if save:
-        SAVE_PATH = core.scripts.if_save.create_savedir()
+        SAVE_PATH = core.utils.if_save.create_savedir()
         ratio.savefig(tmp_dir / "aod_vs_rf_avg_loop_ratio.png")
         scaled.savefig(tmp_dir / "aod_vs_rf_avg_loop_ratio_scaled.png")
         cosmoplots.combine(

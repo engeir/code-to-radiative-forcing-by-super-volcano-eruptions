@@ -511,3 +511,37 @@ def weighted_season_avg(da: xr.DataArray) -> xr.DataArray:
     # Return the weighted average
     # ds_weighted = (da * wgts).groupby("time.season").sum(dim="time")
     return obs_sum / ones_out
+
+
+def normalize_peaks(*args: tuple[list | np.ndarray, str]) -> tuple[list, ...]:
+    """Normalize the input arrays.
+
+    The string (see description of `args` in the parameters section) only negates the
+    arrays. Completely pointless actually, since this should rather be done after the
+    fact, but also why not.
+
+    Parameters
+    ----------
+    *args : tuple[list | np.ndarray, str]
+        Each tuple sent to `args` contains an array and a string describing if the array
+        is an AOD or RF array. But really the only difference is that is the string is
+        `aod` we multiply by `1`, and if the string is `rf` we multiply by -1.
+
+    Returns
+    -------
+    tuple[list, ...]
+        However many tuples with arrays are sent in, as many lists are returned
+    """
+    out: list[list] = []
+    win_length = 12
+    for tup in args:
+        arrs = []
+        for i in range(len(tup[0])):
+            array = scipy.signal.savgol_filter(tup[0][i].data, win_length, 3)
+            if tup[1] == "aod":
+                scaled_array = tup[0][i] / array.max()
+            elif tup[1] == "rf":
+                scaled_array = -tup[0][i] / array.min()
+            arrs.append(scaled_array)
+        out.append(arrs)
+    return tuple(out)

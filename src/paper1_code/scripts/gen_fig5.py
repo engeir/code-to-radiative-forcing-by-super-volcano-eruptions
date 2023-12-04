@@ -8,10 +8,8 @@ import cosmoplots
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import plastik
 
 import paper1_code as core
-from paper1_code.scripts import load_data as core_load
 
 
 class SetupNeededData:
@@ -19,41 +17,41 @@ class SetupNeededData:
 
     def __init__(self):
         # C2W
-        self.so2 = core_load.get_so2_c2w_peaks()
-        self.aod = core_load.get_aod_c2w_peaks()
-        self.rf = core_load.get_rf_c2w_peaks()
-        self.temp = core_load.get_trefht_c2w_peaks()
+        self.so2 = core.load.cesm2.get_so2_c2w_peaks()
+        self.aod = core.load.cesm2.get_aod_c2w_peaks()
+        self.rf = core.load.cesm2.get_rf_c2w_peaks()
+        self.temp = core.load.cesm2.get_trefht_c2w_peaks()
         # Marshall et al. 2020
-        self.so2_m20, self.aod_m20, self.rf_m20, self.temp_m20 = core_load.get_m20(
+        self.so2_m20, self.aod_m20, self.rf_m20, self.temp_m20 = core.load.m20.get_m20(
             find_all_peaks=True
         )
         # Otto-Bliesner et al. 2016
-        self.so2_ob16, self.rf_ob16, self.temp_ob16 = core_load.get_ob16()
+        self.so2_ob16, self.rf_ob16, self.temp_ob16 = core.load.ob16.get_ob16()
         # Mt. Tambora
-        self.so2_tambora = core_load.get_so2_tambora_peak()
-        self.aod_tambora = core_load.get_aod_tambora()
-        self.rf_tambora = core_load.get_rf_tambora()
-        self.temp_tambora = core_load.get_trefht_tambora()
+        self.so2_tambora = core.load.tambora.get_so2_tambora()
+        self.aod_tambora = core.load.tambora.get_aod_tambora()
+        self.rf_tambora = core.load.tambora.get_rf_tambora()
+        self.temp_tambora = core.load.tambora.get_trefht_tambora()
         # Jones et al. 2005
         self.so2_j05, self.aod_j05, self.rf_j05, self.temp_j05 = (
-            core_load.get_so2_j05(),
-            core_load.get_aod_j05(),
-            core_load.get_rf_j05(),
-            core_load.get_trefht_j05(),
+            core.load.j05.get_so2_j05(),
+            core.load.j05.get_aod_j05(),
+            core.load.j05.get_rf_j05(),
+            core.load.j05.get_trefht_j05(),
         )
         # Timmreck et al. 2010
         self.so2_t10, self.aod_t10, self.rf_t10, self.temp_t10 = (
-            core_load.get_so2_t10(),
-            core_load.get_aod_t10(),
-            core_load.get_rf_t10(),
-            core_load.get_trefht_t10(),
+            core.load.t10.get_so2_t10(),
+            core.load.t10.get_aod_t10(),
+            core.load.t10.get_rf_t10(),
+            core.load.t10.get_trefht_t10(),
         )
         # Mt. Pinatubo
         self.so2_pinatubo, self.aod_pinatubo, self.rf_pinatubo, self.temp_pinatubo = (
-            core_load.get_so2_pinatubo(),
-            core_load.get_aod_pinatubo(),
-            core_load.get_rf_pinatubo(),
-            core_load.get_trefht_pinatubo(),
+            core.load.pinatubo.get_so2_pinatubo(),
+            core.load.pinatubo.get_aod_pinatubo(),
+            core.load.pinatubo.get_rf_pinatubo(),
+            core.load.pinatubo.get_trefht_pinatubo(),
         )
 
 
@@ -68,8 +66,8 @@ class DoPlotting:
         """Plot SO2 against AOD peaks."""
         ihl = self.data.so2[-1]
         ahl = self.data.aod[-1]
-        fig = plt.figure()
-        ax = fig.gca()
+        fig5_a = plt.figure()
+        ax = fig5_a.gca()
         plt.plot(self.data.so2, self.data.aod[:3], **core.config.LEGENDS["c2w"])
         plt.scatter(ihl, ahl, **core.config.LEGENDS["c2wn"])
         plt.plot(self.data.so2_m20, self.data.aod_m20, **core.config.LEGENDS["m20*"])
@@ -97,16 +95,16 @@ class DoPlotting:
         ax.indicate_inset_zoom(ax1)
         plt.xlabel("Injected SO2 [Tg]")
         plt.ylabel("Aerosol optical depth [1]")
-        plastik.topside_legends(
-            ax,
-            c_max=2,
-            side="top left",
-            alpha=0.8,
-            ec="gray",
-            fontsize=core.config.FONTSIZE,
-            anchor_=(-0.01, 1.02),
-        )
-        return fig
+        kwargs = {
+            "loc": "upper left",
+            "bbox_to_anchor": (-0.01, 1.02),
+            "framealpha": 0.8,
+            "edgecolor": "gray",
+            "fontsize": core.config.FONTSIZE,
+            "ncol": 2,
+        }
+        ax.legend(**kwargs)
+        return fig5_a
 
     def plot_so2_vs_rf(self) -> mpl.figure.Figure:
         """Plot SO2 against RF peaks."""
@@ -115,7 +113,7 @@ class DoPlotting:
         ytt_leg.pop("label")
         ihl = self.data.so2[-1]
         thl = self.data.rf[-1]
-        fig = plt.figure()
+        fig5_b = plt.figure()
         # Fit from Niemeier and Timreck (2015) (they use S, and not SO2, which has half
         # the mass)
         s = np.linspace(0, 850, 10000)
@@ -159,21 +157,22 @@ class DoPlotting:
         ax.indicate_inset_zoom(ax1)
         plt.xlabel("Injected SO2 [Tg]")
         plt.ylabel("Radiative forcing $[\\mathrm{W/m^2}]$")
-        plastik.topside_legends(
-            plt.gca(),
-            c_max=2,
-            side="top left",
-            ec="gray",
-            fontsize=core.config.FONTSIZE,
-            anchor_=(-0.01, 1.02),
-        )
-        return fig
+        kwargs = {
+            "loc": "upper left",
+            "bbox_to_anchor": (-0.01, 1.02),
+            "framealpha": 0.8,
+            "edgecolor": "gray",
+            "fontsize": core.config.FONTSIZE,
+            "ncol": 2,
+        }
+        ax.legend(**kwargs)
+        return fig5_b
 
     def plot_so2_vs_temp(self) -> mpl.figure.Figure:
         """Plot SO2 against temperature peaks."""
         c2wsn_temp = self.data.temp[-1]
-        fig = plt.figure()
-        ax = fig.gca()
+        fig5_c = plt.figure()
+        ax = fig5_c.gca()
         plt.plot(self.data.so2, self.data.temp[:3], **core.config.LEGENDS["c2w"])
         plt.scatter(self.data.so2[-1], c2wsn_temp, **core.config.LEGENDS["c2wn"])
         self._plot_so2_temp_common_data(ax)
@@ -191,16 +190,16 @@ class DoPlotting:
         ax.indicate_inset_zoom(ax1)
         plt.xlabel("Injected SO2 [Tg]")
         plt.ylabel("Temperature anomaly [K]")
-        plastik.topside_legends(
-            plt.gca(),
-            c_max=2,
-            side="top left",
-            alpha=0.8,
-            ec="gray",
-            fontsize=core.config.FONTSIZE,
-            anchor_=(-0.01, 1.02),
-        )
-        return fig
+        kwargs = {
+            "loc": "upper left",
+            "bbox_to_anchor": (-0.01, 1.02),
+            "framealpha": 0.8,
+            "edgecolor": "gray",
+            "fontsize": core.config.FONTSIZE,
+            "ncol": 2,
+        }
+        ax.legend(**kwargs)
+        return fig5_c
 
     def _plot_so2_temp_common_data(self, ax):
         ax.plot(self.data.so2_ob16, self.data.temp_ob16, **core.config.LEGENDS["ob16"])
@@ -218,7 +217,7 @@ class DoPlotting:
         rf_hl = self.data.rf[-1]
         rf_m20 = self.data.rf_m20[np.argsort(self.data.aod_m20)]
         aod_m20 = self.data.aod_m20[np.argsort(self.data.aod_m20)]
-        fig = plt.figure()
+        fig5_d = plt.figure()
         plt.plot(self.data.aod[:3], self.data.rf[:3], **core.config.LEGENDS["c2w"])
         plt.scatter(aod_hl, rf_hl, **core.config.LEGENDS["c2wn"])
         plt.scatter(
@@ -250,15 +249,16 @@ class DoPlotting:
         ax.indicate_inset_zoom(ax1)
         plt.xlabel("Aerosol optical depth [1]")
         plt.ylabel("Radiative forcing $[\\mathrm{W/m^2}]$")
-        plastik.topside_legends(
-            plt.gca(),
-            c_max=2,
-            side="top left",
-            ec="gray",
-            fontsize=core.config.FONTSIZE,
-            anchor_=(-0.01, 1.02),
-        )
-        return fig
+        kwargs = {
+            "loc": "upper left",
+            "bbox_to_anchor": (-0.01, 1.02),
+            "framealpha": 0.8,
+            "edgecolor": "gray",
+            "fontsize": core.config.FONTSIZE,
+            "ncol": 2,
+        }
+        ax.legend(**kwargs)
+        return fig5_d
 
     def plot_aod_vs_temperature(self) -> mpl.figure.Figure:
         """Plot AOD peaks against temperature peaks."""
@@ -266,8 +266,8 @@ class DoPlotting:
         trefht_hl = self.data.temp[-1]
         temp_m20 = self.data.temp_m20[np.argsort(self.data.aod_m20)]
         aod_m20 = self.data.aod_m20[np.argsort(self.data.aod_m20)]
-        fig = plt.figure()
-        ax = fig.gca()
+        fig5_e = plt.figure()
+        ax = fig5_e.gca()
         plt.plot(self.data.aod[:3], self.data.temp[:3], **core.config.LEGENDS["c2w"])
         plt.scatter(aod_hl, trefht_hl, **core.config.LEGENDS["c2wn"])
         plt.plot(aod_m20, temp_m20, **core.config.LEGENDS["m20*"])
@@ -298,16 +298,16 @@ class DoPlotting:
         plt.xlim((-0.75, 15.75))
         plt.xlabel("Aerosol optical depth [1]")
         plt.ylabel("Temperature anomaly [K]")
-        plastik.topside_legends(
-            plt.gca(),
-            c_max=2,
-            side="top left",
-            anchor_=(-0.01, 1.02),
-            alpha=0.8,
-            ec="gray",
-            fontsize=core.config.FONTSIZE,
-        )
-        return fig
+        kwargs = {
+            "loc": "upper left",
+            "bbox_to_anchor": (-0.01, 1.02),
+            "framealpha": 0.8,
+            "edgecolor": "gray",
+            "fontsize": core.config.FONTSIZE,
+            "ncol": 2,
+        }
+        ax.legend(**kwargs)
+        return fig5_e
 
     def plot_rf_vs_temp(self) -> mpl.figure.Figure:
         """Plot RF peaks against temperature peaks."""
@@ -316,8 +316,8 @@ class DoPlotting:
         rf_lme = self.data.rf_ob16[np.argsort(self.data.rf_ob16)]
         temp_m20 = self.data.temp_m20[np.argsort(self.data.rf_m20)]
         rf_m20 = self.data.rf_m20[np.argsort(self.data.rf_m20)]
-        fig = plt.figure()
-        ax = fig.gca()
+        fig5_f = plt.figure()
+        ax = fig5_f.gca()
         plt.plot(self.data.rf[:3], self.data.temp[:3], **core.config.LEGENDS["c2w"])
         plt.scatter(rf_hl, trefht_hl, **core.config.LEGENDS["c2wn"])
         plt.plot(rf_lme, temp_lme, **core.config.LEGENDS["ob16"])
@@ -332,15 +332,16 @@ class DoPlotting:
         plt.scatter(self.data.rf_t10, self.data.temp_t10, **core.config.LEGENDS["t10"])
         plt.xlabel("Radiative forcing $[\\mathrm{W/m^2}]$")
         plt.ylabel("Temperature anomaly [K]")
-        plastik.topside_legends(
-            plt.gca(),
-            c_max=2,
-            side="top left",
-            ec="gray",
-            fontsize=core.config.FONTSIZE,
-            anchor_=(-0.01, 1.02),
-        )
-        return fig
+        kwargs = {
+            "loc": "upper left",
+            "bbox_to_anchor": (-0.01, 1.02),
+            "framealpha": 0.8,
+            "edgecolor": "gray",
+            "fontsize": core.config.FONTSIZE,
+            "ncol": 2,
+        }
+        ax.legend(**kwargs)
+        return fig5_f
 
 
 def main(show_output: bool = False):
@@ -356,7 +357,7 @@ def main(show_output: bool = False):
     aod_vs_temp = plotter.plot_aod_vs_temperature()
     rf_vs_temp = plotter.plot_rf_vs_temp()
     if save:
-        SAVE_PATH = core.scripts.if_save.create_savedir()
+        SAVE_PATH = core.utils.if_save.create_savedir()
         so2_vs_aod.savefig(tmp_dir / "injection_vs_aod")
         so2_vs_rf.savefig(tmp_dir / "injection_vs_rf")
         so2_vs_temp.savefig(tmp_dir / "injection_vs_temperature")

@@ -166,7 +166,7 @@ POINTS_DICTS: dict[
     "caretdown (centered at base)": 11,
 }
 
-FONTSIZE = 6
+FONTSIZE = 5
 COLOR_DICTS: dict[Literal["accent", "category10", "dark2", "set1"], list] = {
     # Same as palettable.colorbrewer.qualitative.Accent_8.hex_colors
     "accent": [
