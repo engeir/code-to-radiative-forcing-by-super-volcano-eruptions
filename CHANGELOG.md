@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.6.0](https://github.com/engeir/paper1-code/compare/v0.5.0...v0.6.0) (2023-12-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* **figure:** change fig1 and soon make fig2 redundant
+
+### Features
+
+* **figure:** change fig1 and soon make fig2 redundant ([e870504](https://github.com/engeir/paper1-code/commit/e870504c02e6019b9d49012e058ac72a89481f4e))
+
+
+### Miscellaneous
+
+* release 0.5.1 ([f2027f9](https://github.com/engeir/paper1-code/commit/f2027f9290e6e25ed5b8d6463a2a082f202a138d))
+* release 0.6.0 ([9d7560c](https://github.com/engeir/paper1-code/commit/9d7560c2166e562c7fbcccfb9567c50b32f4cf37))
+
+
+### Code Refactoring
+
+* **data:** move load function into designated modules ([#25](https://github.com/engeir/paper1-code/issues/25)) ([e870504](https://github.com/engeir/paper1-code/commit/e870504c02e6019b9d49012e058ac72a89481f4e))
+
 ## [0.5.0](https://github.com/engeir/paper1-code/compare/v0.4.1...v0.5.0) (2023-12-04)
 
 
