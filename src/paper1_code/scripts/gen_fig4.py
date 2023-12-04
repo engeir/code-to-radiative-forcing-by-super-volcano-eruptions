@@ -17,7 +17,7 @@ class SetupNeededData:
     """Class that loads all data used in the plotting procedures."""
 
     def __init__(self):
-        self.text, self.aod, self.rf = core_load._set_cesm2_avg(freq="ses")
+        self.text, self.aod, self.rf = core_load.get_c2w_aod_rf(freq="ses")
         self.time_m20, self.aod_m20, self.rf_m20 = core_load.get_m20()
 
 
@@ -100,7 +100,7 @@ class DoPlotting:
             "bbox_to_anchor": (0.51, -0.02, 0.5, 0.3),
             "framealpha": 0.8,
             "edgecolor": "gray",
-            "fontsize": 6,
+            "fontsize": core.config.FONTSIZE,
         }
         ax.legend(**kwargs)
         return fig
@@ -154,12 +154,12 @@ class DoPlotting:
 
     def plot_ratio_scaled(self, with_m20_data: bool = False) -> mpl.figure.Figure:
         """Plot ratio between scaled AOD and RF during the first three years of the eruption."""
-        aod, rf = core_load._normalize_peaks(
-            2, (self.data.aod, "aod"), (self.data.rf, "rf")
+        aod, rf = core_load.normalize_peaks(
+            (self.data.aod, "aod"), (self.data.rf, "rf")
         )
         if with_m20_data:
-            aod_m20_, rf_m20_ = core_load._normalize_peaks(
-                2, (self.data.aod_m20, "aod"), (self.data.rf_m20, "rf")
+            aod_m20_, rf_m20_ = core_load.normalize_peaks(
+                (self.data.aod_m20, "aod"), (self.data.rf_m20, "rf")
             )
             aod_m20 = np.asarray(aod_m20_)
             rf_m20 = np.asarray(rf_m20_)

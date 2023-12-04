@@ -166,6 +166,7 @@ POINTS_DICTS: dict[
     "caretdown (centered at base)": 11,
 }
 
+FONTSIZE = 6
 COLOR_DICTS: dict[Literal["accent", "category10", "dark2", "set1"], list] = {
     # Same as palettable.colorbrewer.qualitative.Accent_8.hex_colors
     "accent": [
@@ -221,8 +222,8 @@ COLOR_DICTS: dict[Literal["accent", "category10", "dark2", "set1"], list] = {
 _C = COLOR_DICTS["category10"]
 _P = POINTS_DICTS
 _DATA_TYPES = Literal[
-    "P", "P100", "VT", "c2w", "c2wm",
-    "c2wmp", "c2ws", "c2wn", "greg", "m20",
+    "P", "P100", "VT", "c2w", "c2wm", "c2wmp", "ob16",
+    "c2ws", "c2wn", "greg", "t10", "m20", "m20*"
 ]
 LEGENDS: dict[_DATA_TYPES, dict] = {
     "P": {"c": _C[4], "marker": _P["star"], "s": 15, "zorder": 5, "label": "P"},
@@ -234,6 +235,9 @@ LEGENDS: dict[_DATA_TYPES, dict] = {
     "c2ws": {"c": _C[2], "marker": _P["triangle_up"], "s": 5, "zorder": 3, "label": r"C2W$\uparrow$"},
     "c2wn": {"c": _C[5], "marker": _P["tri_up"], "s": 15, "zorder": 4, "label": r"C2WN$\uparrow$"},
     "greg": {"c": _C[7], "marker": _P["x"], "s": 5, "zorder": -1, "label": "G16"},
+    "t10": {"c": _C[6], "marker": _P["circle"], "s": 5, "zorder": 5, "label": "T10"},
     "m20": {"c": _C[3], "marker": _P["thin_diamond"], "s": 5, "zorder": 2, "label": "M20"},
+    "m20*": {"c": _C[3], "marker": _P["thin_diamond"], "ms": 2, "zorder": 2, "label": "M20"},
+    "ob16": {"c": _C[2], "marker": _P["triangle_down"], "ms": 2, "zorder": 2, "label": "OB16"},
 }
 # fmt: on
