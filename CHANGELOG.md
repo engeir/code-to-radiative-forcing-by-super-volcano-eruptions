@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.7.1](https://github.com/engeir/paper1-code/compare/v0.7.0...v0.7.1) (2023-12-05)
+
+
+### Bug Fixes
+
+* **figure:** incorrect time series used in fig5 ([4f9810c](https://github.com/engeir/paper1-code/commit/4f9810c81f9bca1d9982ed2adb5f3f8d2d6728c3))
+
+
+### Miscellaneous
+
+* **figure:** add old fig2 back in as supplementary ([c80b30e](https://github.com/engeir/paper1-code/commit/c80b30e5e9ac9654e49b3627f0999d9997ba8248))
+
+
+### Code Refactoring
+
+* **data:** generalize and de-clutter cesm array loading ([c80b30e](https://github.com/engeir/paper1-code/commit/c80b30e5e9ac9654e49b3627f0999d9997ba8248))
+
+
+### Documentation
+
+* **README:** change to new executable script name ([9ff6d47](https://github.com/engeir/paper1-code/commit/9ff6d477787aa865ecb1e64cc4666a75953d7d81))
+
 ## [0.7.0](https://github.com/engeir/paper1-code/compare/v0.6.0...v0.7.0) (2023-12-05)
 
 
