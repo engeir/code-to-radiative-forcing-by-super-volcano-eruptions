@@ -56,9 +56,9 @@ class DoPlotting:
 
     def _plot(
         self,
-        medium,
-        plus,
-        strong,
+        medium: tuple[float, np.ndarray],
+        plus: tuple[float, np.ndarray],
+        strong: tuple[float, np.ndarray],
     ) -> mpl.figure.Figure:
         medium_const, medium_scaled = medium
         plus_const, plus_scaled = plus
@@ -193,15 +193,15 @@ def main(show_output: bool = False):
     TMP = tempfile.TemporaryDirectory()
     tmp_dir = pathlib.Path(TMP.name)
     save = True
+    plotter_temp = DoPlotting(show_output, "temp")
+    wint_temp = plotter_temp.waveform_integrate()
+    wmax_temp = plotter_temp.waveform_max()
     plotter_aod = DoPlotting(show_output, "aod")
     wint_aod = plotter_aod.waveform_integrate()
     wmax_aod = plotter_aod.waveform_max()
     plotter_rf = DoPlotting(show_output, "rf")
     wint_rf = plotter_rf.waveform_integrate()
     wmax_rf = plotter_rf.waveform_max()
-    plotter_temp = DoPlotting(show_output, "temp")
-    wint_temp = plotter_temp.waveform_integrate()
-    wmax_temp = plotter_temp.waveform_max()
     if save:
         SAVE_PATH = core.utils.if_save.create_savedir()
         wmax_aod.savefig(tmp_dir / "compare-waveform-max-aod")

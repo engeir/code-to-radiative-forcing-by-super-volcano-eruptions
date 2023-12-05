@@ -26,7 +26,7 @@ repos:
         name: ruff
         stages: [commit]
         language: system
-        entry: poetry run ruff src tests
+        entry: poetry run ruff --fix src tests
         types: [python]
 
       - id: xdoctest

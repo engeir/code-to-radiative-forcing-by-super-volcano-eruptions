@@ -2,6 +2,7 @@
 
 import pathlib
 import tempfile
+import warnings
 
 import cosmoplots
 import matplotlib as mpl
@@ -106,7 +107,10 @@ class DoPlotting:
 
     def _m20_plots(self, rf_m20, aod_m20, ax):
         mell = core.config.LEGENDS["m20"]
+        warnings.simplefilter("ignore")
+        # Dividing by zero is fine...
         ratio_nonan = rf_m20.flatten() / aod_m20.flatten()
+        warnings.resetwarnings()
         idx = np.argwhere(~np.isnan(ratio_nonan))
         ratio_nonan = ratio_nonan[idx].flatten()
         time_nonan = (self.data.time_m20.flatten() - self.data.time_m20.flatten()[0])[
@@ -125,12 +129,16 @@ class DoPlotting:
             )
             rs = result.slope
             ri = result.intercept
-            print(f"Mean ratio: {ratio_nonan[mask].mean()}")
-            print(f"Slope: {rs}")
+            if self.print_summary:
+                print(f"Mean ratio: {ratio_nonan[mask].mean()}")
+                print(f"Slope: {rs}")
             x = time_nonan[mask]
             y = x * rs + ri
+            warnings.simplefilter("ignore")
+            # Dividing by zero is fine...
             y_means = (rf_m20 / aod_m20).mean(axis=0)
             y_std = (rf_m20 / aod_m20).std(axis=0)
+            warnings.resetwarnings()
             ax.plot(x, y, c=mell["c"])
             t_fill = self.data.time_m20[0, :] - self.data.time_m20.flatten()[0]
             mask2 = (t_fill > low) & (t_fill < high)
