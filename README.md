@@ -30,8 +30,7 @@ poetry install
 Every figure has its own executable. Figures are created by running:
 
 ```bash
-poetry run generate-fig1
-poetry run generate-fig2
+poetry run generate-fig1-2
 poetry run generate-fig3
 poetry run generate-fig4
 poetry run generate-fig5
