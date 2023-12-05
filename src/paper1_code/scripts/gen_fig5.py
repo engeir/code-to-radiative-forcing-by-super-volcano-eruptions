@@ -371,8 +371,8 @@ def main(show_output: bool = False):
             tmp_dir / "aod_vs_rf.png",
             tmp_dir / "aod_vs_temperature.png",
             tmp_dir / "rf_vs_temperature.png",
-        ).using(fontsize=50).in_grid(w=2, h=3).save(SAVE_PATH / "parameter_scan.png")
-        if (fig5 := (SAVE_PATH / "aod_vs_rf_loop.png")).exists():
+        ).using(fontsize=50).in_grid(w=2, h=3).save(SAVE_PATH / "figure5.png")
+        if (fig5 := (SAVE_PATH / "figure5.png")).exists():
             print(f"Successfully saved figure 5 to {fig5.resolve()}")
     if show_output:
         plt.show()

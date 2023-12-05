@@ -190,7 +190,8 @@ def get_rf_arrs(
 
 
 def get_trefht_arrs(
-    remove_seasonality: bool = False
+    remove_seasonality: bool = False,
+    shift: int | None = None,
 ) -> tuple[
     list[xr.DataArray], list[xr.DataArray], list[xr.DataArray], list[xr.DataArray]
 ]:

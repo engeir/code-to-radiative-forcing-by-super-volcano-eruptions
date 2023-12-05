@@ -193,10 +193,10 @@ def main(show_output: bool = False):
         cosmoplots.combine(
             tmp_dir / "aod_vs_rf_avg_loop_ratio.png",
             tmp_dir / "aod_vs_rf_avg_loop_ratio_scaled.png",
-        ).using(fontsize=50, gravity="southwest", pos=(5, 30)).in_grid(1, 2).save(
-            SAVE_PATH / "aod_vs_rf_loop.png"
+        ).using(fontsize=50, gravity="southwest", pos=(10, 30)).in_grid(1, 2).save(
+            SAVE_PATH / "figure4.png"
         )
-        if (fig4 := (SAVE_PATH / "aod_vs_rf_loop.png")).exists():
+        if (fig4 := (SAVE_PATH / "figure4.png")).exists():
             print(f"Successfully saved figure 4 to {fig4.resolve()}")
     if show_output:
         plt.show()
