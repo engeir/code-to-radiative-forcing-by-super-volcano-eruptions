@@ -1,5 +1,7 @@
 """Load Mt. Pinatubo data."""
 
+# FIXME: add doi.
+
 
 def get_so2_pinatubo() -> float:
     """Get SO2 injected values based on observational data.
