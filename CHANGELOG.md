@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.7.0](https://github.com/engeir/paper1-code/compare/v0.6.0...v0.7.0) (2023-12-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* **figure:** remove previous fig2
+
+### Features
+
+* **figure:** finish new implementation of fig1 (and fig2) ([d975001](https://github.com/engeir/paper1-code/commit/d975001b6d9c33af19f25a001388948b59f89439))
+* **figure:** remove previous fig2 ([c5c21b9](https://github.com/engeir/paper1-code/commit/c5c21b9e33cbeadcf23fb66f05442de2102d7f87))
+
+
+### Miscellaneous
+
+* release 0.7.0 ([2670379](https://github.com/engeir/paper1-code/commit/267037904b22f4d3d97fb4cea03dea9623c27c60))
+
 ## [0.6.0](https://github.com/engeir/paper1-code/compare/v0.5.0...v0.6.0) (2023-12-04)
 
 
