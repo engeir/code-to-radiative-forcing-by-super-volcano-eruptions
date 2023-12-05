@@ -275,7 +275,7 @@ class DoPlotting:
             self.data.aod_pinatubo, self.data.temp_pinatubo, **core.config.LEGENDS["P"]
         )
         plt.scatter(
-            self.data.aod_tambora, self.data.rf_tambora, **core.config.LEGENDS["VT"]
+            self.data.aod_tambora, self.data.temp_tambora, **core.config.LEGENDS["VT"]
         )
         plt.scatter(
             self.data.aod_j05, self.data.temp_j05, **core.config.LEGENDS["P100"]
@@ -289,7 +289,7 @@ class DoPlotting:
             self.data.aod_pinatubo, self.data.temp_pinatubo, **core.config.LEGENDS["P"]
         )
         ax1.scatter(
-            self.data.aod_tambora, self.data.rf_tambora, **core.config.LEGENDS["VT"]
+            self.data.aod_tambora, self.data.temp_tambora, **core.config.LEGENDS["VT"]
         )
         ax1.set_xlim((0, 1))
         ax1.set_ylim((0, 1.2))
