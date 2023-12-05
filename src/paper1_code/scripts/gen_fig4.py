@@ -42,12 +42,13 @@ class DoPlotting:
         l_c2wmp = core.config.LEGENDS["c2wmp"]
         l_c2ws = core.config.LEGENDS["c2ws"]
         l_c2wn = core.config.LEGENDS["c2wn"]
+        year_zero = 0
         fig = plt.figure()
         ax = fig.gca()
         ax.set_xlim((-0.0, 3.7))
         for i, ell in enumerate([l_c2wn, l_c2ws, l_c2wmp, l_c2wm], start=-3):
             ratio_s = rf[abs(i)] / aod[abs(i)]
-            x = np.asarray([float(t) - 1850 for t in self.data.text[abs(i)]])
+            x = np.asarray([float(t) - year_zero for t in self.data.text[abs(i)]])
             # Full
             year_mask = (x > self.period1[0]) & (x < self.period2[1])
             x = x[year_mask]
