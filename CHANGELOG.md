@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/engeir/paper1-code/compare/v0.7.1...v0.7.2) (2023-12-05)
+
+
+### Miscellaneous
+
+* **docs:** add FIXME comments for module docstrings ([9d7d383](https://github.com/engeir/paper1-code/commit/9d7d3839f5313fefbc86e6c628f5558a48752f0d))
+
 ## [0.7.1](https://github.com/engeir/paper1-code/compare/v0.7.0...v0.7.1) (2023-12-05)
 
 
