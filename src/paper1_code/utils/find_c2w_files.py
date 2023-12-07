@@ -8,6 +8,7 @@ from typing import Self, overload
 
 import numpy as np
 import xarray as xr
+from returns.result import Failure, Result, Success
 from xarray.core.types import T_Xarray
 
 import paper1_code as core
@@ -205,9 +206,13 @@ class FindFiles:
             print(f"{h}:", end="\r")
             [print(f"\t\t\t{i}") for i in s]
 
-    def get_files(self) -> list[tuple[str, str, str, str, str, str]]:
+    def get_files(self) -> Result[list[tuple[str, str, str, str, str, str]], str]:
         """Return the list of matched files."""
-        return self._matched_files if self._matched_files is not None else []
+        return (
+            Success(self._matched_files)
+            if self._matched_files is not None
+            else Failure("There are no matched files to return.")
+        )
 
     @overload
     def sort(self, *attributes: str, arrays: list[T_Xarray]) -> list[T_Xarray]:
@@ -422,7 +427,7 @@ class FindFiles:
             ]:
                 out.extend(iter(found_tups))
         self._matched_files = out
-        # Make sure we keep the sorting order after the refined selection has been make.
+        # Make sure we keep the sorting order after the refined selection has been made.
         return self if self._sort_order is None else self._sort_tup(*self._sort_order)
 
     def _re_create_file_paths(

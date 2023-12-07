@@ -13,7 +13,7 @@ FINDER = FindFiles()
 
 
 def get_c2w_aod_rf(
-    freq: Literal["y", "ses"] = "y"
+    freq: Literal["y", "ses"] = "y",
 ) -> tuple[list[np.ndarray], list[np.ndarray], list[np.ndarray]]:
     """Return time, AOD and RF arrays with seasonal or annual means.
 
@@ -138,10 +138,10 @@ def get_aod_arrs(
     mp = core.utils.time_series.mean_flatten(mp, dims=["lat", "lon"])
     h = core.utils.time_series.mean_flatten(h, dims=["lat", "lon"])
     # Remove control run
-    s = remove_control(s)
-    m = remove_control(m)
-    mp = remove_control(mp)
-    h = remove_control(h)
+    # s = remove_control(s)
+    # m = remove_control(m)
+    # mp = remove_control(mp)
+    # h = remove_control(h)
     for i, arr in enumerate(s):
         s[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
     for i, arr in enumerate(mp):
