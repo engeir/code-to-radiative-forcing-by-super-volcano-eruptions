@@ -53,59 +53,82 @@ class DoPlotting:
         self.data = SetupNeededData(version)
         self.n_year = 6
         self.version = version
+        self.m_c = core.config.LEGENDS["c2wm"]["c"]
+        self.mp_c = core.config.LEGENDS["c2wmp"]["c"]
+        self.s_c = core.config.LEGENDS["c2ws"]["c"]
 
     def _plot(
         self,
         medium: tuple[float, np.ndarray],
         plus: tuple[float, np.ndarray],
         strong: tuple[float, np.ndarray],
+        style: Literal["plot", "semilogy", "loglog"] = "plot",
     ) -> mpl.figure.Figure:
-        medium_const, medium_scaled = medium
-        plus_const, plus_scaled = plus
-        strong_const, strong_scaled = strong
         # Percentiles
         n = 1
-        low_range = np.linspace(MIN_PERCENTILE, 50, num=n, endpoint=False)
-        high_range = np.linspace(50, MAX_PERCENTILE, num=n + 1)[1:]
-        medium_perc1 = np.percentile(self.data.medium, low_range, axis=0)
-        medium_perc1 = medium_perc1 / medium_const
-        medium_perc2 = np.percentile(self.data.medium, high_range, axis=0)
-        medium_perc2 = medium_perc2 / medium_const
-        plus_perc1 = np.percentile(self.data.plus, low_range, axis=0)
-        plus_perc1 = plus_perc1 / plus_const
-        plus_perc2 = np.percentile(self.data.plus, high_range, axis=0)
-        plus_perc2 = plus_perc2 / plus_const
-        strong_perc1 = np.percentile(self.data.strong, low_range, axis=0)
-        strong_perc1 = strong_perc1 / strong_const
-        strong_perc2 = np.percentile(self.data.strong, high_range, axis=0)
-        strong_perc2 = strong_perc2 / strong_const
+        low = np.linspace(MIN_PERCENTILE, 50, num=n, endpoint=False)
+        high = np.linspace(50, MAX_PERCENTILE, num=n + 1)[1:]
+        medium_perc1 = np.percentile(self.data.medium, low, axis=0) / medium[0]
+        medium_perc2 = np.percentile(self.data.medium, high, axis=0) / medium[0]
+        plus_perc1 = np.percentile(self.data.plus, low, axis=0) / plus[0]
+        plus_perc2 = np.percentile(self.data.plus, high, axis=0) / plus[0]
+        strong_perc1 = np.percentile(self.data.strong, low, axis=0) / strong[0]
+        strong_perc2 = np.percentile(self.data.strong, high, axis=0) / strong[0]
 
-        x_m = self.data.medium[0].time.data
-        x_p = self.data.plus[0].time.data
-        x_s = self.data.strong[0].time.data
         fig = plt.figure()
         ax = fig.gca()
+        getattr(ax, style)()
+        if style != "plot":
+            ax.set_ylim((1e-3, 3))
         ax.set_xlabel(r"Time $[\mathrm{yr}]$")
         if self.version == "temp":
-            attr_name = "temperature"
+            ax.set_ylabel("Normalised \ntemperature anomaly $[1]$")
         elif self.version == "rf":
-            attr_name = "radiative forcing"
+            ax.set_ylabel("Normalised \nradiative forcing anomaly $[1]$")
         elif self.version == "aod":
-            attr_name = "aerosol optical depth"
-        ax.set_ylabel(f"Normalised \n{attr_name} anomaly $[1]$")
+            ax.set_ylabel("Normalised \naerosol optical depth anomaly $[1]$")
+        if style == "loglog":
+            # Find peak, set time = 0
+            idx_m = int(np.argmax(medium[1]))
+            idx_p = int(np.argmax(plus[1]))
+            idx_s = int(np.argmax(strong[1]))
+        else:
+            idx_m = 0
+            idx_p = 0
+            idx_s = 0
+        x_m = self.data.medium[0].time.data[idx_m:]
+        x_m -= x_m[0]
+        medium_scaled = medium[1][idx_m:]
+        x_p = self.data.plus[0].time.data[idx_p:]
+        x_p -= x_p[0]
+        plus_scaled = plus[1][idx_p:]
+        x_s = self.data.strong[0].time.data[idx_s:]
+        x_s -= x_s[0]
+        strong_scaled = strong[1][idx_s:]
         (medium_line,) = ax.plot(x_m, medium_scaled, c="k")
         (plus_line,) = ax.plot(x_p, plus_scaled, ":", c="k")
         (strong_line,) = ax.plot(x_s, strong_scaled, "--", c="k")
         alpha = 1 / n if n != 1 else 0.7
-        medium_fill = mpatches.Patch(facecolor=CLR[0], alpha=1.0, linewidth=0)
+        medium_fill = mpatches.Patch(facecolor=self.m_c, alpha=1.0, linewidth=0)
         for p1, p2 in zip(medium_perc1, medium_perc2, strict=True):
-            ax.fill_between(x_m, p1, p2, alpha=alpha, color=CLR[0], edgecolor=None)
-        plus_fill = mpatches.Patch(facecolor=CLR[1], alpha=1.0, linewidth=0)
+            ax.fill_between(
+                x_m, p1[idx_m:], p2[idx_m:], alpha=alpha, color=self.m_c, edgecolor=None
+            )
+        plus_fill = mpatches.Patch(facecolor=self.mp_c, alpha=1.0, linewidth=0)
         for p1, p2 in zip(plus_perc1, plus_perc2, strict=True):
-            ax.fill_between(x_p, p1, p2, alpha=alpha, color=CLR[1], edgecolor=None)
-        strong_fill = mpatches.Patch(facecolor=CLR[2], alpha=1.0, linewidth=0)
+            ax.fill_between(
+                x_p,
+                p1[idx_p:],
+                p2[idx_p:],
+                alpha=alpha,
+                color=self.mp_c,
+                edgecolor=None,
+            )
+        strong_fill = mpatches.Patch(facecolor=self.s_c, alpha=1.0, linewidth=0)
         for p1, p2 in zip(strong_perc1, strong_perc2, strict=True):
-            ax.fill_between(x_s, p1, p2, alpha=alpha, color=CLR[2], edgecolor=None)
+            ax.fill_between(
+                x_s, p1[idx_s:], p2[idx_s:], alpha=alpha, color=self.s_c, edgecolor=None
+            )
 
         # Combine shading and line labels
         plt.legend(
@@ -115,9 +138,9 @@ class DoPlotting:
                 (medium_fill, medium_line),
             ],
             [
-                r"C2W$\uparrow$, $C" + f" = {strong_const:.2f}" + r"$",
-                f"C2W$-$, $C = {plus_const:.2f}$",
-                r"C2W$\downarrow$, $C" + f" = {medium_const:.2f}" + r"$",
+                r"C2W$\uparrow$, $C" + f" = {strong[0]:.2f}" + r"$",
+                f"C2W$-$, $C = {plus[0]:.2f}$",
+                r"C2W$\downarrow$, $C" + f" = {medium[0]:.2f}" + r"$",
             ],
             loc="upper right",
             handler_map={
@@ -130,12 +153,19 @@ class DoPlotting:
         )
         return plt.gcf()
 
-    def waveform_max(self) -> mpl.figure.Figure:
+    def waveform_max(
+        self, style: Literal["plot", "semilogy", "loglog"] = "plot"
+    ) -> mpl.figure.Figure:
         """Compare shape of TREFHT variable from medium and strong eruption simulations.
 
         The seasonal effects are removed by finding the median across four realisations.
         Comparison is done by shifting the signals to zero and then dividing by their
         maximum values.
+
+        Parameters
+        ----------
+        style : Literal["plot", "semilogy", "loglog"]
+            The axis style of the plot
 
         Returns
         -------
@@ -156,35 +186,7 @@ class DoPlotting:
             (medium_const, medium_scaled),
             (plus_const, plus_scaled),
             (strong_const, strong_scaled),
-        )
-
-    def waveform_integrate(self) -> mpl.figure.Figure:
-        """Compare shape of TREFHT variable from medium and strong eruption simulations.
-
-        The median across four realisations is computed, with shading given from the 25th
-        and 75th percentiles. Comparison is done by shifting the signals to zero and then
-        dividing by their own integral.
-
-        Returns
-        -------
-        mpl.figure.Figure
-            The figure object that is created by the function
-        """
-        # Find median values
-        medium_med = np.median(self.data.medium, axis=0)
-        plus_med = np.median(self.data.plus, axis=0)
-        strong_med = np.median(self.data.strong, axis=0)
-        medium_const = np.trapz(medium_med, self.data.medium[0].time.data)
-        plus_const = np.trapz(plus_med, self.data.plus[0].time.data)
-        strong_const = np.trapz(strong_med, self.data.strong[0].time.data)
-        medium_scaled = medium_med / medium_const
-        plus_scaled = plus_med / plus_const
-        strong_scaled = strong_med / strong_const
-
-        return self._plot(
-            (medium_const, medium_scaled),
-            (plus_const, plus_scaled),
-            (strong_const, strong_scaled),
+            style=style,
         )
 
 
@@ -194,38 +196,23 @@ def main(show_output: bool = False):
     tmp_dir = pathlib.Path(TMP.name)
     save = True
     plotter_temp = DoPlotting(show_output, "temp")
-    wint_temp = plotter_temp.waveform_integrate()
     wmax_temp = plotter_temp.waveform_max()
     plotter_aod = DoPlotting(show_output, "aod")
-    wint_aod = plotter_aod.waveform_integrate()
     wmax_aod = plotter_aod.waveform_max()
     plotter_rf = DoPlotting(show_output, "rf")
-    wint_rf = plotter_rf.waveform_integrate()
     wmax_rf = plotter_rf.waveform_max()
     if save:
         SAVE_PATH = core.utils.if_save.create_savedir()
         wmax_aod.savefig(tmp_dir / "compare-waveform-max-aod")
-        wint_aod.savefig(tmp_dir / "compare-waveform-integrate-aod")
         wmax_rf.savefig(tmp_dir / "compare-waveform-max-rf")
-        wint_rf.savefig(tmp_dir / "compare-waveform-integrate-rf")
         wmax_temp.savefig(tmp_dir / "compare-waveform-max-temp")
-        wint_temp.savefig(tmp_dir / "compare-waveform-integrate-temp")
-        cosmoplots.combine(
-            tmp_dir / "compare-waveform-max-temp.png",
-            tmp_dir / "compare-waveform-integrate-temp.png",
-        ).using(fontsize=50).in_grid(1, 2).save(SAVE_PATH / "figure1.png")
         cosmoplots.combine(
             tmp_dir / "compare-waveform-max-aod.png",
             tmp_dir / "compare-waveform-max-rf.png",
-            tmp_dir / "compare-waveform-integrate-aod.png",
-            tmp_dir / "compare-waveform-integrate-rf.png",
-        ).using(fontsize=50).in_grid(2, 2).with_labels("(a)", "(c)", "(b)", "(d)").save(
-            SAVE_PATH / "figure2.png"
-        )
+            tmp_dir / "compare-waveform-max-temp.png",
+        ).using(fontsize=50).in_grid(1, 3).save(SAVE_PATH / "figure1.png")
         if (fig1 := (SAVE_PATH / "figure1.png")).exists():
             print(f"Successfully saved figure 1 to {fig1.resolve()}")
-        if (fig2 := (SAVE_PATH / "figure2.png")).exists():
-            print(f"Successfully saved figure 2 to {fig2.resolve()}")
     if show_output:
         plt.show()
     else:

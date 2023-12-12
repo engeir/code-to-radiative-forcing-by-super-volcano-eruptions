@@ -141,8 +141,8 @@ def main(show_output: bool = False):
         ).using(fontsize=50).in_grid(1, 2).save(
             SAVE_PATH / "arrays_combined_normalized.png"
         )
-        if (fig2 := (SAVE_PATH / "arrays_combined_normalized.png")).exists():
-            print(f"Successfully saved figure 2 to {fig2.resolve()}")
+        if (fig1 := (SAVE_PATH / "arrays_combined_normalized.png")).exists():
+            print(f"Successfully saved figure 1 to {fig1.resolve()}")
     if show_output:
         plt.show()
     else:
