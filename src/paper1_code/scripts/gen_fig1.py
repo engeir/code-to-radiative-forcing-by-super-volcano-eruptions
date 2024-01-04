@@ -176,9 +176,15 @@ class DoPlotting:
         medium_med = np.median(self.data.medium, axis=0)
         plus_med = np.median(self.data.plus, axis=0)
         strong_med = np.median(self.data.strong, axis=0)
-        medium_const = scipy.signal.savgol_filter(medium_med, self.n_year, 3).max()
-        plus_const = scipy.signal.savgol_filter(plus_med, self.n_year, 3).max()
-        strong_const = scipy.signal.savgol_filter(strong_med, self.n_year, 3).max()
+        extreme = (
+            "max"
+            if abs(self.data.medium[0].data.min()) < abs(self.data.medium[0].data.max())
+            else "min"
+        )
+        filter = scipy.signal.savgol_filter
+        medium_const = getattr(filter(medium_med, self.n_year, 3), extreme)()
+        plus_const = getattr(filter(plus_med, self.n_year, 3), extreme)()
+        strong_const = getattr(filter(strong_med, self.n_year, 3), extreme)()
         medium_scaled = medium_med / medium_const
         plus_scaled = plus_med / plus_const
         strong_scaled = strong_med / strong_const
@@ -203,6 +209,7 @@ def main(show_output: bool = False):
     wmax_rf = plotter_rf.waveform_max()
     if save:
         SAVE_PATH = core.utils.if_save.create_savedir()
+        # tmp_dir = pathlib.Path(".")
         wmax_aod.savefig(tmp_dir / "compare-waveform-max-aod")
         wmax_rf.savefig(tmp_dir / "compare-waveform-max-rf")
         wmax_temp.savefig(tmp_dir / "compare-waveform-max-temp")

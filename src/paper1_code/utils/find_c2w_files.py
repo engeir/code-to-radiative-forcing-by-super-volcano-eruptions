@@ -542,8 +542,8 @@ class FindFiles:
         with np.load(fp) as f:
             xarr = xr.DataArray(f["data"], dims=["time"], coords={"time": f["times"]})
             file_set = {
-                "long_name": core.config.DATA_ATTRS_EXTRA[file[3]][0],
-                "units": core.config.DATA_ATTRS_EXTRA[file[3]][1],
+                "long_name": core.config.DATA_ATTRS[file[3]][0],
+                "units": core.config.DATA_ATTRS[file[3]][1],
                 "file_id": file,
             }
             xarr = xarr.assign_attrs(file_set)

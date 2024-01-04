@@ -86,9 +86,9 @@ class DoPlotting:
                     x_means, y_means - y_std, y_means + y_std, alpha=0.3, color=ell["c"]
                 )
             if self.print_summary:
-                print("")
+                print(f"{ell['label']}")
         if aod_m20 is not None and rf_m20 is not None:
-            self._m20_plots(rf_m20, aod_m20, ax)
+            self._m20_plots(rf_m20, aod_m20, ax, **kwargs)
         xlabel = kwargs.pop("xlabel", "Time after eruption $[\\mathrm{year}]$")
         ylabel = kwargs.pop(
             "ylabel",
@@ -106,7 +106,7 @@ class DoPlotting:
         ax.legend(**kwargs)
         return fig
 
-    def _m20_plots(self, rf_m20, aod_m20, ax):
+    def _m20_plots(self, rf_m20, aod_m20, ax, **kwargs):
         mell = core.config.LEGENDS["m20"]
         warnings.simplefilter("ignore")
         # Dividing by zero is fine...
@@ -129,10 +129,12 @@ class DoPlotting:
                 ratio_nonan[mask],
             )
             rs = result.slope
+            rse = result.stderr
             ri = result.intercept
             if self.print_summary:
-                print(f"Mean ratio: {ratio_nonan[mask].mean()}")
-                print(f"Slope: {rs}")
+                print(rf"Slope: \({rs:.2f}\pm{rse:.2f}\)", end="\t")
+                # print(f"Mean ratio: {ratio_nonan[mask].mean()}")
+                # print(f"Slope: {rs}")
             x = time_nonan[mask]
             y = x * rs + ri
             warnings.simplefilter("ignore")
@@ -140,7 +142,8 @@ class DoPlotting:
             y_means = (rf_m20 / aod_m20).mean(axis=0)
             y_std = (rf_m20 / aod_m20).std(axis=0)
             warnings.resetwarnings()
-            ax.plot(x, y, c=mell["c"])
+            if "xlabel" not in kwargs:
+                ax.plot(x, y, c=mell["c"], label="_Hidde", alpha=0.5)
             t_fill = self.data.time_m20[0, :] - self.data.time_m20.flatten()[0]
             mask2 = (t_fill > low) & (t_fill < high)
             ax.fill_between(
@@ -150,6 +153,8 @@ class DoPlotting:
                 alpha=0.3,
                 color=mell["c"],
             )
+        if self.print_summary:
+            print(f"{mell['label']}")
 
     def plot_ratio(self, with_m20_data: bool = False) -> mpl.figure.Figure:
         """Plot ratio between AOD and RF during the first three years of the eruption."""

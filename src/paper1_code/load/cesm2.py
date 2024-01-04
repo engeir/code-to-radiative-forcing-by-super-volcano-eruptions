@@ -70,7 +70,7 @@ def _finalize_arrays(
     h = list(xr.align(*h))
     if remove_seasonality:
         # Assume time series are centered at zero and all of the same kind.
-        sign = 1 if abs(m[0].data.min()) < abs(m[0].data.max()) else -1
+        sign = 1  # if abs(m[0].data.min()) < abs(m[0].data.max()) else -1
         for i, a in enumerate(m):
             a.data = a * sign
             m[i] = a.compute()

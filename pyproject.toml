@@ -124,6 +124,9 @@ exclude = [
   "dist",
   "node_modules",
   "venv",
+  # Files that were downloaded
+  "python-ucar.cgd.ccsm4.cesmLME.atm.proc.daily_ave.FSNTOA-20240103T0650.py",
+  "python-ucar.cgd.ccsm4.cesmLME.atm.proc.daily_ave.TREFHT-20240103T0651.py",
 ]
 per-file-ignores = {}
 

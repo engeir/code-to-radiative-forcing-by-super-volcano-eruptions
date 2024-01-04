@@ -2,17 +2,12 @@
 
 import pathlib
 
+import paper1_code as core
+
 
 def create_savedir() -> pathlib.Path:
     """Create the directory where the figures will be saved."""
-    HERE = pathlib.Path(__file__)
-    next = False
-    for parents in HERE.parents:
-        if next:
-            SAVE_PATH = parents / "generated_files"
-            break
-        if parents.name == "src":
-            next = True
+    SAVE_PATH = core.config.DATA_DIR_OUT
     if not SAVE_PATH.exists():
         SAVE_PATH.mkdir(parents=True)
     return SAVE_PATH
