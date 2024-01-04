@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.8.0](https://github.com/engeir/paper1-code/compare/v0.7.2...v0.8.0) (2024-01-04)
+
+
+### Features
+
+* **climate resistance:** implement initial calculation script ([134de41](https://github.com/engeir/paper1-code/commit/134de41d027126b3107e3e9d84a8ed88471352d7))
+* **data:** add download and install instructions for OB16 ([3bc73d9](https://github.com/engeir/paper1-code/commit/3bc73d98d8c673d3884b612371c600157cf3d147))
+* **figure:** merge figs 1 and 2, removes int normalization ([ce8e605](https://github.com/engeir/paper1-code/commit/ce8e605aee11253f476c0046dc5d1cd48bbec209))
+
+
+### Miscellaneous
+
+* **config:** create toml simple toml file ([455e732](https://github.com/engeir/paper1-code/commit/455e7322a4804cff7c8b8d6e0bfe738a752281a2))
+
+
+### Code Refactoring
+
+* **find-files:** use the returns library ([a824081](https://github.com/engeir/paper1-code/commit/a824081adef5d41e6653f1790f6a1a3445fe660d))
+
 ## [0.7.2](https://github.com/engeir/paper1-code/compare/v0.7.1...v0.7.2) (2023-12-05)
 
 
