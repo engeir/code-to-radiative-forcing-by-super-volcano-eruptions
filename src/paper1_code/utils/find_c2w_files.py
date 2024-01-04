@@ -34,6 +34,7 @@ class FindFiles:
     _bad_files : files that were candidates but that did not match the regex
     _matched_files : files that have been looked up among the files found with the regex
     _sort_order : tuple with the sorting that is applied to the files
+    _sort_reverse : bool stating if the sorting of the files should be reversed
 
     Raises
     ------
@@ -151,6 +152,7 @@ class FindFiles:
         self._initial_file_lookup(files, pattern)
         self._matched_files: list[tuple[str, str, str, str, str, str]] | None = None
         self._sort_order: tuple[str, ...] | None = None
+        self._sort_reverse: bool = False
 
     def copy(self) -> Self:
         """Create a shallow copy of this object."""
@@ -219,6 +221,10 @@ class FindFiles:
         pass
 
     @overload
+    def sort(self, *attributes: str, reverse: bool) -> Self:
+        pass
+
+    @overload
     def sort(self, *attributes: str) -> Self:
         pass
 
@@ -226,6 +232,7 @@ class FindFiles:
         self,
         *attributes: str,
         arrays: list[T_Xarray] | None = None,
+        reverse: bool = False,
     ) -> list[T_Xarray] | Self:
         """Sort a list of arrays based on their attributes.
 
@@ -240,6 +247,8 @@ class FindFiles:
         arrays : list[T_Xarray] | None
             An optional list of xarray DataArrays to sort. If None, the matched files
             are used in the sorting.
+        reverse : bool
+            Reverse the sorting. Default is False.
 
         Returns
         -------
@@ -248,6 +257,7 @@ class FindFiles:
         """
         # We re-set the sort order every time this is called.
         self._sort_order = attributes
+        self._sort_reverse = reverse
         if arrays is None and self._matched_files is None:
             return self
         elif arrays is not None:
@@ -255,8 +265,7 @@ class FindFiles:
         else:
             return self._sort_tup(*attributes)
 
-    @staticmethod
-    def _sort_xr(arrays: list[T_Xarray], *attributes: str) -> list[T_Xarray]:
+    def _sort_xr(self, arrays: list[T_Xarray], *attributes: str) -> list[T_Xarray]:
         """Sort a list of arrays based on their attributes."""
         # Check that the parameters are real attributes of the arrays.
         for a in attributes:
@@ -272,7 +281,7 @@ class FindFiles:
             return tuple(x.attrs[attr] for attr in attributes)
 
         ac = arrays.copy()
-        ac.sort(key=sorter)
+        ac.sort(key=sorter, reverse=self._sort_reverse)
         return ac
 
     def _sort_tup(self, *attributes: str) -> Self:
@@ -301,7 +310,7 @@ class FindFiles:
             return tuple(x[lookup[attr]] for attr in attributes)
 
         ac = self._matched_files.copy()
-        ac.sort(key=sorter)
+        ac.sort(key=sorter, reverse=self._sort_reverse)
         self._matched_files = ac
         return self
 
@@ -429,6 +438,26 @@ class FindFiles:
         self._matched_files = out
         # Make sure we keep the sorting order after the refined selection has been made.
         return self if self._sort_order is None else self._sort_tup(*self._sort_order)
+
+    def keep_most_recent(self) -> Self:
+        """Keep only the latest file among identical files."""
+        if self._matched_files is None:
+            return self
+        sorting = self._sort_order
+        reverse = self._sort_reverse
+        self = self.sort(
+            "compset", "ensemble", "sim", "attr", "freq", "date", reverse=True
+        )
+        only_recent = []
+        last_file = ("",) * 6
+        if self._matched_files is None:
+            return self
+        for file in self._matched_files:
+            if last_file[:-1] != file[:-1]:
+                only_recent.append(file)
+                last_file = file
+        self._matched_files = only_recent
+        return self if sorting is None else self.sort(*sorting, reverse=reverse)
 
     def _re_create_file_paths(
         self,
