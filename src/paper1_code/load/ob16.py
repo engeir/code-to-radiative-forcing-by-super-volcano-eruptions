@@ -4,15 +4,104 @@
 
 import datetime
 import itertools
-import pathlib
 import re
+import subprocess
 from typing import Literal
 
 import numpy as np
+import requests
+import rich.progress
 import scipy
 import xarray as xr
 
 import paper1_code as core
+
+
+def save_to_npz() -> None:
+    """Save the OB16 data to .npz files."""
+    # Download OB16 output datasets.
+    _download_ob16_output_files()
+    # Combine and convert the datasets and save to compressed .npz files.
+    path = core.config.DATA_DIR_ROOT / "cesm-lme"
+    if not path.exists():
+        path.mkdir(parents=False)
+    _save_output_files_to_npz(path)
+    # Input file with injected SO2.
+    _download_so2_file(path)
+    print(f"You might want to clean up the .nc files in {core.config.PROJECT_ROOT}.")
+
+
+def _download_ob16_output_files() -> None:
+    script_path = core.config.PROJECT_ROOT / "src" / "paper1_code" / "load"
+    script = "python-ucar.cgd.ccsm4.cesmLME.atm.proc.daily_ave."
+    subprocess.call(["python", script_path / f"{script}FSNTOA-20240103T0650.py"])
+    subprocess.call(["python", script_path / f"{script}TREFHT-20240103T0651.py"])
+
+
+def _save_output_files_to_npz(path) -> None:
+    file0 = "b.e11.BLMTRC5CN.f19_g16.VOLC_GRA.00"
+    file1 = ".cam.h0."
+    file2_0 = ".08500101-18491231.nc"
+    file2_1 = ".18500101-20051231.nc"
+    # Temperature.
+    for i in range(5):
+        file_0 = file0 + str(i + 1) + file1 + "TREFHT" + file2_0
+        file_1 = file0 + str(i + 1) + file1 + "TREFHT" + file2_1
+        data = xr.open_mfdataset([file_0, file_1])
+        array = core.utils.time_series.mean_flatten(data["TREFHT"], dims=["lat", "lon"])
+        np.savez(path / f"TREFHT-00{i+1}", data=array.data, times=array.time.data)
+    # RF forcing
+    for i in range(5):
+        file_0 = file0 + str(i + 1) + file1 + "FSNTOA" + file2_0
+        file_1 = file0 + str(i + 1) + file1 + "FSNTOA" + file2_1
+        data = xr.open_mfdataset([file_0, file_1])
+        array = core.utils.time_series.mean_flatten(data["FSNTOA"], dims=["lat", "lon"])
+        np.savez(path / f"FSNTOA-00{i+1}", data=array.data, times=array.time.data)
+    # Control run for temperature.
+    data = xr.open_mfdataset(
+        [
+            "b.e11.BLMTRC5CN.f19_g16.850forcing.003.cam.h0.TREFHT.08500101-18491231.nc",
+            "b.e11.BLMTRC5CN.f19_g16.850forcing.003.cam.h0.TREFHT.18500101-20051231.nc",
+        ]
+    )
+    array = core.utils.time_series.mean_flatten(data["TREFHT"], dims=["lat", "lon"])
+    np.savez(
+        path / "TREFHT850forcing-control-003.npz",
+        data=array.data,
+        times=array.time.data,
+    )
+
+
+def _download_so2_file(path) -> None:
+    name = "IVI2LoadingLatHeight501-2000_L18_c20100518.nc"
+    if (path / name).exists():
+        print(
+            f"{path/name} already exists, so I skip this. Delete it first if you are"
+            " sure you want to download it again."
+        )
+        return
+    url = f"https://svn-ccsm-inputdata.cgd.ucar.edu/trunk/inputdata/atm/cam/volc/{name}"
+    progress = rich.progress.Progress(
+        rich.progress.TextColumn("[progress.description]{task.description}"),
+        rich.progress.SpinnerColumn(),
+        rich.progress.BarColumn(),
+        rich.progress.TaskProgressColumn(),
+        rich.progress.MofNCompleteColumn(),
+        rich.progress.TimeRemainingColumn(elapsed_when_finished=True),
+    )
+    with requests.get(url, stream=True, verify=False) as r:
+        r.raise_for_status()
+        with open(path / name, "wb") as f:
+            with progress:
+                for chunk in progress.track(
+                    r.iter_content(chunk_size=8192),
+                    total=20851,
+                    description="[cyan]Downloading file...",
+                ):
+                    # If you have chunk encoded response uncomment if
+                    # and set chunk_size parameter to None.
+                    # if chunk:
+                    f.write(chunk)
 
 
 def _get_ob16_rf_temp_arrays() -> tuple[list[xr.DataArray], list[xr.DataArray]]:
@@ -22,10 +111,20 @@ def _get_ob16_rf_temp_arrays() -> tuple[list[xr.DataArray], list[xr.DataArray]]:
     -------
     tuple[list[xr.DataArray], list[xr.DataArray]]
         The AOD and RF arrays in two lists
+
+    Raises
+    ------
+    FileNotFoundError
+        If the directory where all the files is not found.
     """
     # Need AOD and RF seasonal and annual means, as well as an array of equal length
     # with the corresponding time-after-eruption.
-    path = pathlib.Path(core.config.DATA_DIR_ROOT) / "cesm-lme"
+    path = core.config.DATA_DIR_ROOT / "cesm-lme"
+    if not path.exists():
+        raise FileNotFoundError(
+            "Cannot find CESM-LME files. You may try to run the `save_to_npz` function"
+            f" within {__name__}."
+        )
     pattern = re.compile("([A-Z]+)-00[1-5]\\.npz$", re.X)
     files_ = list(path.rglob("*00[1-5].npz"))
     rf, temp = [], []
@@ -66,9 +165,7 @@ def _load_numpy(np_file) -> xr.DataArray:
 def _remove_seasonality_ob16(arr: xr.DataArray, monthly: bool = False) -> xr.DataArray:
     """Remove seasonality by subtracting CESM LME control run."""
     file_name = (
-        pathlib.Path(core.config.DATA_DIR_ROOT)
-        / "cesm-lme"
-        / "TREFHT850forcing-control-003.npz"
+        core.config.DATA_DIR_ROOT / "cesm-lme" / "TREFHT850forcing-control-003.npz"
     )
     if file_name.exists():
         array = _load_numpy(file_name.resolve())
@@ -134,9 +231,19 @@ def _get_so2_ob16_full_timeseries() -> tuple[np.ndarray, np.ndarray]:
     -------
     tuple[np.ndarray, np.ndarray]
         Arrays containing time and value of SO2 peaks
+
+    Raises
+    ------
+    FileNotFoundError
+        If the volcanic forcing file is not found.
     """
     file = "IVI2LoadingLatHeight501-2000_L18_c20100518.nc"
-    ds = xr.open_dataset(pathlib.Path(core.config.DATA_DIR_ROOT) / "cesm-lme" / file)
+    if not (fn := core.config.DATA_DIR_ROOT / "cesm-lme" / file).exists():
+        raise FileNotFoundError(
+            f"Cannot find {fn.resolve()}. Try running the `save_to_npz` function inside"
+            f" {__name__}."
+        )
+    ds = xr.open_dataset(core.config.DATA_DIR_ROOT / "cesm-lme" / file)
     year = ds.time.data
     avgs_list = core.utils.time_series.mean_flatten([ds.colmass], dims=["lat"])
     avgs = avgs_list[0].data
@@ -249,3 +356,7 @@ def get_ob16() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     temp_v = temp.data[_idx_temp].flatten()
     _ids = so2.argsort()
     return so2[_ids], rf_v[_ids], temp_v[_ids]
+
+
+if __name__ == "__main__":
+    save_to_npz()

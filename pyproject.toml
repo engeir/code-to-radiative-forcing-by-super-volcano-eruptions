@@ -28,6 +28,9 @@ cosmoplots = { git = "ssh://git@github.com/uit-cosmo/cosmoplots.git", rev = "ima
 plastik = "^0.5.0"
 matplotlib-label-lines = "^0.7.0"
 returns = "^0.22.0"
+requests = "^2.31.0"
+rich = "^13.7.0"
+types-requests = "^2.31.0.20231231"
 
 [tool.poetry.group.dev.dependencies]
 pyupgrade = "^2.31.1"
@@ -124,10 +127,9 @@ exclude = [
   "dist",
   "node_modules",
   "venv",
-  # Files that were downloaded
-  "python-ucar.cgd.ccsm4.cesmLME.atm.proc.daily_ave.FSNTOA-20240103T0650.py",
-  "python-ucar.cgd.ccsm4.cesmLME.atm.proc.daily_ave.TREFHT-20240103T0651.py",
 ]
+# Files that were downloaded
+extend-exclude = ["python-ucar.cgd.ccsm4.cesmLME*py"]
 per-file-ignores = {}
 
 # Same as Black.

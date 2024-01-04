@@ -18,15 +18,15 @@ repos:
       - id: ruff_format
         name: ruff_format
         stages: [commit]
-        language: system
-        entry: poetry run ruff format src tests
+        language: python
+        entry: poetry run ruff format --force-exclude src tests
         types: [python]
 
       - id: ruff
         name: ruff
         stages: [commit]
-        language: system
-        entry: poetry run ruff --fix src tests
+        language: python
+        entry: poetry run ruff --fix --force-exclude src tests
         types: [python]
 
       - id: xdoctest
