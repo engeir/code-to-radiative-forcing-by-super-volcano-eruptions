@@ -87,7 +87,7 @@ def _get_forcing_arrays(data) -> tuple[list, list, list]:
     )
     control = (
         data.copy()
-        .keep("e_fSST1850", ("FLNT", "FSNT"), "control")
+        .keep("e_fSST1850", ("FLNT", "FSNT"), "control", "ens1")
         .sort("attr", "ensemble")
         .load()
     )
@@ -120,9 +120,9 @@ def _get_forcing_arrays(data) -> tuple[list, list, list]:
     m_ = core.utils.time_series.shift_arrays(m_, daily=False)
     mp_ = core.utils.time_series.shift_arrays(mp_, daily=False)
     s_ = core.utils.time_series.shift_arrays(s_, daily=False)
-    m_ = _time_from_eruption_start(m_, cut=96)
-    mp_ = _time_from_eruption_start(mp_, cut=96)
-    s_ = _time_from_eruption_start(s_, cut=96)
+    m_ = _time_from_eruption_start(m_, cut=int(12 * 8))
+    mp_ = _time_from_eruption_start(mp_, cut=int(12 * 20))
+    s_ = _time_from_eruption_start(s_, cut=int(12 * 20))
     plt.figure()
     [a.plot() for a in m_ + mp_ + s_]
     return m_, mp_, s_
@@ -157,6 +157,7 @@ def main():
     print(f"% C2W^:\t\t{r[8:].mean():.1f}+-{r[8:].std():.1f}\t{(1/r[8:]).mean():.2f}+-{(1/r[8:]).std():.2f}")
     print(f"% C2W-:\t\t{r[4:8].mean():.1f}+-{r[4:8].std():.1f}\t{(1/r[4:8]).mean():.2f}+-{(1/r[4:8]).std():.2f}")
     print(f"% C2W_:\t\t{r[:4].mean():.0f}+-{r[:4].std():.0f}\t\t{(1/r[:4]).mean():.1f}+-{(1/r[:4]).std():.1f}")
+    print(f"% C2W_ (1:):\t{r[1:4].mean():.1f}+-{r[1:4].std():.1f}\t{(1/r[1:4]).mean():.2f}+-{(1/r[1:4]).std():.2f}")
     print(f"% Total:\t{r.mean():.0f}+-{r.std():.0f}\t\t{(1/r).mean():.1f}+-{(1/r).std():.1f}")
     print(f"% Total (1:):\t{r[1:].mean():.1f}+-{r[1:].std():.1f}\t{(1/r[1:]).mean():.2f}+-{(1/r[1:]).std():.2f}")
     # fmt: on
