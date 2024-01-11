@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.8.1](https://github.com/engeir/paper1-code/compare/v0.8.0...v0.8.1) (2024-01-11)
+
+
+### Bug Fixes
+
+* **build:** update name to mise from rtx ([434ef6f](https://github.com/engeir/paper1-code/commit/434ef6ff2d7e623f2c3a0dd884c02e62ca3972ba))
+* **security:** updates gitpython as described by https://github.com/engeir/paper1-code/security/dependabot/1 ([08944a4](https://github.com/engeir/paper1-code/commit/08944a4b7dee9f7adf9f95f1365cbfee340d2640))
+
+
+### Miscellaneous
+
+* **climate resistance:** use 20 years of mp and s ([3277561](https://github.com/engeir/paper1-code/commit/327756103df0e0724b07b936150ab10998410d95))
+
+
+### Styles
+
+* **supp:** update formatting of supplementary fig script ([f5ba8a7](https://github.com/engeir/paper1-code/commit/f5ba8a73d5cfcdd7764572ac331aaaf954b32127))
+
+
+### Documentation
+
+* **M20:** add DOI to Marshall data module ([8977881](https://github.com/engeir/paper1-code/commit/89778815460c0f574542284a7bf8bf78d2469e9d))
+
 ## [0.8.0](https://github.com/engeir/paper1-code/compare/v0.7.2...v0.8.0) (2024-01-04)
 
 
