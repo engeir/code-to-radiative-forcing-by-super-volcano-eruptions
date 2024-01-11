@@ -63,7 +63,7 @@ class DoPlotting:
         return ax
 
     def plot_arrays(
-        self
+        self,
     ) -> tuple[mpl.figure.Figure, mpl.figure.Figure, mpl.figure.Figure]:
         """Plot the data that is used in other analysis methods.
 
