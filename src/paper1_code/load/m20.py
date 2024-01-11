@@ -1,12 +1,10 @@
 """Load Marshall et al. 2020 data.
 
-See ...
+See https://doi.org/10.5285/232164e8b1444978a41f2acf8bbbfe91 for access to the complete
+dataset.
 """
 
-# FIXME: add doi.
-
 import datetime
-import pathlib
 
 import numpy as np
 import scipy
@@ -20,7 +18,7 @@ def get_m20(find_all_peaks: bool = False) -> tuple[np.ndarray, ...]:
     # Need AOD and RF seasonal and annual means, as well as an array of equal length
     # with the corresponding time-after-eruption.
     path = (
-        pathlib.Path(core.config.DATA_DIR_ROOT)
+        core.config.DATA_DIR_ROOT
         / "marshall"
         / "dap.ceda.ac.uk"
         / "badc"
