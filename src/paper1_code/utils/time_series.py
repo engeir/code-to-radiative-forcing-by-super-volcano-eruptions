@@ -262,7 +262,7 @@ def _remove_seasonality_fourier(
         yf_clean[idx] = linear_fill
     else:
         print(
-            "WARNING: No frequencies were removed! The radius is probably too small,"
+            "Warning: No frequencies were removed! The radius is probably too small,"
             " try with a larger one."
         )
         print(
@@ -412,7 +412,7 @@ def keep_whole_years(
 
     Notes
     -----
-    WARNING: This function uses the middle year as a reference of the "correct" number
+    Warning: This function uses the middle year as a reference of the "correct" number
     of events in a given year. This means that if the time series include years of
     irregular lengths, for example with leap years, this function will not work.
     """
