@@ -8,13 +8,10 @@ from typing import Literal
 def create_config() -> pathlib.Path:
     """Create the file where the configuration will be saved."""
     HERE = pathlib.Path(__file__)
-    next = False
-    for parents in HERE.parents:
-        if next:
-            project_root = parents
-            break
+    for i, parents in enumerate(HERE.parents):
         if parents.name == "src":
-            next = True
+            project_root = HERE.parents[i + 1]
+            break
     if not project_root.exists():
         project_root.mkdir(parents=True)
     return project_root
