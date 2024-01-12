@@ -1,6 +1,9 @@
-"""Load Timmreck et al. 2010 data."""
+"""Load Timmreck et al. 2010 data.
 
-# FIXME: add doi.
+Notes
+-----
+See https://doi.org/10.1029/2010GL045464 for the full paper.
+"""
 
 
 def get_so2_t10() -> float:

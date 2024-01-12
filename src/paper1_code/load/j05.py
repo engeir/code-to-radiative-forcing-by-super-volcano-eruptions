@@ -1,6 +1,9 @@
-"""Load Jones et al. (2005) data."""
+"""Load Jones et al. (2005) data.
 
-# FIXME: add doi.
+Notes
+-----
+See https://doi.org/10.1007/s00382-005-0066-8 for the full paper.
+"""
 
 
 def get_so2_j05() -> float:

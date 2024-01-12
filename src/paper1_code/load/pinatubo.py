@@ -1,6 +1,9 @@
-"""Load Mt. Pinatubo data."""
+"""Load Mt. Pinatubo data.
 
-# FIXME: add doi.
+Notes
+-----
+See the individual functions for sources.
+"""
 
 
 def get_so2_pinatubo() -> float:

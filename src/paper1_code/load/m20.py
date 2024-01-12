@@ -1,5 +1,7 @@
 """Load Marshall et al. 2020 data.
 
+Notes
+-----
 See https://doi.org/10.5285/232164e8b1444978a41f2acf8bbbfe91 for access to the complete
 dataset.
 """

@@ -1,6 +1,10 @@
-"""Load Otto-Bliesner et al. 2016 data."""
+"""Load Otto-Bliesner et al. 2016 data.
 
-# FIXME: add doi.
+Notes
+-----
+See https://doi.org/10.1175/BAMS-D-14-00233.1 for the full paper and link to where the
+datasets are stored.
+"""
 
 import datetime
 import itertools

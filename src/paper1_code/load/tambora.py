@@ -1,6 +1,9 @@
-"""Load Mt. Tambora data."""
+"""Load Mt. Tambora data.
 
-# FIXME: add doi.
+Notes
+-----
+See the individual functions for sources.
+"""
 
 
 def get_so2_tambora() -> float:

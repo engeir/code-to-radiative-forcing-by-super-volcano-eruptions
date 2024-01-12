@@ -1,6 +1,11 @@
-"""Load Gregory et al. (2016) data."""
+"""Load Gregory et al. (2016) data.
 
-# FIXME: add doi.
+Notes
+-----
+See https://doi.org/10.1007/s00382-016-3055-1 for the full paper.
+
+The datasets were kindly provided by J. Gregory (personal communication).
+"""
 
 import pathlib
 import sys
