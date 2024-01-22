@@ -70,8 +70,6 @@ class DoPlotting:
         fig3_b = plt.figure()
         ax2 = fig3_b.gca()
         for size, ax_ in zip(["large", "small"], [ax1, ax2], strict=True):
-            if size == "large":
-                ax_.fill_between([0, 0.15 * 8 / 3], -3 * 8 / 3, 1 * 8 / 3, color="gray")
             self.plot_gregory_paper_gradient_lines(self.data.x_g16, ax_, size)
             plot = ax_.scatter
             if size == "large":
