@@ -122,13 +122,17 @@ def get_aod_arrs(
             arrs[i] = arr_
         return arrs
 
-    data = FINDER.find(
-        "e_fSST1850",
-        {f"ens{i+1}" for i in range(4)},
-        {"strong", "medium", "medium-plus", "strong-highlat"},
-        "AODVISstdn",
-        "h0",
-    ).sort("attr", "ensemble")
+    data = (
+        FINDER.find(
+            "e_fSST1850",
+            {f"ens{i+1}" for i in range(4)},
+            {"strong", "medium", "medium-plus", "strong-highlat"},
+            "AODVISstdn",
+            "h0",
+        )
+        .sort("attr", "ensemble")
+        .keep_most_recent()
+    )
     m = data.copy().keep("medium").load()
     mp = data.copy().keep("medium-plus").load()
     s = data.copy().keep("strong").load()
@@ -159,9 +163,11 @@ def get_rf_arrs(
     list[xr.DataArray], list[xr.DataArray], list[xr.DataArray], list[xr.DataArray]
 ]:
     """Return medium, medium-plus, strong and strong north arrays in lists."""
-    control_data = FINDER.find(
-        "e_fSST1850", "ens0", "control", "h0", ["FLNT", "FSNT"]
-    ).sort("attr", "ensemble")
+    control_data = (
+        FINDER.find("e_fSST1850", "ens1", "control", "h0", ["FLNT", "FSNT"])
+        .sort("attr", "ensemble")
+        .keep_most_recent()
+    )
     control = control_data.load()
     control = core.utils.time_series.mean_flatten(control, dims=["lat", "lon"])
 
@@ -179,13 +185,17 @@ def get_rf_arrs(
             arrs[i] = flnt
         return arrs
 
-    data = FINDER.find(
-        "e_fSST1850",
-        {f"ens{i+1}" for i in range(4)},
-        {"strong", "medium", "medium-plus", "strong-highlat"},
-        {"FLNT", "FSNT"},
-        "h0",
-    ).sort("attr", "ensemble")
+    data = (
+        FINDER.find(
+            "e_fSST1850",
+            {f"ens{i+1}" for i in range(4)},
+            {"strong", "medium", "medium-plus", "strong-highlat"},
+            {"FLNT", "FSNT"},
+            "h0",
+        )
+        .sort("attr", "ensemble")
+        .keep_most_recent()
+    )
     m = data.copy().keep("medium").load()
     mp = data.copy().keep("medium-plus").load()
     s = data.copy().keep("strong").load()
@@ -217,13 +227,17 @@ def get_trefht_arrs(
     list[xr.DataArray], list[xr.DataArray], list[xr.DataArray], list[xr.DataArray]
 ]:
     """Return medium, medium-plus, strong and strong north arrays in lists."""
-    data = FINDER.find(
-        "e_BWma1850",
-        {f"ens{i+1}" for i in range(4)},
-        {"strong", "medium", "medium-plus", "strong-highlat"},
-        "TREFHT",
-        "h0",
-    ).sort("sim", "attr", "ensemble")
+    data = (
+        FINDER.find(
+            "e_BWma1850",
+            {f"ens{i+1}" for i in range(4)},
+            {"strong", "medium", "medium-plus", "strong-highlat"},
+            "TREFHT",
+            "h0",
+        )
+        .sort("sim", "attr", "ensemble")
+        .keep_most_recent()
+    )
     s = data.copy().keep("strong").load()
     m = data.copy().keep("medium").load()
     mp = data.copy().keep("medium-plus").load()
