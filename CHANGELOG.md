@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.8.2](https://github.com/engeir/paper1-code/compare/v0.8.1...v0.8.2) (2024-01-22)
+
+
+### Bug Fixes
+
+* **figure:** use most recent data ([876d8f4](https://github.com/engeir/paper1-code/commit/876d8f410effde59d99256b087f217b14f54ce18))
+* **font:** specify matplotlib preamble ([574a454](https://github.com/engeir/paper1-code/commit/574a4549591d18fbc194a3acc9d7fcd40fb7b7e4))
+* **namespace:** do not overwrite `next` to local variable ([9f7f07b](https://github.com/engeir/paper1-code/commit/9f7f07bbdd792b9512fa51ca22bf535782eff620))
+
+
+### Miscellaneous
+
+* **figure:** remove grey box indicating small view ([628f4d8](https://github.com/engeir/paper1-code/commit/628f4d87dbe7e29f951e93d324fb98f7b8270d76))
+* **load:** remove ucar scritps from git tracking ([c767a4a](https://github.com/engeir/paper1-code/commit/c767a4a2b8caa10f2dd49f201abc4920470589fc))
+* write 'Warning' instead of 'WARNING' ([83b2906](https://github.com/engeir/paper1-code/commit/83b290645fd6bf1484835094d5d33981fcfe119b))
+
+
+### Code Refactoring
+
+* **lint:** fix lint warning, overwrite built-in function "format" ([45dd383](https://github.com/engeir/paper1-code/commit/45dd38361bd996dff46d7d2872cc5ebfb5309969))
+
+
+### Continuous Integration
+
+* **github:** use bot account to generate releases ([9984854](https://github.com/engeir/paper1-code/commit/9984854117bda1f461454c52b7391e1b7d78b6f5))
+
+
+### Build System
+
+* **mise:** move python venv setup to development config file ([9f47af1](https://github.com/engeir/paper1-code/commit/9f47af1d75c4feb8fab6d37f1c338e9d22e6ea51))
+
+
+### Documentation
+
+* **docstring:** add DOI to all load scripts ([6eb0bfd](https://github.com/engeir/paper1-code/commit/6eb0bfd51f092269be982bdbe8a341495720ec4f))
+
 ## [0.8.1](https://github.com/engeir/paper1-code/compare/v0.8.0...v0.8.1) (2024-01-11)
 
 
