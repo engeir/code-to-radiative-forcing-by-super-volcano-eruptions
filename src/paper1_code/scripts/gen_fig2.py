@@ -113,9 +113,6 @@ class DoPlotting:
                     if x not in "label"
                 }
                 plot(self.data.aod_j05, -self.data.rf_j05, label="P100 Peak*", **legend)
-                legend_width = 0.45
-            else:
-                legend_width = 0.41
             legend = {
                 x: core.config.LEGENDS["P"][x]
                 for x in core.config.LEGENDS["P"]
@@ -135,12 +132,13 @@ class DoPlotting:
             ax_.set_ylabel("Radiative forcing $[\\mathrm{W/m^2}]$")
             kwargs = {
                 "ncol": 2,
-                "loc": "lower left",
-                "bbox_to_anchor": (-0.01, -0.02, legend_width, 0.3),
+                "loc": "upper right",
                 "framealpha": 0.8,
                 "edgecolor": "gray",
                 "fontsize": core.config.FONTSIZE,
-                "mode": "expand",
+                "labelspacing": 0.3,
+                "handletextpad": 0.2,
+                "columnspacing": 0.3,
             }
             ax_.legend(**kwargs)
         return fig3_a, fig3_b

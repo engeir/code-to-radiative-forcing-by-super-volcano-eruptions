@@ -98,10 +98,12 @@ class DoPlotting:
         ax.set_ylabel(ylabel)
         kwargs = {
             "loc": "lower right",
-            "bbox_to_anchor": (0.51, -0.02, 0.5, 0.3),
             "framealpha": 0.8,
             "edgecolor": "gray",
             "fontsize": core.config.FONTSIZE,
+            "labelspacing": 0.3,
+            "handletextpad": 0.2,
+            "columnspacing": 0.3,
         }
         ax.legend(**kwargs)
         return fig

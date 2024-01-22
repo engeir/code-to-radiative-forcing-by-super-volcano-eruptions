@@ -97,11 +97,13 @@ class DoPlotting:
         plt.ylabel("Aerosol optical depth [1]")
         kwargs = {
             "loc": "upper left",
-            "bbox_to_anchor": (-0.01, 1.02),
             "framealpha": 0.8,
             "edgecolor": "gray",
             "fontsize": core.config.FONTSIZE,
             "ncol": 2,
+            "labelspacing": 0.3,
+            "handletextpad": 0.2,
+            "columnspacing": 0.3,
         }
         ax.legend(**kwargs)
         return fig5_a
@@ -159,11 +161,13 @@ class DoPlotting:
         plt.ylabel("Radiative forcing $[\\mathrm{W/m^2}]$")
         kwargs = {
             "loc": "upper left",
-            "bbox_to_anchor": (-0.01, 1.02),
             "framealpha": 0.8,
             "edgecolor": "gray",
             "fontsize": core.config.FONTSIZE,
             "ncol": 2,
+            "labelspacing": 0.3,
+            "handletextpad": 0.2,
+            "columnspacing": 0.3,
         }
         ax.legend(**kwargs)
         return fig5_b
@@ -192,11 +196,13 @@ class DoPlotting:
         plt.ylabel("Temperature anomaly [K]")
         kwargs = {
             "loc": "upper left",
-            "bbox_to_anchor": (-0.01, 1.02),
             "framealpha": 0.8,
             "edgecolor": "gray",
             "fontsize": core.config.FONTSIZE,
             "ncol": 2,
+            "labelspacing": 0.3,
+            "handletextpad": 0.2,
+            "columnspacing": 0.3,
         }
         ax.legend(**kwargs)
         return fig5_c
@@ -251,11 +257,13 @@ class DoPlotting:
         plt.ylabel("Radiative forcing $[\\mathrm{W/m^2}]$")
         kwargs = {
             "loc": "upper left",
-            "bbox_to_anchor": (-0.01, 1.02),
             "framealpha": 0.8,
             "edgecolor": "gray",
             "fontsize": core.config.FONTSIZE,
             "ncol": 2,
+            "labelspacing": 0.3,
+            "handletextpad": 0.2,
+            "columnspacing": 0.3,
         }
         ax.legend(**kwargs)
         return fig5_d
@@ -300,11 +308,13 @@ class DoPlotting:
         plt.ylabel("Temperature anomaly [K]")
         kwargs = {
             "loc": "upper left",
-            "bbox_to_anchor": (-0.01, 1.02),
             "framealpha": 0.8,
             "edgecolor": "gray",
             "fontsize": core.config.FONTSIZE,
             "ncol": 2,
+            "labelspacing": 0.3,
+            "handletextpad": 0.2,
+            "columnspacing": 0.3,
         }
         ax.legend(**kwargs)
         return fig5_e
@@ -334,11 +344,13 @@ class DoPlotting:
         plt.ylabel("Temperature anomaly [K]")
         kwargs = {
             "loc": "upper left",
-            "bbox_to_anchor": (-0.01, 1.02),
             "framealpha": 0.8,
             "edgecolor": "gray",
             "fontsize": core.config.FONTSIZE,
             "ncol": 2,
+            "labelspacing": 0.3,
+            "handletextpad": 0.2,
+            "columnspacing": 0.3,
         }
         ax.legend(**kwargs)
         return fig5_f
