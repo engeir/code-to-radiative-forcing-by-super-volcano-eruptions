@@ -1,2 +1,16 @@
-[tools]
-python = { version = "3.11", virtualenv = ".venv" }
+[tasks."install-poetry"]
+description = "Install poetry"
+run = "curl -sSL https://install.python-poetry.org | python3 -"
+
+[tasks.install]
+description = "Install dependencies"
+run = "poetry install"
+alias = "i"
+
+[tasks.run]
+description = "Run all scripts to generate figures"
+run = "poetry run generate-figs"
+alias = "r"
+
+[env]
+MISE_ENV = "development"
