@@ -73,9 +73,9 @@ def _get_temp_arrays(data) -> tuple[list, list, list]:
     temp_s = core.utils.time_series.shift_arrays(temp_s, daily=False)
     temp_m = core.utils.time_series.shift_arrays(temp_m, daily=False)
     temp_mp = core.utils.time_series.shift_arrays(temp_mp, daily=False)
-    temp_s = _time_from_eruption_start(temp_s, cut=240)
-    temp_m = _time_from_eruption_start(temp_m, cut=240)
-    temp_mp = _time_from_eruption_start(temp_mp, cut=240)
+    temp_s = _time_from_eruption_start(temp_s, cut=int(12 * 20))
+    temp_m = _time_from_eruption_start(temp_m, cut=int(12 * 20))
+    temp_mp = _time_from_eruption_start(temp_mp, cut=int(12 * 20))
     # temp_control = time_from_eruption_start(temp_control, cut=252)
     [a.plot() for a in temp_m + temp_mp + temp_s]
     return temp_m, temp_mp, temp_s
@@ -107,6 +107,14 @@ def _get_forcing_arrays(data) -> tuple[list, list, list]:
             arrs[i] = flnt.compute()
         return arrs
 
+    def subtract_last_decade_mean(arrs: list) -> list:
+        # Subtract the mean of the last decade
+        for i, arr in enumerate(arrs):
+            arr_ = arr[-120:]
+            arr.data = arr.data - arr_.mean().data
+            arrs[i] = arr
+        return arrs
+
     s_ = frc.copy().keep("strong").sort("attr", "ensemble").load()
     m_ = frc.copy().keep("medium").sort("attr", "ensemble").load()
     mp_ = frc.copy().keep("medium-plus").sort("attr", "ensemble").load()
@@ -117,15 +125,33 @@ def _get_forcing_arrays(data) -> tuple[list, list, list]:
     s_ = difference_and_remove_control(s_)
     m_ = difference_and_remove_control(m_)
     mp_ = difference_and_remove_control(mp_)
+    s_ = subtract_last_decade_mean(s_)
+    m_ = subtract_last_decade_mean(m_)
+    mp_ = subtract_last_decade_mean(mp_)
     m_ = core.utils.time_series.shift_arrays(m_, daily=False)
     mp_ = core.utils.time_series.shift_arrays(mp_, daily=False)
     s_ = core.utils.time_series.shift_arrays(s_, daily=False)
-    m_ = _time_from_eruption_start(m_, cut=int(12 * 8))
+    m_ = _time_from_eruption_start(m_, cut=int(12 * 20))
     mp_ = _time_from_eruption_start(mp_, cut=int(12 * 20))
     s_ = _time_from_eruption_start(s_, cut=int(12 * 20))
     plt.figure()
     [a.plot() for a in m_ + mp_ + s_]
     return m_, mp_, s_
+
+
+def plot_evolution(f, t) -> None:
+    f_, t_ = np.asarray(f).mean(axis=0), np.asarray(t).mean(axis=0)
+    # Calculate the integral up to every point in the arrays
+    integral = np.zeros_like(f_, dtype=float)
+    for i in range(len(f_)):
+        integral[i] = np.trapz(f_[: i + 1]) / np.trapz(t_[: i + 1])
+    kappa = integral - integral[-1]
+    plt.figure()
+    plt.plot(f_, label="F")
+    plt.plot(t_, label="T")
+    plt.plot(integral, label="Rho")
+    plt.plot(kappa, label="Kappa")
+    plt.legend()
 
 
 def main():
@@ -153,12 +179,21 @@ def main():
         yerr=[r[:4].std(), r[4:8].std(), r[8:].std()],
         fmt="_",
     )
+    plot_evolution(m_, temp_m)
+    plot_evolution(mp_, temp_mp)
+    plot_evolution(s_, temp_s)
     # fmt: off
+    print(f"% C2W^:\t\t{r[8:].mean():.2f}+-{r[8:].std():.2f}\t{(1/r[8:]).mean():.3f}+-{(1/r[8:]).std():.3f}")
+    print(f"% C2W-:\t\t{r[4:8].mean():.2f}+-{r[4:8].std():.2f}\t{(1/r[4:8]).mean():.3f}+-{(1/r[4:8]).std():.3f}")
+    print(f"% C2W_:\t\t{r[:4].mean():.1f}+-{r[:4].std():.1f}\t\t{(1/r[:4]).mean():.2f}+-{(1/r[:4]).std():.2f}")
+    print(f"% C2W_ (1:):\t{r[1:4].mean():.2f}+-{r[1:4].std():.2f}\t{(1/r[1:4]).mean():.3f}+-{(1/r[1:4]).std():.3f}")
+    print(f"% Total:\t{r.mean():.1f}+-{r.std():.1f}\t\t{(1/r).mean():.3f}+-{(1/r).std():.3f}")
+    print(f"% Total (1:):\t{r[1:].mean():.2f}+-{r[1:].std():.2f}\t{(1/r[1:]).mean():.3f}+-{(1/r[1:]).std():.3f}")
     print(f"% C2W^:\t\t{r[8:].mean():.1f}+-{r[8:].std():.1f}\t{(1/r[8:]).mean():.2f}+-{(1/r[8:]).std():.2f}")
     print(f"% C2W-:\t\t{r[4:8].mean():.1f}+-{r[4:8].std():.1f}\t{(1/r[4:8]).mean():.2f}+-{(1/r[4:8]).std():.2f}")
     print(f"% C2W_:\t\t{r[:4].mean():.0f}+-{r[:4].std():.0f}\t\t{(1/r[:4]).mean():.1f}+-{(1/r[:4]).std():.1f}")
     print(f"% C2W_ (1:):\t{r[1:4].mean():.1f}+-{r[1:4].std():.1f}\t{(1/r[1:4]).mean():.2f}+-{(1/r[1:4]).std():.2f}")
-    print(f"% Total:\t{r.mean():.0f}+-{r.std():.0f}\t\t{(1/r).mean():.1f}+-{(1/r).std():.1f}")
+    print(f"% Total:\t{r.mean():.0f}+-{r.std():.0f}\t\t{(1/r).mean():.2f}+-{(1/r).std():.2f}")
     print(f"% Total (1:):\t{r[1:].mean():.1f}+-{r[1:].std():.1f}\t{(1/r[1:]).mean():.2f}+-{(1/r[1:]).std():.2f}")
     # fmt: on
     plt.show()

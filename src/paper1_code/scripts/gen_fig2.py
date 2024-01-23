@@ -79,8 +79,9 @@ class DoPlotting:
                     label="C2W Peaks*",
                     c="none",
                     ec="red",
+                    lw=1.5,
                     s=15,
-                    zorder=10,
+                    zorder=4,
                     **{
                         x: core.config.LEGENDS["c2w"][x]
                         for x in core.config.LEGENDS["c2w"]

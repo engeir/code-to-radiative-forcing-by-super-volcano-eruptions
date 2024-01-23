@@ -122,6 +122,14 @@ def get_aod_arrs(
             arrs[i] = arr_
         return arrs
 
+    def subtract_last_decade_mean(arrs: list) -> list:
+        # Subtract the mean of the last decade
+        for i, arr in enumerate(arrs):
+            arr_ = arr[-120:]
+            arr.data = arr.data - arr_.mean().data
+            arrs[i] = arr
+        return arrs
+
     data = (
         FINDER.find(
             "e_fSST1850",
@@ -146,6 +154,10 @@ def get_aod_arrs(
     # m = remove_control(m)
     # mp = remove_control(mp)
     # h = remove_control(h)
+    s = subtract_last_decade_mean(s)
+    m = subtract_last_decade_mean(m)
+    mp = subtract_last_decade_mean(mp)
+    h = subtract_last_decade_mean(h)
     for i, arr in enumerate(s):
         s[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
     for i, arr in enumerate(mp):
@@ -185,6 +197,14 @@ def get_rf_arrs(
             arrs[i] = flnt
         return arrs
 
+    def subtract_last_decade_mean(arrs: list) -> list:
+        # Subtract the mean of the last decade
+        for i, arr in enumerate(arrs):
+            arr_ = arr[-120:]
+            arr.data = arr.data - arr_.mean().data
+            arrs[i] = arr
+        return arrs
+
     data = (
         FINDER.find(
             "e_fSST1850",
@@ -209,6 +229,10 @@ def get_rf_arrs(
     m = difference_and_remove_control(m)
     mp = difference_and_remove_control(mp)
     h = difference_and_remove_control(h)
+    s = subtract_last_decade_mean(s)
+    m = subtract_last_decade_mean(m)
+    mp = subtract_last_decade_mean(mp)
+    h = subtract_last_decade_mean(h)
     for i, arr in enumerate(s):
         s[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
     for i, arr in enumerate(mp):

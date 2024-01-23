@@ -105,16 +105,25 @@ class DoPlotting:
         x_s = self.data.strong[0].time.data[idx_s:]
         x_s -= x_s[0]
         strong_scaled = strong[1][idx_s:]
+        # Show the peak
+        x0, y0, width, height = 0.25, 0.4, 0.3, 0.55
+        ax1 = ax.inset_axes((x0, y0, width, height))
         (medium_line,) = ax.plot(x_m, medium_scaled, c="k")
         (plus_line,) = ax.plot(x_p, plus_scaled, ":", c="k")
         (strong_line,) = ax.plot(x_s, strong_scaled, "--", c="k")
+        ax1.plot(x_m, medium_scaled, c="k")
+        ax1.plot(x_p, plus_scaled, ":", c="k")
+        ax1.plot(x_s, strong_scaled, "--", c="k")
         alpha = 1 / n if n != 1 else 0.7
-        medium_fill = mpatches.Patch(facecolor=self.m_c, alpha=1.0, linewidth=0)
         for p1, p2 in zip(medium_perc1, medium_perc2, strict=True):
             ax.fill_between(
                 x_m, p1[idx_m:], p2[idx_m:], alpha=alpha, color=self.m_c, edgecolor=None
             )
-        plus_fill = mpatches.Patch(facecolor=self.mp_c, alpha=1.0, linewidth=0)
+            ax1.fill_between(
+                x_m, p1[idx_m:], p2[idx_m:], alpha=alpha, color=self.m_c, edgecolor=None
+            )
+            ax1.set_xlim((-0.5, 4))
+            # ax1.set_ylim((0, 1.2))
         for p1, p2 in zip(plus_perc1, plus_perc2, strict=True):
             ax.fill_between(
                 x_p,
@@ -124,18 +133,41 @@ class DoPlotting:
                 color=self.mp_c,
                 edgecolor=None,
             )
-        strong_fill = mpatches.Patch(facecolor=self.s_c, alpha=1.0, linewidth=0)
+            ax1.fill_between(
+                x_m,
+                p1[idx_m:],
+                p2[idx_m:],
+                alpha=alpha,
+                color=self.mp_c,
+                edgecolor=None,
+            )
+            ax1.set_xlim((-0.5, 4))
+            # ax1.set_ylim((0, 1.2))
         for p1, p2 in zip(strong_perc1, strong_perc2, strict=True):
             ax.fill_between(
                 x_s, p1[idx_s:], p2[idx_s:], alpha=alpha, color=self.s_c, edgecolor=None
             )
+            ax1.fill_between(
+                x_m, p1[idx_m:], p2[idx_m:], alpha=alpha, color=self.s_c, edgecolor=None
+            )
+            ax1.set_xlim((-0.5, 4))
+            # ax1.set_ylim((0, 1.2))
 
         # Combine shading and line labels
         plt.legend(
             [
-                (strong_fill, strong_line),
-                (plus_fill, plus_line),
-                (medium_fill, medium_line),
+                (
+                    mpatches.Patch(facecolor=self.s_c, alpha=1.0, linewidth=0),
+                    strong_line,
+                ),
+                (
+                    mpatches.Patch(facecolor=self.mp_c, alpha=1.0, linewidth=0),
+                    plus_line,
+                ),
+                (
+                    mpatches.Patch(facecolor=self.m_c, alpha=1.0, linewidth=0),
+                    medium_line,
+                ),
             ],
             [
                 r"C2W$\uparrow$, $C" + f" = {strong[0]:.2f}" + r"$",
