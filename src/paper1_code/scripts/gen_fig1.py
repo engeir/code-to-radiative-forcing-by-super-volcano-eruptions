@@ -65,108 +65,89 @@ class DoPlotting:
         style: Literal["plot", "semilogy", "loglog"] = "plot",
     ) -> mpl.figure.Figure:
         # Percentiles
-        n = 1
-        low = np.linspace(MIN_PERCENTILE, 50, num=n, endpoint=False)
-        high = np.linspace(50, MAX_PERCENTILE, num=n + 1)[1:]
-        medium_perc1 = np.percentile(self.data.medium, low, axis=0) / medium[0]
-        medium_perc2 = np.percentile(self.data.medium, high, axis=0) / medium[0]
-        plus_perc1 = np.percentile(self.data.plus, low, axis=0) / plus[0]
-        plus_perc2 = np.percentile(self.data.plus, high, axis=0) / plus[0]
-        strong_perc1 = np.percentile(self.data.strong, low, axis=0) / strong[0]
-        strong_perc2 = np.percentile(self.data.strong, high, axis=0) / strong[0]
-
-        fig = plt.figure()
-        ax = fig.gca()
+        low = np.linspace(MIN_PERCENTILE, 50, num=1, endpoint=False)
+        high = np.linspace(50, MAX_PERCENTILE, num=1 + 1)[1:]
+        ax = plt.figure().gca()
         getattr(ax, style)()
-        if style != "plot":
-            ax.set_ylim((1e-3, 3))
         ax.set_xlabel(r"Time $[\mathrm{yr}]$")
         if self.version == "temp":
             ax.set_ylabel("Normalised \ntemperature anomaly $[1]$")
+            ax.set_ylim((-0.6, 1.7))
+            ax1 = ax.inset_axes((0.2, 0.6, 0.33, 0.37))
+            ax1.set_ylim((-0.5, 1.5))
         elif self.version == "rf":
             ax.set_ylabel("Normalised \nradiative forcing anomaly $[1]$")
+            ax.set_ylim((-0.5, 1.5))
+            ax1 = ax.inset_axes((0.2, 0.5, 0.33, 0.47))
+            ax1.set_ylim((-0.5, 1.5))
         elif self.version == "aod":
             ax.set_ylabel("Normalised \naerosol optical depth anomaly $[1]$")
+            ax1 = ax.inset_axes((0.2, 0.3, 0.33, 0.67))
+        getattr(ax1, style)()
+        if style != "plot":
+            ax.set_ylim((1e-3, 3))
         if style == "loglog":
             # Find peak, set time = 0
-            idx_m = int(np.argmax(medium[1]))
-            idx_p = int(np.argmax(plus[1]))
-            idx_s = int(np.argmax(strong[1]))
+            idm = int(np.argmax(medium[1]))
+            idp = int(np.argmax(plus[1]))
+            ids = int(np.argmax(strong[1]))
         else:
-            idx_m = 0
-            idx_p = 0
-            idx_s = 0
-        x_m = self.data.medium[0].time.data[idx_m:]
-        x_m -= x_m[0]
-        medium_scaled = medium[1][idx_m:]
-        x_p = self.data.plus[0].time.data[idx_p:]
-        x_p -= x_p[0]
-        plus_scaled = plus[1][idx_p:]
-        x_s = self.data.strong[0].time.data[idx_s:]
-        x_s -= x_s[0]
-        strong_scaled = strong[1][idx_s:]
-        # Show the peak
-        x0, y0, width, height = 0.25, 0.4, 0.3, 0.55
-        ax1 = ax.inset_axes((x0, y0, width, height))
-        (medium_line,) = ax.plot(x_m, medium_scaled, c="k")
-        (plus_line,) = ax.plot(x_p, plus_scaled, ":", c="k")
-        (strong_line,) = ax.plot(x_s, strong_scaled, "--", c="k")
-        ax1.plot(x_m, medium_scaled, c="k")
-        ax1.plot(x_p, plus_scaled, ":", c="k")
-        ax1.plot(x_s, strong_scaled, "--", c="k")
-        alpha = 1 / n if n != 1 else 0.7
-        for p1, p2 in zip(medium_perc1, medium_perc2, strict=True):
-            ax.fill_between(
-                x_m, p1[idx_m:], p2[idx_m:], alpha=alpha, color=self.m_c, edgecolor=None
-            )
-            ax1.fill_between(
-                x_m, p1[idx_m:], p2[idx_m:], alpha=alpha, color=self.m_c, edgecolor=None
-            )
-            ax1.set_xlim((-0.5, 4))
-            # ax1.set_ylim((0, 1.2))
-        for p1, p2 in zip(plus_perc1, plus_perc2, strict=True):
-            ax.fill_between(
-                x_p,
-                p1[idx_p:],
-                p2[idx_p:],
-                alpha=alpha,
-                color=self.mp_c,
-                edgecolor=None,
-            )
-            ax1.fill_between(
-                x_m,
-                p1[idx_m:],
-                p2[idx_m:],
-                alpha=alpha,
-                color=self.mp_c,
-                edgecolor=None,
-            )
-            ax1.set_xlim((-0.5, 4))
-            # ax1.set_ylim((0, 1.2))
-        for p1, p2 in zip(strong_perc1, strong_perc2, strict=True):
-            ax.fill_between(
-                x_s, p1[idx_s:], p2[idx_s:], alpha=alpha, color=self.s_c, edgecolor=None
-            )
-            ax1.fill_between(
-                x_m, p1[idx_m:], p2[idx_m:], alpha=alpha, color=self.s_c, edgecolor=None
-            )
-            ax1.set_xlim((-0.5, 4))
-            # ax1.set_ylim((0, 1.2))
+            idm = 0
+            idp = 0
+            ids = 0
+        if not np.logical_and(
+            (
+                self.data.medium[0].time.data[idm:] == self.data.plus[0].time.data[idp:]
+            ).all(),
+            (
+                self.data.plus[0].time.data[idp:] == self.data.strong[0].time.data[ids:]
+            ).all(),
+        ):
+            raise ValueError("Time arrays are not equal.")
+        x_ = self.data.medium[0].time.data[idm:]
+        x_ -= x_[0]
+        medium_scaled = medium[1][idm:]
+        plus_scaled = plus[1][idp:]
+        strong_scaled = strong[1][ids:]
+        a = 0.7
+        for p1, p2 in zip(
+            np.percentile(self.data.medium, low, axis=0) / medium[0],
+            np.percentile(self.data.medium, high, axis=0) / medium[0],
+            strict=True,
+        ):
+            ax.fill_between(x_, p1[idm:], p2[idm:], alpha=a, color=self.m_c, ec=None)
+            ax1.fill_between(x_, p1[idm:], p2[idm:], alpha=a, color=self.m_c, ec=None)
+        for p1, p2 in zip(
+            np.percentile(self.data.plus, low, axis=0) / plus[0],
+            np.percentile(self.data.plus, high, axis=0) / plus[0],
+            strict=True,
+        ):
+            ax.fill_between(x_, p1[idp:], p2[idp:], alpha=a, color=self.mp_c, ec=None)
+            ax1.fill_between(x_, p1[idp:], p2[idp:], alpha=a, color=self.mp_c, ec=None)
+        for p1, p2 in zip(
+            np.percentile(self.data.strong, low, axis=0) / strong[0],
+            np.percentile(self.data.strong, high, axis=0) / strong[0],
+            strict=True,
+        ):
+            ax.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
+            ax1.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
+        ax1.set_xlim((-0.5, 3.5))
+        ax1.patch.set_alpha(0.3)
 
         # Combine shading and line labels
         plt.legend(
             [
                 (
                     mpatches.Patch(facecolor=self.s_c, alpha=1.0, linewidth=0),
-                    strong_line,
+                    ax.plot(x_, strong_scaled, "--", c="k")[0],
                 ),
                 (
                     mpatches.Patch(facecolor=self.mp_c, alpha=1.0, linewidth=0),
-                    plus_line,
+                    ax.plot(x_, plus_scaled, ":", c="k")[0],
                 ),
                 (
                     mpatches.Patch(facecolor=self.m_c, alpha=1.0, linewidth=0),
-                    medium_line,
+                    ax.plot(x_, medium_scaled, c="k")[0],
                 ),
             ],
             [
@@ -176,13 +157,16 @@ class DoPlotting:
             ],
             loc="upper right",
             handler_map={
-                medium_line: HandlerLine2D(marker_pad=0),
-                plus_line: HandlerLine2D(marker_pad=0),
-                strong_line: HandlerLine2D(marker_pad=0),
+                "medium_line": HandlerLine2D(marker_pad=0),
+                "plus_line": HandlerLine2D(marker_pad=0),
+                "strong_line": HandlerLine2D(marker_pad=0),
             },
             framealpha=0.6,
             fontsize=core.config.FONTSIZE,
         )
+        ax1.plot(x_, medium_scaled, c="k")
+        ax1.plot(x_, plus_scaled, ":", c="k")
+        ax1.plot(x_, strong_scaled, "--", c="k")
         return plt.gcf()
 
     def waveform_max(

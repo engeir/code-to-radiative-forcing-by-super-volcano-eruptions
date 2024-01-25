@@ -4,7 +4,7 @@ import pathlib
 import re
 from collections.abc import Iterable
 from itertools import product
-from typing import Self, overload
+from typing import Any, Self, overload
 
 import numpy as np
 import xarray as xr
@@ -12,6 +12,30 @@ from returns.result import Failure, Result, Success
 from xarray.core.types import T_Xarray
 
 import paper1_code as core
+
+
+class DataFilesNotFound(Exception):
+    """Exception raised when no data files are found."""
+
+    def __init__(self, message: str = "No data files were found."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class NoMatchError(Exception):
+    """Exception raised when no files are matched."""
+
+    def __init__(self, *message: Any):
+        self.message = message
+        super().__init__(*self.message)
+
+
+class SortError(Exception):
+    """Exception raised when sorting cannot be done."""
+
+    def __init__(self, *message: Any):
+        self.message = message
+        super().__init__(*self.message)
 
 
 class FindFiles:
@@ -38,7 +62,7 @@ class FindFiles:
 
     Raises
     ------
-    ConnectionError
+    DataFilesNotFound
         If the files cannot be found the hard disk might not be mounted
 
     Examples
@@ -52,7 +76,7 @@ class FindFiles:
     ... )
     Traceback (most recent call last):
     ...
-    AttributeError: ...
+    SortError: ...
     >>> # [print(m) for m in files.get_files()]
 
     You still find nothing since there are two specifications of ensembles.
@@ -62,7 +86,7 @@ class FindFiles:
     ... )
     Traceback (most recent call last):
     ...
-    AttributeError: ...
+    SortError: ...
     >>> # [print(m) for m in files]
 
     Now, you find all files with simulation type "strong" and ensemble type "ens2" and
@@ -144,7 +168,7 @@ class FindFiles:
         pattern = re.compile(regex + self.ft, re.X)
         self.root_path = pathlib.Path(core.config.DATA_DIR_ROOT)
         if not self.root_path.exists():
-            raise ConnectionError(
+            raise DataFilesNotFound(
                 "The file path could not be found. Are you sure the harddisk is"
                 " connected?"
             )
@@ -270,7 +294,7 @@ class FindFiles:
         # Check that the parameters are real attributes of the arrays.
         for a in attributes:
             if any(a not in x.attrs for x in arrays):
-                raise AttributeError(
+                raise SortError(
                     "Sorting cannot be done since the parameter is not an attribute of"
                     " all the arrays. Available attributes of the first array are\n"
                     f"{list(arrays[0].attrs.keys())}"
@@ -299,7 +323,7 @@ class FindFiles:
         }
         for a in attributes:
             if a not in lookup.keys():
-                raise AttributeError(
+                raise SortError(
                     "Sorting cannot be done since the sorting parameter is not an"
                     " attribute of all the arrays. Available attributes are\n"
                     f"{list(lookup.keys())}"
@@ -335,7 +359,7 @@ class FindFiles:
 
         Raises
         ------
-        AttributeError
+        NoMatchError
             If no files were found from the attempted match
         """
         # Unset the sorting.
@@ -364,7 +388,7 @@ class FindFiles:
             " sets. Try to specify one at the time, of decreasing importance, to narrow"
             " down what files you have available for your use case."
         )
-        raise AttributeError(
+        raise NoMatchError(
             err_msg,
             self._compset,
             self._ens,

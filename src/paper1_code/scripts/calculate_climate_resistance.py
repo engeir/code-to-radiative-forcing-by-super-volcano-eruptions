@@ -140,6 +140,7 @@ def _get_forcing_arrays(data) -> tuple[list, list, list]:
 
 
 def plot_evolution(f, t) -> None:
+    """Plot function for the F, T, Rho and Kappa evolution."""
     f_, t_ = np.asarray(f).mean(axis=0), np.asarray(t).mean(axis=0)
     # Calculate the integral up to every point in the arrays
     integral = np.zeros_like(f_, dtype=float)
