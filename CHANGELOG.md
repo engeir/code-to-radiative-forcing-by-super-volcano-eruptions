@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/engeir/paper1-code/compare/v0.8.2...v0.9.0) (2024-01-29)
+
+
+### Features
+
+* **plot:** add climate resistance ([#34](https://github.com/engeir/paper1-code/issues/34)) ([2b61bb9](https://github.com/engeir/paper1-code/commit/2b61bb9861c4308a6df6f2f5027ec665905cd7fe))
+
+
+### Build System
+
+* **deps:** bump pillow from 10.1.0 to 10.2.0 ([#33](https://github.com/engeir/paper1-code/issues/33)) ([6b30f32](https://github.com/engeir/paper1-code/commit/6b30f326b7292d495482e37c530587b739de9fbc))
+
 ## [0.8.2](https://github.com/engeir/paper1-code/compare/v0.8.1...v0.8.2) (2024-01-22)
 
 
