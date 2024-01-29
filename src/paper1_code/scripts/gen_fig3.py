@@ -38,6 +38,10 @@ class DoPlotting:
         rf_m20: np.ndarray | None = None,
         **kwargs,
     ) -> mpl.figure.Figure:
+        if self.print_summary:
+            print(
+                f"Using {len(self.data.time_m20)} out of 82 eruptions from the M20 dataset."
+            )
         l_c2wm = core.config.LEGENDS["c2wm"]
         l_c2wmp = core.config.LEGENDS["c2wmp"]
         l_c2ws = core.config.LEGENDS["c2ws"]
