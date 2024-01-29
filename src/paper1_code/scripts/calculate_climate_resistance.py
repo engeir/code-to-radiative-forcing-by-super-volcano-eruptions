@@ -180,24 +180,23 @@ def main():
         yerr=[r[:4].std(), r[4:8].std(), r[8:].std()],
         fmt="_",
     )
-    plot_evolution(m_, temp_m)
-    plot_evolution(mp_, temp_mp)
-    plot_evolution(s_, temp_s)
-    # fmt: off
-    print(f"% C2W^:\t\t{r[8:].mean():.2f}+-{r[8:].std():.2f}\t{(1/r[8:]).mean():.3f}+-{(1/r[8:]).std():.3f}")
-    print(f"% C2W-:\t\t{r[4:8].mean():.2f}+-{r[4:8].std():.2f}\t{(1/r[4:8]).mean():.3f}+-{(1/r[4:8]).std():.3f}")
-    print(f"% C2W_:\t\t{r[:4].mean():.1f}+-{r[:4].std():.1f}\t\t{(1/r[:4]).mean():.2f}+-{(1/r[:4]).std():.2f}")
-    print(f"% C2W_ (1:):\t{r[1:4].mean():.2f}+-{r[1:4].std():.2f}\t{(1/r[1:4]).mean():.3f}+-{(1/r[1:4]).std():.3f}")
-    print(f"% Total:\t{r.mean():.1f}+-{r.std():.1f}\t\t{(1/r).mean():.3f}+-{(1/r).std():.3f}")
-    print(f"% Total (1:):\t{r[1:].mean():.2f}+-{r[1:].std():.2f}\t{(1/r[1:]).mean():.3f}+-{(1/r[1:]).std():.3f}")
-    print(f"% C2W^:\t\t{r[8:].mean():.1f}+-{r[8:].std():.1f}\t{(1/r[8:]).mean():.2f}+-{(1/r[8:]).std():.2f}")
-    print(f"% C2W-:\t\t{r[4:8].mean():.1f}+-{r[4:8].std():.1f}\t{(1/r[4:8]).mean():.2f}+-{(1/r[4:8]).std():.2f}")
-    print(f"% C2W_:\t\t{r[:4].mean():.0f}+-{r[:4].std():.0f}\t\t{(1/r[:4]).mean():.1f}+-{(1/r[:4]).std():.1f}")
-    print(f"% C2W_ (1:):\t{r[1:4].mean():.1f}+-{r[1:4].std():.1f}\t{(1/r[1:4]).mean():.2f}+-{(1/r[1:4]).std():.2f}")
-    print(f"% Total:\t{r.mean():.0f}+-{r.std():.0f}\t\t{(1/r).mean():.2f}+-{(1/r).std():.2f}")
-    print(f"% Total (1:):\t{r[1:].mean():.1f}+-{r[1:].std():.1f}\t{(1/r[1:]).mean():.2f}+-{(1/r[1:]).std():.2f}")
-    # fmt: on
+    # plot_evolution(m_, temp_m)
+    # plot_evolution(mp_, temp_mp)
+    # plot_evolution(s_, temp_s)
+    _print_stats(r, ".2f", ".3f", ".1f")
+    _print_stats(r, ".1f", ".2f", ".0f")
     plt.show()
+
+
+def _print_stats(r, arg1, arg2, arg3):
+    # fmt: off
+    print(f"% C2W^:\t\t{r[8:].mean():{arg1}}+-{r[8:].std():{arg1}}\t{(1 / r[8:]).mean():{arg2}}+-{(1 / r[8:]).std():{arg2}}")
+    print(f"% C2W-:\t\t{r[4:8].mean():{arg1}}+-{r[4:8].std():{arg1}}\t{(1 / r[4:8]).mean():{arg2}}+-{(1 / r[4:8]).std():{arg2}}")
+    print(f"% C2W_:\t\t{r[:4].mean():{arg3}}+-{r[:4].std():{arg3}}\t\t{(1 / r[:4]).mean():{arg1}}+-{(1 / r[:4]).std():{arg1}}")
+    print(f"% C2W_ (1:):\t{r[1:4].mean():{arg1}}+-{r[1:4].std():{arg1}}\t{(1 / r[1:4]).mean():{arg2}}+-{(1 / r[1:4]).std():{arg2}}")
+    print(f"% Total:\t{r.mean():{arg3}}+-{r.std():{arg3}}\t\t{(1 / r).mean():{arg2}}+-{(1 / r).std():{arg2}}")
+    print(f"% Total (1:):\t{r[1:].mean():{arg1}}+-{r[1:].std():{arg1}}\t{(1 / r[1:]).mean():{arg2}}+-{(1 / r[1:]).std():{arg2}}")
+    # fmt: on
 
 
 if __name__ == "__main__":
