@@ -133,7 +133,7 @@ def get_aod_arrs(
     data = (
         FINDER.find(
             "e_fSST1850",
-            {f"ens{i+1}" for i in range(4)},
+            {f"ens{i+2}" for i in range(4)},
             {"strong", "medium", "medium-plus", "strong-highlat"},
             "AODVISstdn",
             "h0",
@@ -208,7 +208,7 @@ def get_rf_arrs(
     data = (
         FINDER.find(
             "e_fSST1850",
-            {f"ens{i+1}" for i in range(4)},
+            {f"ens{i+2}" for i in range(4)},
             {"strong", "medium", "medium-plus", "strong-highlat"},
             {"FLNT", "FSNT"},
             "h0",
@@ -254,7 +254,7 @@ def get_trefht_arrs(
     data = (
         FINDER.find(
             "e_BWma1850",
-            {f"ens{i+1}" for i in range(4)},
+            {f"ens{i+2}" for i in range(4)},
             {"strong", "medium", "medium-plus", "strong-highlat"},
             "TREFHT",
             "h0",

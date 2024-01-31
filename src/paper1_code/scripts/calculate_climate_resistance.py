@@ -53,7 +53,12 @@ def _compute_integral_ratio(
 
 
 def _get_temp_arrays(data) -> tuple[list, list, list]:
-    temp = data.copy().keep("e_BWma1850", "TREFHT", {"medium", "medium-plus", "strong"})
+    temp = data.copy().keep(
+        "e_BWma1850",
+        "TREFHT",
+        {f"ens{i}" for i in [2, 3, 4, 5]},
+        {"medium", "medium-plus", "strong"},
+    )
     temp_ctrl = data.copy().keep("e_BWma1850", "TREFHT", "control")
     temp_s = temp.copy().keep("strong").load()
     temp_m = temp.copy().keep("medium").load()
@@ -83,7 +88,10 @@ def _get_temp_arrays(data) -> tuple[list, list, list]:
 
 def _get_forcing_arrays(data) -> tuple[list, list, list]:
     frc = data.copy().keep(
-        "e_fSST1850", ("FLNT", "FSNT"), {"strong", "medium", "medium-plus"}
+        "e_fSST1850",
+        ("FLNT", "FSNT"),
+        {f"ens{i}" for i in [2, 3, 4, 5]},
+        {"strong", "medium", "medium-plus"},
     )
     control = (
         data.copy()
@@ -160,7 +168,7 @@ def main():
     data = (
         DATAFILES.find(
             ["e_BWma1850", "e_fSST1850"],
-            {f"ens{i}" for i in [0, 1, 2, 3, 4]},
+            {f"ens{i}" for i in [0, 1, 2, 3, 4, 5]},
             ("TREFHT", "FLNT", "FSNT"),
             "h0",
             {"strong", "medium", "medium-plus", "control"},

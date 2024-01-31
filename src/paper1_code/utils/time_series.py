@@ -81,23 +81,33 @@ def shift_arrays(
     return list(xr.align(*array))
 
 
-def _latitude_mean(arr: xr.DataArray, lat: str) -> xr.DataArray:
+def _latitude_mean(
+    arr: xr.DataArray, lat: str, operation: Literal["mean", "sum"] = "mean"
+) -> xr.DataArray:
     """Average over latitude with appropriate weighting."""
     lats = getattr(arr, lat)
     weights = np.cos(np.deg2rad(lats))
     weights.name = "weights"
-    return arr.weighted(weights).mean(lat)
+    return getattr(arr.weighted(weights), operation)(lat)
 
 
 @overload
 def mean_flatten(
-    arrays: list[xr.DataArray], dims: list[str] | None = None
+    arrays: list[xr.DataArray],
+    dims: list[str] | None = ...,
+    lat: str = ...,
+    operation: Literal["mean", "sum"] = ...,
 ) -> list[xr.DataArray]:
     ...
 
 
 @overload
-def mean_flatten(arrays: xr.DataArray, dims: list[str] | None = None) -> xr.DataArray:
+def mean_flatten(
+    arrays: xr.DataArray,
+    dims: list[str] | None = ...,
+    lat: str = ...,
+    operation: Literal["mean", "sum"] = ...,
+) -> xr.DataArray:
     ...
 
 
@@ -105,6 +115,7 @@ def mean_flatten(
     arrays: list[xr.DataArray] | xr.DataArray,
     dims: list[str] | None = None,
     lat: str = "lat",
+    operation: Literal["mean", "sum"] = "mean",
 ) -> list[xr.DataArray] | xr.DataArray:
     """Average over all longitudes/zonal dimension.
 
@@ -117,6 +128,8 @@ def mean_flatten(
         ["lon", "time"].
     lat : str
         The name that should be used for the latitude dimension. Default is 'lat'.
+    operation : Literal["mean", "sum"]
+        The operation that should be performed. Default is 'mean'.
 
     Returns
     -------
@@ -133,23 +146,24 @@ def mean_flatten(
         include_lat = False
     else:
         include_lat = True
-    if isinstance(arrays, xr.DataArray):
-        if include_lat:
-            tmp = _latitude_mean(arrays, lat)
-            arrays = tmp.assign_attrs(arrays.attrs)
-            tmp.close()
-        arrays = arrays.mean(dim=dims)
-        arrays = arrays.assign_attrs(arrays.attrs)
-        return arrays
+    match arrays:
+        case xr.DataArray():
+            if include_lat:
+                tmp = _latitude_mean(arrays, lat, operation=operation)
+                arrays = tmp.assign_attrs(arrays.attrs)
+                tmp.close()
+            arrays_: xr.DataArray = getattr(arrays, operation)(dim=dims)
+            arrays_ = arrays_.assign_attrs(arrays_.attrs)
+            return arrays_
     array = arrays[:]
     for i, arr in enumerate(array):
         if include_lat:
-            tmp = _latitude_mean(arr, lat)
+            tmp = _latitude_mean(arr, lat, operation=operation)
             arr_ = tmp.assign_attrs(arr.attrs)
             tmp.close()
         else:
             arr_ = arr
-        array[i] = arr_.mean(dim=dims)
+        array[i] = getattr(arr_, operation)(dim=dims)
         array[i] = array[i].assign_attrs(arr_.attrs)
         arr.close()
         arr_.close()
