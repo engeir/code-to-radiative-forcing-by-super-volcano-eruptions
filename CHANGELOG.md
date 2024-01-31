@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/engeir/paper1-code/compare/v0.9.0...v0.9.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* **cesm:** use ens5 instead of ens1, which had erroneous temperature ([bc89e8c](https://github.com/engeir/paper1-code/commit/bc89e8c66addfce38ddf0b8b1e9db7d74ded600b))
+
 ## [0.9.0](https://github.com/engeir/paper1-code/compare/v0.8.2...v0.9.0) (2024-01-29)
 
 
