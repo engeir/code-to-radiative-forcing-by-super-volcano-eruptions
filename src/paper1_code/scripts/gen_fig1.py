@@ -10,8 +10,8 @@ import numpy as np
 import scipy
 from matplotlib import patches as mpatches
 from matplotlib import pyplot as plt
-from matplotlib.legend_handler import HandlerLine2D
 from matplotlib import ticker
+from matplotlib.legend_handler import HandlerLine2D
 
 import paper1_code as core
 
