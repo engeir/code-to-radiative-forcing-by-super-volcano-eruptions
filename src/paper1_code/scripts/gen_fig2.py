@@ -72,22 +72,21 @@ class DoPlotting:
         for size, ax_ in zip(["large", "small"], [ax1, ax2], strict=True):
             self.plot_gregory_paper_gradient_lines(self.data.x_g16, ax_, size)
             plot = ax_.scatter
-            if size == "large":
-                plot(
-                    self.data.aod_c2w_peak,
-                    np.array(self.data.rf_c2w_peak) * (-1),
-                    label="C2W Peaks*",
-                    c="none",
-                    ec="red",
-                    lw=1.5,
-                    s=15,
-                    zorder=4,
-                    **{
-                        x: core.config.LEGENDS["c2w"][x]
-                        for x in core.config.LEGENDS["c2w"]
-                        if x not in ["c", "label", "marker", "ms", "zorder"]
-                    },
-                )
+            plot(
+                self.data.aod_c2w_peak,
+                np.array(self.data.rf_c2w_peak) * (-1),
+                label="C2W Peaks*",
+                c="none",
+                ec="red",
+                lw=1.5,
+                s=15,
+                zorder=4,
+                **{
+                    x: core.config.LEGENDS["c2w"][x]
+                    for x in core.config.LEGENDS["c2w"]
+                    if x not in ["c", "label", "marker", "ms", "zorder"]
+                },
+            )
             legend = {
                 x: core.config.LEGENDS["VT"][x]
                 for x in core.config.LEGENDS["VT"]
@@ -117,6 +116,8 @@ class DoPlotting:
                 for x in core.config.LEGENDS["P"]
                 if x not in "label"
             }
+            if size == "small":
+                plot([], [], label=" ", c="none")
             plot(self.data.aod_p, -self.data.rf_p, label="P Peak*", **legend)
             plot(
                 self.data.aod_c2w[5], self.data.rf_c2w[5], **core.config.LEGENDS["c2wn"]

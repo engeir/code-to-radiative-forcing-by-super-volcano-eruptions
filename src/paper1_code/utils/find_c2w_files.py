@@ -148,7 +148,7 @@ class FindFiles:
             # Match a -
             -
             # Match for simulation type
-            # Same group as above, but we do not accept _ this time
+            # Same group as above
             ([a-z,A-Z,0-9,_,-]+?)
             # Match a /, then any number of special or non-special characters, then a /
             /.*/

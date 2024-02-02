@@ -9,6 +9,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
+from matplotlib import ticker
 
 import paper1_code as core
 
@@ -49,6 +50,8 @@ class DoPlotting:
         year_zero = 0
         fig = plt.figure()
         ax = fig.gca()
+        ax.xaxis.set_major_locator(ticker.MultipleLocator(0.5))
+        ax.xaxis.set_minor_locator(ticker.MultipleLocator(0.25))
         ax.set_xlim((-0.0, 3.7))
         for i, ell in enumerate([l_c2wn, l_c2ws, l_c2wmp, l_c2wm], start=-3):
             ratio_s = rf[abs(i)] / aod[abs(i)]
@@ -57,9 +60,10 @@ class DoPlotting:
             year_mask = (x > self.period1[0]) & (x < self.period2[1])
             x = x[year_mask]
             ratio_s = ratio_s[year_mask]
-            ax.scatter(x, ratio_s, **ell)
-            # Rise (steep, AOD rises faster than RF)
-            # Recovery (flat, AOD and RF linearly dependent)
+            # Remove "zorder" from dictionary ell
+            ell_ = ell.copy()
+            ell_.pop("zorder")
+            ax.scatter(x, ratio_s, zorder=abs(i), **ell_)
             year_masks = [
                 (x > self.period1[0]) & (x < self.period1[1]),
                 (x > self.period2[0]) & (x < self.period2[1]),
@@ -83,11 +87,18 @@ class DoPlotting:
                 y = x_means * rs + ri
                 # Error bars
                 if "xlabel" not in kwargs:
-                    ax.plot(x_means, y, c=ell["c"], label="_Hidde", alpha=0.5)
+                    ax.plot(
+                        x_means, y, zorder=abs(i), c=ell["c"], label="_Hidde", alpha=0.5
+                    )
                 if self.print_summary:
                     print(rf"Slope: \({rs:.2f}\pm{rse:.2f}\)", end="\t")
                 ax.fill_between(
-                    x_means, y_means - y_std, y_means + y_std, alpha=0.3, color=ell["c"]
+                    x_means,
+                    y_means - y_std,
+                    y_means + y_std,
+                    alpha=0.3,
+                    zorder=abs(i),
+                    color=ell["c"],
                 )
             if self.print_summary:
                 print(f"{ell['label']}")
@@ -114,6 +125,8 @@ class DoPlotting:
 
     def _m20_plots(self, rf_m20, aod_m20, ax, **kwargs):
         mell = core.config.LEGENDS["m20"]
+        mell_ = mell.copy()
+        mell_.pop("zorder")
         warnings.simplefilter("ignore")
         # Dividing by zero is fine...
         ratio_nonan = rf_m20.flatten() / aod_m20.flatten()
@@ -126,7 +139,8 @@ class DoPlotting:
         ax.scatter(
             time_nonan[time_nonan < self.period2[1]],
             ratio_nonan[time_nonan < self.period2[1]],
-            **mell,
+            zorder=2,
+            **mell_,
         )
         for low, high in [(0.0, 1.1), (1.1, 3.0)]:
             mask = (time_nonan > low) & (time_nonan < high)
@@ -149,7 +163,7 @@ class DoPlotting:
             y_std = (rf_m20 / aod_m20).std(axis=0)
             warnings.resetwarnings()
             if "xlabel" not in kwargs:
-                ax.plot(x, y, c=mell["c"], label="_Hidde", alpha=0.5)
+                ax.plot(x, y, zorder=2, c=mell["c"], label="_Hidde", alpha=0.5)
             t_fill = self.data.time_m20[0, :] - self.data.time_m20.flatten()[0]
             mask2 = (t_fill > low) & (t_fill < high)
             ax.fill_between(
@@ -157,6 +171,7 @@ class DoPlotting:
                 (y_means - y_std)[mask2],
                 (y_means + y_std)[mask2],
                 alpha=0.3,
+                zorder=2,
                 color=mell["c"],
             )
         if self.print_summary:

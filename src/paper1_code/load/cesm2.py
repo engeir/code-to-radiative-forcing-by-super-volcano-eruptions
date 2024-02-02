@@ -133,7 +133,7 @@ def get_aod_arrs(
     data = (
         FINDER.find(
             "e_fSST1850",
-            {f"ens{i+2}" for i in range(4)},
+            {f"ens{i+1}" for i in range(5)},
             {"strong", "medium", "medium-plus", "strong-highlat"},
             "AODVISstdn",
             "h0",
@@ -141,10 +141,10 @@ def get_aod_arrs(
         .sort("attr", "ensemble")
         .keep_most_recent()
     )
-    m = data.copy().keep("medium").load()
-    mp = data.copy().keep("medium-plus").load()
-    s = data.copy().keep("strong").load()
-    h = data.copy().keep("strong-highlat").load()
+    m = data.copy().keep("medium", {f"ens{i+2}" for i in range(4)}).load()
+    mp = data.copy().keep("medium-plus", {f"ens{i+2}" for i in range(4)}).load()
+    s = data.copy().keep("strong", {f"ens{i+2}" for i in range(4)}).load()
+    h = data.copy().keep("strong-highlat", {"ens1", "ens3"}).load()
     s = core.utils.time_series.mean_flatten(s, dims=["lat", "lon"])
     m = core.utils.time_series.mean_flatten(m, dims=["lat", "lon"])
     mp = core.utils.time_series.mean_flatten(mp, dims=["lat", "lon"])
@@ -208,7 +208,7 @@ def get_rf_arrs(
     data = (
         FINDER.find(
             "e_fSST1850",
-            {f"ens{i+2}" for i in range(4)},
+            {f"ens{i+1}" for i in range(5)},
             {"strong", "medium", "medium-plus", "strong-highlat"},
             {"FLNT", "FSNT"},
             "h0",
@@ -216,10 +216,10 @@ def get_rf_arrs(
         .sort("attr", "ensemble")
         .keep_most_recent()
     )
-    m = data.copy().keep("medium").load()
-    mp = data.copy().keep("medium-plus").load()
-    s = data.copy().keep("strong").load()
-    h = data.copy().keep("strong-highlat").load()
+    m = data.copy().keep("medium", {f"ens{i+2}" for i in range(4)}).load()
+    mp = data.copy().keep("medium-plus", {f"ens{i+2}" for i in range(4)}).load()
+    s = data.copy().keep("strong", {f"ens{i+2}" for i in range(4)}).load()
+    h = data.copy().keep("strong-highlat", {"ens1", "ens3"}).load()
     s = core.utils.time_series.mean_flatten(s, dims=["lat", "lon"])
     m = core.utils.time_series.mean_flatten(m, dims=["lat", "lon"])
     mp = core.utils.time_series.mean_flatten(mp, dims=["lat", "lon"])
@@ -254,7 +254,7 @@ def get_trefht_arrs(
     data = (
         FINDER.find(
             "e_BWma1850",
-            {f"ens{i+2}" for i in range(4)},
+            {f"ens{i+1}" for i in range(5)},
             {"strong", "medium", "medium-plus", "strong-highlat"},
             "TREFHT",
             "h0",
@@ -262,10 +262,10 @@ def get_trefht_arrs(
         .sort("sim", "attr", "ensemble")
         .keep_most_recent()
     )
-    s = data.copy().keep("strong").load()
-    m = data.copy().keep("medium").load()
-    mp = data.copy().keep("medium-plus").load()
-    h = data.copy().keep("strong-highlat").load()
+    s = data.copy().keep("strong", {f"ens{i+2}" for i in range(4)}).load()
+    m = data.copy().keep("medium", {f"ens{i+2}" for i in range(4)}).load()
+    mp = data.copy().keep("medium-plus", {f"ens{i+2}" for i in range(4)}).load()
+    h = data.copy().keep("strong-highlat", {"ens1", "ens3"}).load()
     s = core.utils.time_series.mean_flatten(s, dims=["lat", "lon"])
     m = core.utils.time_series.mean_flatten(m, dims=["lat", "lon"])
     mp = core.utils.time_series.mean_flatten(mp, dims=["lat", "lon"])

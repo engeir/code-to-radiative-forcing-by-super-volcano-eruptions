@@ -11,6 +11,7 @@ import scipy
 from matplotlib import patches as mpatches
 from matplotlib import pyplot as plt
 from matplotlib.legend_handler import HandlerLine2D
+from matplotlib import ticker
 
 import paper1_code as core
 
@@ -69,7 +70,7 @@ class DoPlotting:
         high = np.linspace(50, MAX_PERCENTILE, num=1 + 1)[1:]
         ax = plt.figure().gca()
         getattr(ax, style)()
-        ax.set_xlabel(r"Time $[\mathrm{yr}]$")
+        ax.set_xlabel(r"Time after eruption $[\mathrm{yr}]$")
         if self.version == "temp":
             ax.set_ylabel("Normalised \ntemperature anomaly $[1]$")
             ax.set_ylim((-0.6, 1.7))
@@ -133,6 +134,8 @@ class DoPlotting:
             ax1.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
         ax1.set_xlim((-0.5, 3.5))
         ax1.patch.set_alpha(0.3)
+        ax1.xaxis.set_major_locator(ticker.MultipleLocator(1))
+        ax1.xaxis.set_minor_locator(ticker.MultipleLocator(0.25))
 
         # Combine shading and line labels
         plt.legend(
