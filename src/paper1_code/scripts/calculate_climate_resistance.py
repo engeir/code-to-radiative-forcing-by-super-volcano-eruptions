@@ -191,8 +191,8 @@ def main():
     # plot_evolution(m_, temp_m)
     # plot_evolution(mp_, temp_mp)
     # plot_evolution(s_, temp_s)
-    _print_stats(r, ".2f", ".3f", ".1f")
-    _print_stats(r, ".1f", ".2f", ".0f")
+    _print_stats(r, ".3f", ".3f", ".2f")
+    _print_stats(r, ".2f", ".2f", ".1f")
     plt.show()
 
 
@@ -200,10 +200,10 @@ def _print_stats(r, arg1, arg2, arg3):
     # fmt: off
     print(f"% C2W^:\t\t{r[8:].mean():{arg1}}+-{r[8:].std():{arg1}}\t{(1 / r[8:]).mean():{arg2}}+-{(1 / r[8:]).std():{arg2}}")
     print(f"% C2W-:\t\t{r[4:8].mean():{arg1}}+-{r[4:8].std():{arg1}}\t{(1 / r[4:8]).mean():{arg2}}+-{(1 / r[4:8]).std():{arg2}}")
-    print(f"% C2W_:\t\t{r[:4].mean():{arg3}}+-{r[:4].std():{arg3}}\t\t{(1 / r[:4]).mean():{arg1}}+-{(1 / r[:4]).std():{arg1}}")
-    print(f"% C2W_ (1:):\t{r[1:4].mean():{arg1}}+-{r[1:4].std():{arg1}}\t{(1 / r[1:4]).mean():{arg2}}+-{(1 / r[1:4]).std():{arg2}}")
-    print(f"% Total:\t{r.mean():{arg3}}+-{r.std():{arg3}}\t\t{(1 / r).mean():{arg2}}+-{(1 / r).std():{arg2}}")
-    print(f"% Total (1:):\t{r[1:].mean():{arg1}}+-{r[1:].std():{arg1}}\t{(1 / r[1:]).mean():{arg2}}+-{(1 / r[1:]).std():{arg2}}")
+    print(f"% C2W_:\t\t{r[:4].mean():{arg3}}+-{r[:4].std():{arg3}}\t{(1 / r[:4]).mean():{arg1}}+-{(1 / r[:4]).std():{arg1}}")
+    print(f"% C2W_ (1:):\t{r[1:4].mean():{arg3}}+-{r[1:4].std():{arg3}}\t{(1 / r[1:4]).mean():{arg2}}+-{(1 / r[1:4]).std():{arg2}}")
+    print(f"% Total:\t{r.mean():{arg3}}+-{r.std():{arg3}}\t{(1 / r).mean():{arg2}}+-{(1 / r).std():{arg2}}")
+    print(f"% Total (1:):\t{r[1:].mean():{arg3}}+-{r[1:].std():{arg3}}\t{(1 / r[1:]).mean():{arg2}}+-{(1 / r[1:]).std():{arg2}}")
     # fmt: on
 
 

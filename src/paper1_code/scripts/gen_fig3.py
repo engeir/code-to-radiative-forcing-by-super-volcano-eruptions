@@ -142,7 +142,7 @@ class DoPlotting:
             zorder=2,
             **mell_,
         )
-        for low, high in [(0.0, 1.1), (1.1, 3.0)]:
+        for low, high in [self.period1, self.period2]:
             mask = (time_nonan > low) & (time_nonan < high)
             result = scipy.stats.linregress(
                 time_nonan[mask],

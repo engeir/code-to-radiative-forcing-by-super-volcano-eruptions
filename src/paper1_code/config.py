@@ -214,7 +214,7 @@ LEGENDS: dict[_DATA_TYPES, dict] = {
     "greg": {"c": _C[7], "marker": _P["x"], "s": 9, "zorder": -1, "label": "G16"},
     "t10": {"c": _C[6], "marker": _P["circle"], "s": 15, "zorder": 5, "label": "T10"},
     "m20": {"c": _C[3], "marker": _P["thin_diamond"], "s": 9, "zorder": 6, "label": "M20"},
-    "m20*": {"c": _C[3], "marker": _P["thin_diamond"], "ms": 3, "zorder": 2, "label": "M20"},
-    "ob16": {"c": _C[2], "marker": _P["triangle_down"], "ms": 3, "zorder": 2, "label": "OB16"},
+    "m20*": {"c": _C[3], "marker": _P["thin_diamond"], "s": 15, "zorder": 2, "label": "M20"},
+    "ob16": {"c": _C[2], "marker": _P["triangle_down"], "s": 15, "zorder": 4, "label": "OB16"},
 }
 # fmt: on
