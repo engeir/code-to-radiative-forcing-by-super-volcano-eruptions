@@ -16,12 +16,12 @@ class SetupNeededData:
     """Class that loads all data used in the plotting procedures."""
 
     def __init__(self):
-        aod_m, aod_mp, aod_s, aod_h = core.load.cesm2.get_aod_arrs()
-        self.aod = aod_m + aod_mp + aod_s + aod_h
-        rf_m, rf_mp, rf_s, rf_h = core.load.cesm2.get_rf_arrs()
-        self.rf = rf_m + rf_mp + rf_s + rf_h
-        temp_m, temp_mp, temp_s, temp_h = core.load.cesm2.get_trefht_arrs()
-        self.temp = temp_m + temp_mp + temp_s + temp_h
+        aod_m, aod_mp, aod_s, aod_ss, aod_h = core.load.cesm2.get_aod_arrs()
+        self.aod = aod_m + aod_mp + aod_s + aod_ss + aod_h
+        rf_m, rf_mp, rf_s, rf_ss, rf_h = core.load.cesm2.get_rf_arrs()
+        self.rf = rf_m + rf_mp + rf_s + rf_ss + rf_h
+        temp_m, temp_mp, temp_s, temp_ss, temp_h = core.load.cesm2.get_trefht_arrs()
+        self.temp = temp_m + temp_mp + temp_s + temp_ss + temp_h
 
 
 class DoPlotting:
@@ -33,7 +33,7 @@ class DoPlotting:
 
     def _array_leginizer(self, ax: mpl.axes.Axes) -> mpl.axes.Axes:
         c4 = plastik.colors.create_colorlist("cmc.batlow", 4)
-        c14 = [c4[0]] * 4 + [c4[1]] * 4 + [c4[3]] * 4 + [c4[2]] * 2
+        c14 = [c4[0]] * 4 + [c4[1]] * 4 + [c4[3]] * 4 + ["r"] + [c4[2]] * 2
         for n, c_ in zip(ax.get_lines(), c14, strict=False):
             n.set_color(c_)
         # Otherwise, it yells at me with UserWarning's cuz of the leading underscore
@@ -52,6 +52,7 @@ class DoPlotting:
                 r"_C2W$\uparrow$",
                 r"_C2W$\uparrow$",
                 r"_C2W$\uparrow$",
+                r"C2WS$\uparrow$",
                 r"C2WN$\uparrow$",
                 r"_C2WN$\uparrow$",
             ],

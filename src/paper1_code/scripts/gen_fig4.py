@@ -68,7 +68,7 @@ class DoPlotting:
         ahl = self.data.aod[-1]
         fig5_a = plt.figure()
         ax = fig5_a.gca()
-        plt.plot(self.data.so2, self.data.aod[:3], **core.config.LEGENDS["c2w"])
+        plt.plot(self.data.so2[:-1], self.data.aod[:-1], **core.config.LEGENDS["c2w"])
         plt.scatter(ihl, ahl, **core.config.LEGENDS["c2wn"])
         plt.scatter(self.data.so2_m20, self.data.aod_m20, **core.config.LEGENDS["m20*"])
         plt.scatter(
@@ -79,9 +79,9 @@ class DoPlotting:
         )
         plt.scatter(self.data.so2_j05, self.data.aod_j05, **core.config.LEGENDS["P100"])
         plt.scatter(self.data.so2_t10, self.data.aod_t10, **core.config.LEGENDS["t10"])
-        x0, y0, width, height = 0.45, 0.1, 0.4, 0.4
+        x0, y0, width, height = 0.62, 0.1, 0.35, 0.4
         ax1 = ax.inset_axes((x0, y0, width, height))
-        ax1.plot(self.data.so2, self.data.aod[:3], **core.config.LEGENDS["c2w"])
+        ax1.plot(self.data.so2[:-1], self.data.aod[:-1], **core.config.LEGENDS["c2w"])
         ax1.scatter(
             self.data.so2_pinatubo, self.data.aod_pinatubo, **core.config.LEGENDS["P"]
         )
@@ -93,6 +93,7 @@ class DoPlotting:
         ax1.set_ylim((0.05, 0.9))
         ax1.patch.set_alpha(0.3)
         ax.indicate_inset_zoom(ax1)
+        ax.set_xlim((-150, 3500))
         plt.xlabel("Injected SO2 [Tg]")
         plt.ylabel("Aerosol optical depth [1]")
         kwargs = {
@@ -118,12 +119,12 @@ class DoPlotting:
         fig5_b = plt.figure()
         # Fit from Niemeier and Timreck (2015) (they use S, and not SO2, which has half
         # the mass)
-        s = np.linspace(0, 850, 10000)
+        s = np.linspace(0, 3000 // 2, 10000)
         warnings.simplefilter("ignore")
         # Dividing by zero is fine...
         rf = 65 * np.exp(-((2246 / s) ** (0.23)))
         warnings.resetwarnings()
-        plt.plot(self.data.so2, self.data.rf[:3], **core.config.LEGENDS["c2w"])
+        plt.plot(self.data.so2[:-1], self.data.rf[:-1], **core.config.LEGENDS["c2w"])
         plt.scatter(ihl, thl, **core.config.LEGENDS["c2wn"])
         plt.scatter(
             self.data.so2_ob16, self.data.rf_ob16, **core.config.LEGENDS["ob16"]
@@ -139,10 +140,10 @@ class DoPlotting:
         plt.scatter(self.data.so2_t10, self.data.rf_t10, **core.config.LEGENDS["t10"])
         plt.plot(s * 2, rf, "--", label="N15", c=ytt_leg["c"])
         # Inset
-        x0, y0, width, height = 0.45, 0.1, 0.4, 0.4
+        x0, y0, width, height = 0.62, 0.1, 0.35, 0.4
         ax = plt.gca()
         ax1 = ax.inset_axes((x0, y0, width, height))
-        ax1.plot(self.data.so2, self.data.rf[:3], **core.config.LEGENDS["c2w"])
+        ax1.plot(self.data.so2[:-1], self.data.rf[:-1], **core.config.LEGENDS["c2w"])
         ax1.scatter(ihl, thl, **core.config.LEGENDS["c2wn"])
         ax1.scatter(
             self.data.so2_ob16, self.data.rf_ob16, **core.config.LEGENDS["ob16"]
@@ -157,10 +158,11 @@ class DoPlotting:
         ax1.scatter(self.data.so2_j05, self.data.rf_j05, **core.config.LEGENDS["P100"])
         ax1.scatter(self.data.so2_t10, self.data.rf_t10, **core.config.LEGENDS["t10"])
         ax1.plot(s * 2, rf, "--", label="N15", c=ytt_leg["c"])
-        ax1.set_xlim((0, 120))
+        ax1.set_xlim((0, 170))
         ax1.set_ylim((0, 28))
         ax1.patch.set_alpha(0.8)
         ax.indicate_inset_zoom(ax1)
+        ax.set_xlim((-150, 3500))
         plt.xlabel("Injected SO2 [Tg]")
         plt.ylabel("Radiative forcing $[\\mathrm{W/m^2}]$")
         kwargs = {
@@ -181,21 +183,22 @@ class DoPlotting:
         c2wsn_temp = self.data.temp[-1]
         fig5_c = plt.figure()
         ax = fig5_c.gca()
-        plt.plot(self.data.so2, self.data.temp[:3], **core.config.LEGENDS["c2w"])
+        plt.plot(self.data.so2[:-1], self.data.temp[:-1], **core.config.LEGENDS["c2w"])
         plt.scatter(self.data.so2[-1], c2wsn_temp, **core.config.LEGENDS["c2wn"])
         self._plot_so2_temp_common_data(ax)
         plt.scatter(
             self.data.so2_j05, self.data.temp_j05, **core.config.LEGENDS["P100"]
         )
         plt.scatter(self.data.so2_t10, self.data.temp_t10, **core.config.LEGENDS["t10"])
-        x0, y0, width, height = 0.45, 0.1, 0.4, 0.4
+        x0, y0, width, height = 0.62, 0.1, 0.35, 0.4
         ax1 = ax.inset_axes((x0, y0, width, height))
-        ax1.plot(self.data.so2, self.data.temp[:3], **core.config.LEGENDS["c2w"])
+        ax1.plot(self.data.so2[:-1], self.data.temp[:-1], **core.config.LEGENDS["c2w"])
         self._plot_so2_temp_common_data(ax1)
-        ax1.set_xlim((0, 120))
+        ax1.set_xlim((0, 170))
         ax1.set_ylim((0, 1.5))
         ax1.patch.set_alpha(0.3)
         ax.indicate_inset_zoom(ax1)
+        ax.set_xlim((-150, 3500))
         plt.xlabel("Injected SO2 [Tg]")
         plt.ylabel("Temperature anomaly [K]")
         kwargs = {
@@ -230,7 +233,7 @@ class DoPlotting:
         rf_m20 = self.data.rf_m20[np.argsort(self.data.aod_m20)]
         aod_m20 = self.data.aod_m20[np.argsort(self.data.aod_m20)]
         fig5_d = plt.figure()
-        plt.plot(self.data.aod[:3], self.data.rf[:3], **core.config.LEGENDS["c2w"])
+        plt.plot(self.data.aod[:-1], self.data.rf[:-1], **core.config.LEGENDS["c2w"])
         plt.scatter(aod_hl, rf_hl, **core.config.LEGENDS["c2wn"])
         plt.scatter(
             self.data.aod_pinatubo, self.data.rf_pinatubo, **core.config.LEGENDS["P"]
@@ -282,7 +285,7 @@ class DoPlotting:
         aod_m20 = self.data.aod_m20[np.argsort(self.data.aod_m20)]
         fig5_e = plt.figure()
         ax = fig5_e.gca()
-        plt.plot(self.data.aod[:3], self.data.temp[:3], **core.config.LEGENDS["c2w"])
+        plt.plot(self.data.aod[:-1], self.data.temp[:-1], **core.config.LEGENDS["c2w"])
         plt.scatter(aod_hl, trefht_hl, **core.config.LEGENDS["c2wn"])
         plt.scatter(aod_m20, temp_m20, **core.config.LEGENDS["m20*"])
         plt.scatter(
@@ -309,7 +312,6 @@ class DoPlotting:
         ax1.set_ylim((0, 1.2))
         ax1.patch.set_alpha(0.3)
         ax.indicate_inset_zoom(ax1)
-        plt.xlim((-0.75, 15.75))
         plt.xlabel("Aerosol optical depth [1]")
         plt.ylabel("Temperature anomaly [K]")
         kwargs = {
@@ -334,7 +336,7 @@ class DoPlotting:
         rf_m20 = self.data.rf_m20[np.argsort(self.data.rf_m20)]
         fig5_f = plt.figure()
         ax = fig5_f.gca()
-        plt.plot(self.data.rf[:3], self.data.temp[:3], **core.config.LEGENDS["c2w"])
+        plt.plot(self.data.rf[:-1], self.data.temp[:-1], **core.config.LEGENDS["c2w"])
         plt.scatter(rf_hl, trefht_hl, **core.config.LEGENDS["c2wn"])
         plt.scatter(rf_lme, temp_lme, **core.config.LEGENDS["ob16"])
         plt.scatter(rf_m20, temp_m20, **core.config.LEGENDS["m20*"])

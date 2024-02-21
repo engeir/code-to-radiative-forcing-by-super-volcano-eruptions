@@ -323,8 +323,7 @@ def get_ob16() -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     rf_fr.data -= rf_fr.data.mean()
     rf_fr.data *= -1
 
-    # Scale forcing from SO4 to SO2
-    so2_start = _get_so2_ob16() / 3 * 2
+    so2_start = _get_so2_ob16()
     # A 210 days shift forward give the best timing of the temperature peak and 150
     # days forward give the timing for the radiative forcing peak. A 190 days shift
     # back give the best timing for when the temperature and radiative forcing

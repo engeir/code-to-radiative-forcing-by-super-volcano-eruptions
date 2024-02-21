@@ -31,8 +31,8 @@ class SetupNeededData:
             core.load.tambora.get_rf_tambora(),
         )
         self.aod_c2w_peak, self.rf_c2w_peak = (
-            core.load.cesm2.get_aod_c2w_peaks()[:3],
-            core.load.cesm2.get_rf_c2w_peaks()[:3],
+            core.load.cesm2.get_aod_c2w_peaks()[:5],
+            core.load.cesm2.get_rf_c2w_peaks()[:5],
         )
 
 
@@ -120,11 +120,15 @@ class DoPlotting:
                 plot([], [], label=" ", c="none")
             plot(self.data.aod_p, -self.data.rf_p, label="P Peak*", **legend)
             plot(
-                self.data.aod_c2w[5], self.data.rf_c2w[5], **core.config.LEGENDS["c2wn"]
+                self.data.aod_c2w[4],
+                self.data.rf_c2w[4],
+                **core.config.LEGENDS["c2wss"],
             )
-            plot([], [], label=" ", c="none")
+            plot(
+                self.data.aod_c2w[3], self.data.rf_c2w[3], **core.config.LEGENDS["c2wn"]
+            )
             plot(self.data.aod_g16, self.data.rf_g16, **core.config.LEGENDS["greg"])
-            xlim = (-0.75, 15.75) if size == "large" else (0, 0.15 * 8 / 3)
+            xlim = (-0.75, 18.75) if size == "large" else (0, 0.15 * 8 / 3)
             ylim = (-85, 5) if size == "large" else (-3 * 8 / 3, 1 * 8 / 3)
             ax_.set_xlim(xlim)
             ax_.set_ylim(ylim)

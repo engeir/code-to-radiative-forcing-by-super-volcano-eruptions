@@ -200,7 +200,7 @@ _C = COLOR_DICTS["category10"]
 _P = POINTS_DICTS
 _DATA_TYPES = Literal[
     "P", "P100", "VT", "c2w", "c2wm", "c2wmp", "ob16",
-    "c2ws", "c2wn", "greg", "t10", "m20", "m20*"
+    "c2ws", "c2wss", "c2wn", "greg", "t10", "m20", "m20*"
 ]
 LEGENDS: dict[_DATA_TYPES, dict] = {
     "P": {"c": "#000000", "marker": _P["star"], "s": 35, "zorder": 5, "label": "P"},
@@ -210,6 +210,7 @@ LEGENDS: dict[_DATA_TYPES, dict] = {
     "c2wm": {"c": _C[0], "marker": _P["triangle_down"], "s": 9, "zorder": 3, "label": r"C2W$\downarrow$"},
     "c2wmp": {"c": _C[1], "marker": _P["diamond"], "s": 9, "zorder": 3, "label": r"C2W$-$"},
     "c2ws": {"c": _C[2], "marker": _P["triangle_up"], "s": 9, "zorder": 3, "label": r"C2W$\uparrow$"},
+    "c2wss": {"c": _C[6], "marker": _P["caretup"], "s": 9, "zorder": 3, "label": r"C2W$\uparrow\uparrow$"},
     "c2wn": {"c": _C[5], "marker": _P["tri_up"], "s": 35, "zorder": 4, "label": r"C2WN$\uparrow$"},
     "greg": {"c": _C[7], "marker": _P["x"], "s": 9, "zorder": -1, "label": "G16"},
     "t10": {"c": _C[6], "marker": _P["circle"], "s": 15, "zorder": 5, "label": "T10"},
