@@ -193,13 +193,14 @@ def _gao_remove_decay_in_forcing(
 ) -> tuple[np.ndarray, np.ndarray]:
     new_frc = np.zeros_like(frc)
     limit = 2e-6
-    place_here = 1
-    for i, v in enumerate(frc[1:]):
-        if frc[i - 1] < v and v > limit and frc[i - 1] < limit:
-            new_frc[i + place_here] = v
-        if new_frc[i + place_here - 1] > limit and v > new_frc[i + place_here - 1]:
-            new_frc[i + place_here - 1] = 0
-            new_frc[i + place_here] = v
+    for i, v in enumerate(frc):
+        if i == 0 and v > limit:
+            new_frc[i] = v
+            continue
+        if v > limit and v > frc[i - 1]:
+            new_frc[i] = v
+        if new_frc[i - 1] > limit and new_frc[i - 1] < v:
+            new_frc[i - 1] = 0
     # Go from monthly to daily (this is fine as long as we use a spiky forcing). We
     # start in December.
     new_frc = _month2day(new_frc, start=12)

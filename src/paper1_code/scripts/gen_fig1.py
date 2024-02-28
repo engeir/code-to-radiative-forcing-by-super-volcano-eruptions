@@ -36,14 +36,18 @@ class SetupNeededData:
             medium,
             plus,
             strong,
+            superstrong,
             *_,
         ) = load_func(remove_seasonality=True, shift=0)
         for i, s in enumerate(strong):
             strong[i] = s[: len(medium[0])]
+        for i, s in enumerate(superstrong):
+            superstrong[i] = s[: len(medium[0])]
         self._version = version
         self.medium = medium
         self.plus = plus
         self.strong = strong
+        self.superstrong = superstrong
 
 
 class DoPlotting:
@@ -57,12 +61,14 @@ class DoPlotting:
         self.m_c = core.config.LEGENDS["c2wm"]["c"]
         self.mp_c = core.config.LEGENDS["c2wmp"]["c"]
         self.s_c = core.config.LEGENDS["c2ws"]["c"]
+        self.ss_c = core.config.LEGENDS["c2wss"]["c"]
 
-    def _plot(
+    def _plot(  # noqa: PLR0913, PLR0915
         self,
         medium: tuple[float, np.ndarray],
         plus: tuple[float, np.ndarray],
         strong: tuple[float, np.ndarray],
+        superstrong: tuple[float, np.ndarray],
         style: Literal["plot", "semilogy", "loglog"] = "plot",
     ) -> mpl.figure.Figure:
         # Percentiles
@@ -92,17 +98,27 @@ class DoPlotting:
             idm = int(np.argmax(medium[1]))
             idp = int(np.argmax(plus[1]))
             ids = int(np.argmax(strong[1]))
+            idss = int(np.argmax(superstrong[1]))
         else:
             idm = 0
             idp = 0
             ids = 0
-        if not np.logical_and(
+            idss = 0
+        if not all(
             (
-                self.data.medium[0].time.data[idm:] == self.data.plus[0].time.data[idp:]
-            ).all(),
-            (
-                self.data.plus[0].time.data[idp:] == self.data.strong[0].time.data[ids:]
-            ).all(),
+                (
+                    self.data.medium[0].time.data[idm:]
+                    == self.data.plus[0].time.data[idp:]
+                ).all(),
+                (
+                    self.data.plus[0].time.data[idp:]
+                    == self.data.strong[0].time.data[ids:]
+                ).all(),
+                (
+                    self.data.strong[0].time.data[ids:]
+                    == self.data.superstrong[0].time.data[idss:]
+                ).all(),
+            )
         ):
             raise ValueError("Time arrays are not equal.")
         x_ = self.data.medium[0].time.data[idm:]
@@ -110,6 +126,7 @@ class DoPlotting:
         medium_scaled = medium[1][idm:]
         plus_scaled = plus[1][idp:]
         strong_scaled = strong[1][ids:]
+        superstrong_scaled = superstrong[1][idss:]
         a = 0.7
         for p1, p2 in zip(
             np.percentile(self.data.medium, low, axis=0) / medium[0],
@@ -132,6 +149,15 @@ class DoPlotting:
         ):
             ax.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
             ax1.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
+        for p1, p2 in zip(
+            np.percentile(self.data.superstrong, low, axis=0) / superstrong[0],
+            np.percentile(self.data.superstrong, high, axis=0) / superstrong[0],
+            strict=True,
+        ):
+            ax.fill_between(x_, p1[idss:], p2[idss:], alpha=a, color=self.ss_c, ec=None)
+            ax1.fill_between(
+                x_, p1[idss:], p2[idss:], alpha=a, color=self.ss_c, ec=None
+            )
         ax1.set_xlim((-0.5, 3.5))
         ax1.patch.set_alpha(0.3)
         ax1.xaxis.set_major_locator(ticker.MultipleLocator(1))
@@ -140,6 +166,10 @@ class DoPlotting:
         # Combine shading and line labels
         plt.legend(
             [
+                (
+                    mpatches.Patch(facecolor=self.ss_c, alpha=1.0, linewidth=0),
+                    ax.plot(x_, superstrong_scaled, "--", c="k")[0],
+                ),
                 (
                     mpatches.Patch(facecolor=self.s_c, alpha=1.0, linewidth=0),
                     ax.plot(x_, strong_scaled, "--", c="k")[0],
@@ -154,6 +184,7 @@ class DoPlotting:
                 ),
             ],
             [
+                r"C2W$\uparrow\uparrow$, $C" + f" = {superstrong[0]:.2f}" + r"$",
                 r"C2W$\uparrow$, $C" + f" = {strong[0]:.2f}" + r"$",
                 f"C2W$-$, $C = {plus[0]:.2f}$",
                 r"C2W$\downarrow$, $C" + f" = {medium[0]:.2f}" + r"$",
@@ -163,6 +194,7 @@ class DoPlotting:
                 "medium_line": HandlerLine2D(marker_pad=0),
                 "plus_line": HandlerLine2D(marker_pad=0),
                 "strong_line": HandlerLine2D(marker_pad=0),
+                "superstrong_line": HandlerLine2D(marker_pad=0),
             },
             framealpha=0.6,
             fontsize=core.config.FONTSIZE,
@@ -170,6 +202,7 @@ class DoPlotting:
         ax1.plot(x_, medium_scaled, c="k")
         ax1.plot(x_, plus_scaled, ":", c="k")
         ax1.plot(x_, strong_scaled, "--", c="k")
+        ax1.plot(x_, superstrong_scaled, "--", c="k")
         return plt.gcf()
 
     def waveform_max(
@@ -195,6 +228,7 @@ class DoPlotting:
         medium_med = np.median(self.data.medium, axis=0)
         plus_med = np.median(self.data.plus, axis=0)
         strong_med = np.median(self.data.strong, axis=0)
+        superstrong_med = np.median(self.data.superstrong, axis=0)
         extreme = (
             "max"
             if abs(self.data.medium[0].data.min()) < abs(self.data.medium[0].data.max())
@@ -204,13 +238,16 @@ class DoPlotting:
         medium_const = getattr(filter_(medium_med, self.n_year, 3), extreme)()
         plus_const = getattr(filter_(plus_med, self.n_year, 3), extreme)()
         strong_const = getattr(filter_(strong_med, self.n_year, 3), extreme)()
+        superstrong_const = getattr(filter_(superstrong_med, self.n_year, 3), extreme)()
         medium_scaled = medium_med / medium_const
         plus_scaled = plus_med / plus_const
         strong_scaled = strong_med / strong_const
+        superstrong_scaled = superstrong_med / superstrong_const
         return self._plot(
             (medium_const, medium_scaled),
             (plus_const, plus_scaled),
             (strong_const, strong_scaled),
+            (superstrong_const, superstrong_scaled),
             style=style,
         )
 

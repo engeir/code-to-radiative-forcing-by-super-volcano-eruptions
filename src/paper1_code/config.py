@@ -206,7 +206,7 @@ LEGENDS: dict[_DATA_TYPES, dict] = {
     "P": {"c": "#000000", "marker": _P["star"], "s": 35, "zorder": 5, "label": "P"},
     "P100": {"c": _C[6], "marker": _P["square"], "s": 15, "zorder": 5, "label": "J05"},
     "VT": {"c": "#000000", "marker": _P["plus"], "s": 35, "lw":1.5 ,"zorder": 5, "label": "T"},
-    "c2w": {"c": _C[0], "marker": _P["diamond"], "ms": 3, "zorder": 4, "label": "C2W"},
+    "c2w": {"c": _C[0], "marker": _P["diamond"], "ms": 3, "zorder": 4, "label": "C2WTrop"},
     "c2wm": {"c": _C[0], "marker": _P["triangle_down"], "s": 9, "zorder": 3, "label": r"C2W$\downarrow$"},
     "c2wmp": {"c": _C[1], "marker": _P["diamond"], "s": 9, "zorder": 3, "label": r"C2W$-$"},
     "c2ws": {"c": _C[2], "marker": _P["triangle_up"], "s": 9, "zorder": 3, "label": r"C2W$\uparrow$"},

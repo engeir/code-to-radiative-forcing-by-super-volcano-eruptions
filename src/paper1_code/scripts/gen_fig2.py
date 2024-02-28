@@ -137,7 +137,7 @@ class DoPlotting:
             kwargs = {
                 "ncol": 2,
                 "loc": "upper right",
-                "framealpha": 0.8,
+                "framealpha": 0.3,
                 "edgecolor": "gray",
                 "fontsize": core.config.FONTSIZE,
                 "labelspacing": 0.3,

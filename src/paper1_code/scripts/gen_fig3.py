@@ -55,6 +55,8 @@ class DoPlotting:
         ax.xaxis.set_minor_locator(ticker.MultipleLocator(0.25))
         ax.set_xlim((-0.0, 3.7))
         for i, ell in enumerate([l_c2wss, l_c2wn, l_c2ws, l_c2wmp, l_c2wm], start=-4):
+            if i == -2:  # noqa: PLR2004
+                continue
             ratio_s = rf[abs(i)] / aod[abs(i)]
             x = np.asarray([float(t) - year_zero for t in self.data.text[abs(i)]])
             # Full
