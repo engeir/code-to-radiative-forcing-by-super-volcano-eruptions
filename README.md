@@ -1,4 +1,4 @@
-# Accompanying code to parameter scan
+# Accompanying code to "Radiative forcing by super-volcano eruptions"
 
 [![DOI](https://zenodo.org/badge/724130844.svg)](https://zenodo.org/badge/latestdoi/724130844)
 
@@ -11,8 +11,8 @@
 Clone and move into the repository:
 
 ```bash
-git clone git@github.com:engeir/paper1-code.git
-cd paper1-code
+git clone git@github.com:engeir/code-to-radiative-forcing-by-super-volcano-eruptions.git
+cd code-to-radiative-forcing-by-super-volcano-eruptions
 ```
 
 [Poetry](python-poetry.org) is used to install the dependencies, which itself is
