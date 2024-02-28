@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.10.0](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.9.1...v0.10.0) (2024-02-28)
+
+
+### Features
+
+* **figure:** add 3000 Tg runs to figures ([55bbd30](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/55bbd309b64c764e398a215a606015210510fec4))
+
+
+### Bug Fixes
+
+* **figure:** keep ens1 for the highlat case ([6436261](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/643626179b9658c9d47877fa463202f1c37e8f8f))
+* **ob16:** small bug in the peak finding strategy ([e1680ef](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/e1680effdba03df3a8a29e489928678dd737b745))
+
+
+### Miscellaneous
+
+* **docs:** change repo name ([32d74a8](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/32d74a8286fe796bc69b5d77e289835f35c2cfb4))
+* **figure:** small adjustment to fig4 ([29316de](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/29316de46ba9ac56933f49477927a96968b08e3c))
+
+
+### Styles
+
+* format ([637e654](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/637e6547718fcf80ef9a12b4e31a94b42a234c23))
+
 ## [0.9.1](https://github.com/engeir/paper1-code/compare/v0.9.0...v0.9.1) (2024-01-31)
 
 
