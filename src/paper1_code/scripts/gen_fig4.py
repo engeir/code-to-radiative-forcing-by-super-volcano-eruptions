@@ -247,6 +247,9 @@ class DoPlotting:
         x0, y0, width, height = 0.57, 0.12, 0.4, 0.4
         ax = plt.gca()
         ax1 = ax.inset_axes((x0, y0, width, height))
+        # x_aod = np.linspace(0, 15, 100)
+        # ax.plot(x_aod, 15 * x_aod**0.5)
+        # ax.plot(x_aod, 22 * np.log(x_aod + 1))
         ax1.plot(self.data.aod, self.data.rf, **core.config.LEGENDS["c2w"])
         ax1.scatter(aod_hl, rf_hl, **core.config.LEGENDS["c2wn"])
         ax1.scatter(
@@ -300,6 +303,9 @@ class DoPlotting:
         plt.scatter(self.data.aod_t10, self.data.temp_t10, **core.config.LEGENDS["t10"])
         x0, y0, width, height = 0.57, 0.12, 0.4, 0.4
         ax1 = ax.inset_axes((x0, y0, width, height))
+        # x_aod = np.linspace(0, 15, 100)
+        # ax.plot(x_aod, 2 * x_aod**0.5)
+        # ax.plot(x_aod, 3 * np.log(x_aod + 1))
         ax1.plot(self.data.aod, self.data.temp, **core.config.LEGENDS["c2w"])
         ax1.scatter(aod_m20, temp_m20, **core.config.LEGENDS["m20*"])
         ax1.scatter(

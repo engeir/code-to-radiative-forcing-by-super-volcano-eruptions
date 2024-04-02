@@ -32,6 +32,7 @@ requests = "^2.31.0"
 rich = "^13.7.0"
 types-requests = "^2.31.0.20231231"
 gitpython = "^3.1.41"
+pyqt5 = "5.15.2"
 
 [tool.poetry.group.dev.dependencies]
 pyupgrade = "^2.31.1"
