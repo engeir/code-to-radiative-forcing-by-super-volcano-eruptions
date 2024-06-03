@@ -1,21 +1,11 @@
 {
   "creators": [
     {
+      "orcid": "0000-0001-6709-8688",
+      "name": "Enger, Eirik Rolland",
       "affiliation": {
         "id": "00wge5k78",
         "name": "UiT The Arctic University of Norway"
-      },
-      "person_or_org": {
-        "family_name": "Enger",
-        "given_name": "Eirik Rolland",
-        "identifiers": [
-          {
-            "identifier": "0000-0001-6709-8688",
-            "scheme": "orcid"
-          }
-        ],
-        "name": "Enger, Eirik Rolland",
-        "type": "personal"
       }
     }
   ],
