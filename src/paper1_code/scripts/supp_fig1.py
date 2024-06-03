@@ -139,7 +139,7 @@ def main(show_output: bool = False):
         cosmoplots.combine(
             tmp_dir / "aod_arrays_normalized.png",
             tmp_dir / "rf_arrays_normalized.png",
-        ).using(fontsize=50).in_grid(1, 2).save(
+        ).using(fontsize=8).in_grid(1, 2).save(
             SAVE_PATH / "arrays_combined_normalized.png"
         )
         if (fig1 := (SAVE_PATH / "arrays_combined_normalized.png")).exists():

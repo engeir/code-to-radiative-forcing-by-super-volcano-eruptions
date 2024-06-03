@@ -272,7 +272,7 @@ def main(show_output: bool = False):
             tmp_dir / "compare-waveform-max-aod.png",
             tmp_dir / "compare-waveform-max-rf.png",
             tmp_dir / "compare-waveform-max-temp.png",
-        ).using(fontsize=50).in_grid(1, 3).save(SAVE_PATH / "figure1.png")
+        ).using(fontsize=8).in_grid(1, 3).save(SAVE_PATH / "figure1.png")
         if (fig1 := (SAVE_PATH / "figure1.png")).exists():
             print(f"Successfully saved figure 1 to {fig1.resolve()}")
     if show_output:

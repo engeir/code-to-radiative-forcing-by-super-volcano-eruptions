@@ -162,7 +162,7 @@ def main(show_output: bool = False):
         cosmoplots.combine(
             tmp_dir / "aod_vs_rf_avg_full.png",
             tmp_dir / "aod_vs_rf_avg_inset.png",
-        ).using(fontsize=50).in_grid(1, 2).save(SAVE_PATH / "figure2.png")
+        ).using(fontsize=8).in_grid(1, 2).save(SAVE_PATH / "figure2.png")
         if (fig2 := (SAVE_PATH / "figure2.png")).exists():
             print(f"Successfully saved figure 2 to {fig2.resolve()}")
     if show_output:

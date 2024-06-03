@@ -231,7 +231,7 @@ def main(show_output: bool = False):
         cosmoplots.combine(
             tmp_dir / "aod_vs_rf_avg_loop_ratio.png",
             tmp_dir / "aod_vs_rf_avg_loop_ratio_scaled.png",
-        ).using(fontsize=50, gravity="southwest", pos=(10, 30)).in_grid(1, 2).save(
+        ).using(fontsize=8, gravity="southwest", pos=(10, 30)).in_grid(1, 2).save(
             SAVE_PATH / "figure3.png"
         )
         if (fig3 := (SAVE_PATH / "figure3.png")).exists():

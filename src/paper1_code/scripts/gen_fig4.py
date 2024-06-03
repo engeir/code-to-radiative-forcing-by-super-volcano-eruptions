@@ -397,7 +397,7 @@ def main(show_output: bool = False):
             tmp_dir / "aod_vs_rf.png",
             tmp_dir / "aod_vs_temperature.png",
             tmp_dir / "rf_vs_temperature.png",
-        ).using(fontsize=50).in_grid(w=2, h=3).save(SAVE_PATH / "figure4.png")
+        ).using(fontsize=8).in_grid(w=2, h=3).save(SAVE_PATH / "figure4.png")
         if (fig4 := (SAVE_PATH / "figure4.png")).exists():
             print(f"Successfully saved figure 4 to {fig4.resolve()}")
     if show_output:
