@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.4](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.3...v0.10.4) (2024-06-03)
+
+
+### Bug Fixes
+
+* **zenodo:** update creator metadata ([0985746](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/098574666e19d05d89c7cc743936d90247166160))
+
 ## [0.10.3](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.2...v0.10.3) (2024-06-03)
 
 
