@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.2](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.1...v0.10.2) (2024-06-03)
+
+
+### Bug Fixes
+
+* **zenodo:** only use the name field ([3a10910](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/3a109109975be28050d48e3bb9267db9eeb39a87))
+
 ## [0.10.1](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.0...v0.10.1) (2024-06-03)
 
 
