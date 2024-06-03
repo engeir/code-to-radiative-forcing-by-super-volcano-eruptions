@@ -1,15 +1,34 @@
 {
-    "creators": [
-        {
-            "orcid": "0000-0001-6709-8688",
-            "affiliation": "UiT The Arctic University of Norway",
-            "name": "Enger, Eirik Rolland"
-        }
-    ],
+  "creators": [
+    {
+      "orcid": "0000-0001-6709-8688",
+      "affiliation": {
+        "id": "00wge5k78",
+        "name": "UiT The Arctic University of Norway"
+      },
+      "person_or_org": {
+        "family_name": "Enger",
+        "given_name": "Eirik Rolland",
+        "identifiers": [
+          {
+            "identifier": "0000-0001-6709-8688",
+            "scheme": "orcid"
+          }
+        ],
+        "name": "Enger, Eirik Rolland",
+        "type": "personal"
+      }
+    }
+  ],
 
-    "license": "MIT",
+  "license": "MIT",
 
-    "title": "Accompanying code to 'Radiative forcing by super-volcano eruptions'",
+  "title": "Accompanying code to 'Radiative forcing by super-volcano eruptions'",
 
-    "keywords": ["volcano", "eruption", "aerosol optical depth", "radiative forcing"]
+  "keywords": [
+    "volcano",
+    "eruption",
+    "aerosol optical depth",
+    "radiative forcing"
+  ]
 }
