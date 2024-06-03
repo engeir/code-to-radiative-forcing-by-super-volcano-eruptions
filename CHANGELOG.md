@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.10.5](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.4...v0.10.5) (2024-06-03)
+
+
+### Bug Fixes
+
+* **zenodo:** correctly specify zenodo metadata ([1810e16](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/1810e16c143ab1104c95b5bec701c07ac6df41ec))
+
+
+### Miscellaneous
+
+* **plotting:** update font size to latest cosmoplots defaults ([1810e16](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/1810e16c143ab1104c95b5bec701c07ac6df41ec))
+
+
+### Tests
+
+* **zenodo:** test that the zenodo json schema is correct ([1810e16](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/1810e16c143ab1104c95b5bec701c07ac6df41ec))
+
+
+### Build System
+
+* **deps:** update dependencies ([1810e16](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/1810e16c143ab1104c95b5bec701c07ac6df41ec))
+
 ## [0.10.4](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.3...v0.10.4) (2024-06-03)
 
 
