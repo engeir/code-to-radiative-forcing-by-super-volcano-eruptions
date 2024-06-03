@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "paper1-code"
-version = "0.10.3"
+version = "0.10.4"
 description = "Code to download and analyse data for a paper"
 authors = ["engeir <engeir@pm.me>"]
 license = "MIT"
