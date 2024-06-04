@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/724130844.svg)](https://zenodo.org/badge/latestdoi/724130844)
 
-<sup>Latest version: v0.10.5</sup> <!-- x-release-please-version -->
+<sup>Latest version: v0.10.6</sup> <!-- x-release-please-version -->
 
 > Code to download and analyze data for a paper
 
