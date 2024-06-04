@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.6](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.5...v0.10.6) (2024-06-04)
+
+
+### Continuous Integration
+
+* **workflow:** update release-please to v4 ([c8b2c9e](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/c8b2c9e25fad6fded36e99ca72b8196ec43af1e8))
+
+
+### Build System
+
+* **deps:** bump idna from 3.6 to 3.7 ([#44](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/issues/44)) ([0c2b622](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/0c2b622a304c57da390268eaad6d4b1a685d31f0))
+* **deps:** bump pillow from 10.2.0 to 10.3.0 ([#41](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/issues/41)) ([22d87a1](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/22d87a1e0c74658d986ff1f5b0ab092a41eb719a))
+* **deps:** bump requests from 2.31.0 to 2.32.2 ([#45](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/issues/45)) ([5318f2c](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/5318f2c861e3e54d5501520b20bfbb16840086fe))
+
 ## [0.10.5](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.4...v0.10.5) (2024-06-03)
 
 
