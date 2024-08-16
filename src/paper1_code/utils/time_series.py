@@ -97,8 +97,7 @@ def mean_flatten(
     dims: list[str] | None = ...,
     lat: str = ...,
     operation: Literal["mean", "sum"] = ...,
-) -> list[xr.DataArray]:
-    ...
+) -> list[xr.DataArray]: ...
 
 
 @overload
@@ -107,8 +106,7 @@ def mean_flatten(
     dims: list[str] | None = ...,
     lat: str = ...,
     operation: Literal["mean", "sum"] = ...,
-) -> xr.DataArray:
-    ...
+) -> xr.DataArray: ...
 
 
 def mean_flatten(
@@ -176,8 +174,7 @@ def remove_seasonality(
     freq: float = 1.0,
     radius: float = 0.01,
     plot: bool = False,
-) -> list[xr.DataArray]:
-    ...
+) -> list[xr.DataArray]: ...
 
 
 @overload
@@ -186,8 +183,7 @@ def remove_seasonality(
     freq: float = 1.0,
     radius: float = 0.01,
     plot: bool = False,
-) -> xr.DataArray:
-    ...
+) -> xr.DataArray: ...
 
 
 def remove_seasonality(
@@ -346,15 +342,13 @@ def float2dt(arr: xr.CFTimeIndex | np.ndarray, freq: str = "D") -> xr.CFTimeInde
 
 
 @overload
-def get_median(arrays: list[xr.DataArray], xarray: Literal[True]) -> xr.DataArray:
-    ...
+def get_median(arrays: list[xr.DataArray], xarray: Literal[True]) -> xr.DataArray: ...
 
 
 @overload
 def get_median(
     arrays: list[xr.DataArray], xarray: Literal[False]
-) -> tuple[np.ndarray, np.ndarray]:
-    ...
+) -> tuple[np.ndarray, np.ndarray]: ...
 
 
 def get_median(
@@ -395,13 +389,13 @@ def get_median(
 
 
 @overload
-def keep_whole_years(arrays: list[xr.DataArray], freq: str = "D") -> list[xr.DataArray]:
-    ...
+def keep_whole_years(
+    arrays: list[xr.DataArray], freq: str = "D"
+) -> list[xr.DataArray]: ...
 
 
 @overload
-def keep_whole_years(arrays: xr.DataArray, freq: str = "D") -> xr.DataArray:
-    ...
+def keep_whole_years(arrays: xr.DataArray, freq: str = "D") -> xr.DataArray: ...
 
 
 def keep_whole_years(
