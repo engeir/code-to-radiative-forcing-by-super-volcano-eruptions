@@ -9,5 +9,11 @@ __all__ = ["utils", "config", "scripts", "load"]
 
 __version__ = version(__package__)
 
-mpl.style.use("cosmoplots.default")
+mpl.style.use(
+    [
+        "https://raw.githubusercontent.com/uit-cosmo/cosmoplots/main/cosmoplots/default.mplstyle",
+        "paper1_code.extra",
+        "paper1_code.jgr",
+    ],
+)
 mpl.rc("text.latex", preamble=r"\usepackage{amsmath}")
