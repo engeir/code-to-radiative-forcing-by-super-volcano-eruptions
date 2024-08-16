@@ -1,12 +1,13 @@
 """Test the config module."""
 
+import volcano_base
 
 import paper1_code as core
 
 
 def test_means() -> None:
     """Test config constants."""
-    finder = core.utils.find_c2w_files.FindFiles()
+    finder = volcano_base.load.FindFiles()
     # finder.avail()
     finder.find("e_BWma1850", "control", "TREFHT")
     if len(finder) != 1:

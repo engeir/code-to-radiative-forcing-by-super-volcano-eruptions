@@ -1,55 +1,53 @@
-[tool.poetry]
+[project]
 name = "paper1-code"
 version = "0.10.6"
 description = "Code to download and analyse data for a paper"
-authors = ["engeir <engeir@pm.me>"]
-license = "MIT"
+authors = [{ name = "engeir", email = "engeir@pm.me" }]
+license = { file = "MIT" }
 readme = "README.md"
+dependencies = [
+  "numpy>=2.0.1",
+  "matplotlib>=3.9.2",
+  "scipy>=1.14.0",
+  "cftime>=1.6.4",
+  "h5netcdf>=1.3.0",
+  "nc-time-axis>=1.4.1",
+  "cosmoplots>=0.4.3",
+  "matplotlib-label-lines>=0.7.0",
+  "returns>=0.23.0",
+  "requests>=2.32.3",
+  "rich>=13.7.1",
+  "types-requests>=2.32.0.20240712",
+  "gitpython>=3.1.43",
+  "plastik>=0.6.2",
+  "volcano-base>=2.1.0",
+  "xarray>=2024.7.0",
+  "dask>=2024.8.0",
+]
 
-[tool.poetry.scripts]
+[project.scripts]
 generate-figs = "paper1_code.scripts.gen_figs:main"
 generate-fig1 = "paper1_code.scripts.gen_fig1:main"
 generate-fig2 = "paper1_code.scripts.gen_fig2:main"
 generate-fig3 = "paper1_code.scripts.gen_fig3:main"
 generate-fig4 = "paper1_code.scripts.gen_fig4:main"
 
-[tool.poetry.dependencies]
-python = ">=3.11,<3.13"
-numpy = "^1.26.2"
-matplotlib = "^3.8.2"
-scipy = "^1.11.4"
-importlib-metadata = "^6.8.0"
-xarray = "^2023.11.0"
-cftime = "^1.6.3"
-h5netcdf = "^1.3.0"
-dask = "^2023.11.0"
-nc-time-axis = "^1.4.1"
-cosmoplots = "^0.4.3"
-matplotlib-label-lines = "^0.7.0"
-returns = "^0.22.0"
-requests = "^2.32.2"
-rich = "^13.7.0"
-types-requests = "^2.31.0.20231231"
-gitpython = "^3.1.41"
-pyqt5 = "5.15.2"
-plastik = "^0.6.2"
-
-[tool.poetry.group.dev.dependencies]
-pyupgrade = "^2.31.1"
-pytest = "^7.1.1"
-pre-commit = "^2.17.0"
-pre-commit-hooks = "^4.1.0"
-wemake-python-styleguide = "^0.18.0"
-ruff = "^0.1.0"
-pydocstringformatter = "^0.7.3"
-xdoctest = "^1.1.2"
-pydoclint = "^0.3.8"
-mypy = "^1.8.0"
-jsonschema = "^4.22.0"
-
+[tool.rye]
+dev-dependencies = [
+  "pyupgrade>=3.17.0",
+  "pytest>=8.3.2",
+  "pre-commit>=3.8.0",
+  "pre-commit-hooks>=4.6.0",
+  "ruff>=0.5.7",
+  "pydocstringformatter>=0.7.3",
+  "xdoctest>=1.1.6",
+  "mypy>=1.11.1",
+  "jsonschema>=4.23.0",
+  "pydoclint>=0.5.6",
+]
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+build-backend = "setuptools.build_meta"
+requires = ["setuptools"]
 
 [tool.mypy]
 files = ["src", "tests"]

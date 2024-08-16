@@ -10,6 +10,7 @@ import datetime
 
 import numpy as np
 import scipy
+import volcano_base
 import xarray as xr
 
 import paper1_code as core
@@ -31,7 +32,7 @@ def get_m20(find_all_peaks: bool = False) -> tuple[np.ndarray, ...]:
     )
     files = list(path.rglob("UM_UKCA*.nc"))
     data: list[xr.Dataset] = [xr.load_dataset(file.resolve()) for file in files]
-    data = core.utils.find_c2w_files.FindFiles().sort("SO2 emission (Tg)", arrays=data)
+    data = volcano_base.load.FindFiles().sort("SO2 emission (Tg)", arrays=data)
     # We first move the July eruptions back six months to January, so all have the
     # eruption day as the first element.
     for i, arr in enumerate(data):

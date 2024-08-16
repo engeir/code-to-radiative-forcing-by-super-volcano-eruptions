@@ -5,9 +5,9 @@ from typing import Literal
 import numpy as np
 import scipy
 import xarray as xr
+from volcano_base.load import FindFiles
 
 import paper1_code as core
-from paper1_code.utils.find_c2w_files import FindFiles
 
 FINDER = FindFiles()
 

@@ -4,7 +4,7 @@
 
 <sup>Latest version: v0.10.6</sup> <!-- x-release-please-version -->
 
-> Code to download and analyze data for a paper
+> Code to download and analyse data for a paper
 
 ## Install
 
@@ -12,7 +12,7 @@ Clone and move into the repository:
 
 ```bash
 git clone git@github.com:engeir/code-to-radiative-forcing-by-super-volcano-eruptions.git
-cd code-to-radiative-forcing-by-super-volcano-eruptions
+cd code-to-radiative-forcing-by-super-volcano-eruptions || exit
 ```
 
 [Poetry](python-poetry.org) is used to install the dependencies, which itself is
