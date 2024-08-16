@@ -21,7 +21,7 @@ dependencies = [
   "gitpython>=3.1.43",
   "plastik>=0.6.2",
   "volcano-base>=2.1.0",
-  "xarray>=2024.7.0",
+  "xarray==2024.2.0",
   "dask>=2024.8.0",
 ]
 

@@ -219,7 +219,7 @@ virtualenv==20.26.3
     # via pre-commit
 volcano-base==2.1.0
     # via paper1-code
-xarray==2024.7.0
+xarray==2024.2.0
     # via paper1-code
     # via volcano-base
 xdoctest==1.1.6

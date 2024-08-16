@@ -168,7 +168,7 @@ urllib3==2.2.2
     # via types-requests
 volcano-base==2.1.0
     # via paper1-code
-xarray==2024.7.0
+xarray==2024.2.0
     # via paper1-code
     # via volcano-base
 zipp==3.20.0
