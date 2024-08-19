@@ -20,9 +20,10 @@ dependencies = [
   "types-requests>=2.32.0.20240712",
   "gitpython>=3.1.43",
   "plastik>=0.6.2",
-  "volcano-base>=2.1.0",
+  "volcano-base>=2.2.1",
   "xarray==2024.2.0",
   "dask>=2024.8.0",
+  "netcdf4>=1.7.1.post2",
 ]
 
 [project.scripts]
@@ -33,6 +34,7 @@ generate-fig3 = "paper1_code.scripts.gen_fig3:main"
 generate-fig4 = "paper1_code.scripts.gen_fig4:main"
 
 [tool.rye]
+universal = true
 dev-dependencies = [
   "pyupgrade>=3.17.0",
   "pytest>=8.3.2",
