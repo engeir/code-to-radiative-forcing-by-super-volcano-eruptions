@@ -11,33 +11,33 @@
 Clone and move into the repository:
 
 ```bash
-git clone git@github.com:engeir/code-to-radiative-forcing-by-super-volcano-eruptions.git
+git clone https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions.git
 cd code-to-radiative-forcing-by-super-volcano-eruptions || exit
 ```
 
-[Poetry](python-poetry.org) is used to install the dependencies, which itself is
-recommended to be installed
-[via pipx](https://python-poetry.org/docs/#installing-with-pipx).
+[Rye](rye.astral.sh) is used to install the dependencies, with installation instructions
+provided [here](https://rye.astral.sh/guide/installation/).
 
-Provided Poetry is available, the project can be installed with:
+Provided Rye is available, the project can be installed with:
 
 ```bash
-poetry install
+rye sync
 ```
 
 ## Usage
 
-Every figure has its own executable. Figures are created by running:
+Every figure has its own executable. Figures are created by running: (see
+`grep "generate" <(rye run)` for a list of available commands)
 
 ```bash
-poetry run generate-fig1
-poetry run generate-fig2
-poetry run generate-fig3
-poetry run generate-fig4
+rye run generate-fig1
+rye run generate-fig2
+rye run generate-fig3
+rye run generate-fig4
 ```
 
 or:
 
 ```bash
-poetry run generate-figs
+rye run generate-figs
 ```
