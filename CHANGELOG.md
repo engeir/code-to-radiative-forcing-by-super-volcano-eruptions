@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.11.0](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.6...v0.11.0) (2024-08-20)
+
+
+### Features
+
+* **plotting:** add Reff, OH and SO2 burden plots ([388bf98](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/388bf986b29d41ef3c574dbc643eb33a81a0daf1))
+
+
+### Bug Fixes
+
+* **xarray:** roll back version to 2024.2.0 ([3890d4f](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/3890d4f64dd30b7fc27b699ddb90baf77b01ed26))
+
+
+### Styles
+
+* format file ([7666bd3](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/7666bd3a338e4fd0ccd66ab323c776abe45f3c67))
+
+
+### Code Refactoring
+
+* move from poetry to rye and fix minor style issues ([aef3111](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/aef3111806662db9b716267fd06b86bdaeb46aee))
+
+
+### Build System
+
+* **deps-dev:** bump setuptools from 69.0.2 to 70.0.0 ([#47](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/issues/47)) ([baa4f41](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/baa4f41221493ec9f665b14481fc6819fc0cb7a2))
+* **deps:** bump urllib3 from 2.1.0 to 2.2.2 ([#48](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/issues/48)) ([8b4765d](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/8b4765d78394323d02ad2f15cb5b02afc7552660))
+* **deps:** bump zipp from 3.17.0 to 3.19.1 ([#49](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/issues/49)) ([62ffef6](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/62ffef6a67f31fe93f526b265ca3bb9a88341367))
+* **rye:** resolve deps universially ([a4ac5de](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/a4ac5de94e487bb25fe228afe28b2c87a1c05caf))
+
+
+### Documentation
+
+* update instructions to use Rye instead of Poetry ([cdff6b4](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/cdff6b41bcfd69fdacf5b1fe018b344b8843fd10))
+
 ## [0.10.6](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.5...v0.10.6) (2024-06-04)
 
 
