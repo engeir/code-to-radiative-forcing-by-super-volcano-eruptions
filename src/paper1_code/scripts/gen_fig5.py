@@ -18,6 +18,7 @@ FigElement = namedtuple("FigElement", ["data", "label", "color", "ls"])
 class ReffPlot:
     """Plot the aerosol effective radius."""
 
+    _SHOW = True
     FINDER = (
         FindFiles()
         .find({"ens1", "ens3"}, {"tt-2sep", "tt-4sep", "medium-2sep", "medium-4sep"})
@@ -57,13 +58,13 @@ class ReffPlot:
         reff_m43 = core.utils.reff.Reff(reff[7], temp[7], sad[7]).calculate_reff()
         e2m = self.ens2median
         attrs = {"plot_c": COLOR[0], "plot_ls": "-"}
-        reff_s2 = e2m([reff_s21, reff_s23]).assign_attrs(**attrs).rename("SMALL, 2sep")
+        reff_s2 = e2m([reff_s21, reff_s23]).assign_attrs(**attrs).rename("S26, 2sep")
         attrs = {"plot_c": COLOR[1], "plot_ls": "-"}
-        reff_s4 = e2m([reff_s41, reff_s43]).assign_attrs(**attrs).rename("SMALL, 4sep")
+        reff_s4 = e2m([reff_s41, reff_s43]).assign_attrs(**attrs).rename("S26, 4sep")
         attrs = {"plot_c": COLOR[2], "plot_ls": "-"}
-        reff_m2 = e2m([reff_m21, reff_m23]).assign_attrs(**attrs).rename("MEDIUM, 2sep")
+        reff_m2 = e2m([reff_m21, reff_m23]).assign_attrs(**attrs).rename("S400, 2sep")
         attrs = {"plot_c": COLOR[3], "plot_ls": "-"}
-        reff_m4 = e2m([reff_m41, reff_m43]).assign_attrs(**attrs).rename("MEDIUM, 4sep")
+        reff_m4 = e2m([reff_m41, reff_m43]).assign_attrs(**attrs).rename("S400, 4sep")
         return xr.merge([reff_s2, reff_s4, reff_m2, reff_m4])
 
     def load(self) -> xr.Dataset:
@@ -71,6 +72,7 @@ class ReffPlot:
         file = SAVE_PATH / "reff.nc"
         if file.exists():
             return xr.load_dataset(file)
+        self._SHOW = False
         ds = self.compute().assign_attrs(
             dict(description="Global stratospheric mean aerosol effective radius.")
         )
@@ -88,7 +90,9 @@ class ReffPlot:
         plt.ylabel(r"$R_{\text{eff}}$ $[\mathrm{\mu m}]$")
         plt.legend()
         plt.savefig(SAVE_PATH / "reff")
-        plt.show()
+        if self._SHOW:
+            plt.show()
+        plt.close("all")
 
 
 class OHPlot:
@@ -116,6 +120,7 @@ class OHPlot:
         Object holding the file keys to the intermediate 4-year double eruption simulation.
     """
 
+    _SHOW = True
     _FINDER: FindFiles = (
         FindFiles().find("OH", "e_fSST1850").sort("sim", "ensemble").copy
     )
@@ -167,21 +172,21 @@ class OHPlot:
         attrs = {"plot_c": COLOR[0], "plot_ls": "-"}
         oh_c_xr = e2m(self.oh_c.load()).assign_attrs(**attrs).rename("CONTROL")
         attrs = {"plot_c": COLOR[1], "plot_ls": "-"}
-        oh_m_xr = e2m(self.oh_m.load()).assign_attrs(**attrs).rename("SMALL")
+        oh_m_xr = e2m(self.oh_m.load()).assign_attrs(**attrs).rename("S26")
         attrs = {"plot_c": COLOR[2], "plot_ls": "-"}
-        oh_p_xr = e2m(self.oh_p.load()).assign_attrs(**attrs).rename("MEDIUM")
+        oh_p_xr = e2m(self.oh_p.load()).assign_attrs(**attrs).rename("S400")
         attrs = {"plot_c": COLOR[3], "plot_ls": "-"}
-        oh_s_xr = e2m(self.oh_s.load()).assign_attrs(**attrs).rename("STRONG")
+        oh_s_xr = e2m(self.oh_s.load()).assign_attrs(**attrs).rename("S1629")
         attrs = {"plot_c": COLOR[4], "plot_ls": "-"}
-        oh_e_xr = e2m(self.oh_e.load()).assign_attrs(**attrs).rename("EXTREME")
+        oh_e_xr = e2m(self.oh_e.load()).assign_attrs(**attrs).rename("S3000")
         attrs = {"plot_c": COLOR[1], "plot_ls": ":"}
-        oh_m2_xr = e2m(self.oh_m2.load()).assign_attrs(**attrs).rename("_SMALL, 2sep")
+        oh_m2_xr = e2m(self.oh_m2.load()).assign_attrs(**attrs).rename("_S26, 2sep")
         attrs = {"plot_c": COLOR[1], "plot_ls": "--"}
-        oh_m4_xr = e2m(self.oh_m4.load()).assign_attrs(**attrs).rename("_SMALL, 4sep")
+        oh_m4_xr = e2m(self.oh_m4.load()).assign_attrs(**attrs).rename("_S26, 4sep")
         attrs = {"plot_c": COLOR[2], "plot_ls": ":"}
-        oh_p2_xr = e2m(self.oh_p2.load()).assign_attrs(**attrs).rename("_MEDIUM, 2sep")
+        oh_p2_xr = e2m(self.oh_p2.load()).assign_attrs(**attrs).rename("_S400, 2sep")
         attrs = {"plot_c": COLOR[2], "plot_ls": "--"}
-        oh_p4_xr = e2m(self.oh_p4.load()).assign_attrs(**attrs).rename("_MEDIUM, 4sep")
+        oh_p4_xr = e2m(self.oh_p4.load()).assign_attrs(**attrs).rename("_S400, 4sep")
         return xr.merge(
             [
                 oh_c_xr,
@@ -201,6 +206,7 @@ class OHPlot:
         file = SAVE_PATH / "oh.nc"
         if file.exists():
             return xr.load_dataset(file)
+        self._SHOW = False
         ds = self.compute().assign_attrs(
             dict(description="Global stratospheric mean OH concentration.")
         )
@@ -225,12 +231,15 @@ class OHPlot:
         plt.xlabel("Time after first eruption [yr]")
         plt.ylabel("OH concentration")
         plt.savefig(SAVE_PATH / "oh")
-        plt.show()
+        if self._SHOW:
+            plt.show()
+        plt.close("all")
 
 
 class SO2BurdenPlot:
     """Plot the SO2 column burden."""
 
+    _SHOW = True
     FINDER = (
         FindFiles()
         .find("TMSO2", "e_fSST1850", "h0")
@@ -276,21 +285,21 @@ class SO2BurdenPlot:
         attrs = {"plot_ls": "-", "plot_c": COLOR[0]}
         oh_c_xr = e2m(self.oh_c.load()).assign_attrs(**attrs).rename("CONTROL")
         attrs = {"plot_c": COLOR[1], "plot_ls": "-"}
-        oh_m_xr = e2m(self.oh_m.load()).assign_attrs(**attrs).rename("SMALL")
+        oh_m_xr = e2m(self.oh_m.load()).assign_attrs(**attrs).rename("S26")
         attrs = {"plot_c": COLOR[2], "plot_ls": "-"}
-        oh_p_xr = e2m(self.oh_p.load()).assign_attrs(**attrs).rename("MEDIUM")
+        oh_p_xr = e2m(self.oh_p.load()).assign_attrs(**attrs).rename("S400")
         attrs = {"plot_c": COLOR[3], "plot_ls": "-"}
-        oh_s_xr = e2m(self.oh_s.load()).assign_attrs(**attrs).rename("STRONG")
+        oh_s_xr = e2m(self.oh_s.load()).assign_attrs(**attrs).rename("S1629")
         attrs = {"plot_c": COLOR[4], "plot_ls": "-"}
-        oh_e_xr = e2m(self.oh_e.load()).assign_attrs(**attrs).rename("EXTREME")
+        oh_e_xr = e2m(self.oh_e.load()).assign_attrs(**attrs).rename("S3000")
         attrs = {"plot_c": COLOR[1], "plot_ls": ":"}
-        oh_m2_xr = e2m(self.oh_m2.load()).assign_attrs(**attrs).rename("_SMALL, 2sep")
+        oh_m2_xr = e2m(self.oh_m2.load()).assign_attrs(**attrs).rename("_S26, 2sep")
         attrs = {"plot_c": COLOR[1], "plot_ls": "--"}
-        oh_m4_xr = e2m(self.oh_m4.load()).assign_attrs(**attrs).rename("_SMALL, 4sep")
+        oh_m4_xr = e2m(self.oh_m4.load()).assign_attrs(**attrs).rename("_S26, 4sep")
         attrs = {"plot_c": COLOR[2], "plot_ls": ":"}
-        oh_p2_xr = e2m(self.oh_p2.load()).assign_attrs(**attrs).rename("_MEDIUM, 2sep")
+        oh_p2_xr = e2m(self.oh_p2.load()).assign_attrs(**attrs).rename("_S400, 2sep")
         attrs = {"plot_c": COLOR[2], "plot_ls": "--"}
-        oh_p4_xr = e2m(self.oh_p4.load()).assign_attrs(**attrs).rename("_MEDIUM, 4sep")
+        oh_p4_xr = e2m(self.oh_p4.load()).assign_attrs(**attrs).rename("_S400, 4sep")
         return xr.merge(
             [
                 oh_c_xr,
@@ -310,6 +319,7 @@ class SO2BurdenPlot:
         file = SAVE_PATH / "so2-burden.nc"
         if file.exists():
             return xr.load_dataset(file)
+        self._SHOW = False
         ds = self.compute().assign_attrs(dict(description="Global mean SO2 burden."))
         ds.to_netcdf(file)
         return ds
@@ -324,7 +334,9 @@ class SO2BurdenPlot:
         plt.legend()
         plt.xlabel("Time after first eruption [yr]")
         plt.savefig(SAVE_PATH / "so2-burden")
-        plt.show()
+        if self._SHOW:
+            plt.show()
+        plt.close("all")
 
 
 ReffPlot().plot()
