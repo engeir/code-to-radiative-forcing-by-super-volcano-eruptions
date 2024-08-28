@@ -1,15 +1,17 @@
-"""Script that generates plots for figure 3."""
+"""Script that generates plots for figure 2."""
 
-import pathlib
-import tempfile
+import os
+from typing import overload
 
-import cosmoplots
 import labellines
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import plastik
 
 import paper1_code as core
+
+convert_aod = core.utils.time_series.convert_aod
 
 
 class SetupNeededData:
@@ -63,19 +65,28 @@ class DoPlotting:
         lablab(l3, ll3, outline_width=3, label=f"${hadcm3}$", size=6)
         lablab(l4, ll4, outline_width=3, label=f"${hadgem2_amip}$", size=6)
 
-    def plot_aod_vs_rf_avg(self) -> tuple[mpl.figure.Figure, mpl.figure.Figure]:
+    @overload
+    def plot_aod_vs_rf_avg(
+        self, ax1: mpl.axes.Axes, ax2: mpl.axes.Axes
+    ) -> tuple[mpl.axes.Axes, mpl.axes.Axes]: ...
+    @overload
+    def plot_aod_vs_rf_avg(self) -> tuple[mpl.figure.Figure, mpl.figure.Figure]: ...
+    def plot_aod_vs_rf_avg(
+        self, ax1: mpl.axes.Axes | None = None, ax2: mpl.axes.Axes | None = None
+    ) -> (
+        tuple[mpl.figure.Figure, mpl.figure.Figure]
+        | tuple[mpl.axes.Axes, mpl.axes.Axes]
+    ):
         """Plot yearly mean RF against AOD."""
-        fig3_a = plt.figure()
-        ax1 = fig3_a.gca()
-        fig3_b = plt.figure()
-        ax2 = fig3_b.gca()
-        for size, ax_ in zip(["large", "small"], [ax1, ax2], strict=True):
+        ax1_ = (fig3_a := plt.figure()).gca() if ax1 is None else ax1
+        ax2_ = (fig3_b := plt.figure()).gca() if ax2 is None else ax2
+        for size, ax_ in zip(["large", "small"], [ax1_, ax2_], strict=True):
             self.plot_gregory_paper_gradient_lines(self.data.x_g16, ax_, size)
             plot = ax_.scatter
             plot(
-                self.data.aod_c2w_peak,
+                convert_aod(np.array(self.data.aod_c2w_peak)),
                 np.array(self.data.rf_c2w_peak) * (-1),
-                label="C2W Peaks*",
+                label="STrop Peaks*",
                 c="none",
                 ec="red",
                 lw=1.5,
@@ -92,84 +103,120 @@ class DoPlotting:
                 for x in core.config.LEGENDS["VT"]
                 if x not in "label"
             }
-            plot(self.data.aod_t, -self.data.rf_t, label="T Peak*", **legend)
             plot(
-                self.data.aod_c2w[2], self.data.rf_c2w[2], **core.config.LEGENDS["c2ws"]
+                convert_aod(self.data.aod_t), -self.data.rf_t, label="T Peak*", **legend
             )
             plot(
-                self.data.aod_c2w[1],
+                convert_aod(self.data.aod_c2w[2]),
+                self.data.rf_c2w[2],
+                **core.config.LEGENDS["c2ws"],
+            )
+            plot(
+                convert_aod(self.data.aod_c2w[1]),
                 self.data.rf_c2w[1],
                 **core.config.LEGENDS["c2wmp"],
             )
             plot(
-                self.data.aod_c2w[0], self.data.rf_c2w[0], **core.config.LEGENDS["c2wm"]
+                convert_aod(self.data.aod_c2w[0]),
+                self.data.rf_c2w[0],
+                **core.config.LEGENDS["c2wm"],
             )
-            if size == "large":
-                legend = {
-                    x: core.config.LEGENDS["P100"][x]
-                    for x in core.config.LEGENDS["P100"]
-                    if x not in "label"
-                }
-                plot(self.data.aod_j05, -self.data.rf_j05, label="P100 Peak*", **legend)
+            legend = {
+                x: core.config.LEGENDS["P100"][x]
+                for x in core.config.LEGENDS["P100"]
+                if x not in "label"
+            }
+            plot(
+                convert_aod(self.data.aod_j05),
+                -self.data.rf_j05,
+                label="J05 Peak*",
+                **legend,
+            )
+            plot([], [], label=" ", c="none")
             legend = {
                 x: core.config.LEGENDS["P"][x]
                 for x in core.config.LEGENDS["P"]
                 if x not in "label"
             }
-            if size == "small":
-                plot([], [], label=" ", c="none")
-            plot(self.data.aod_p, -self.data.rf_p, label="P Peak*", **legend)
             plot(
-                self.data.aod_c2w[4],
+                convert_aod(self.data.aod_p), -self.data.rf_p, label="P Peak*", **legend
+            )
+            plot(
+                convert_aod(self.data.aod_c2w[4]),
                 self.data.rf_c2w[4],
                 **core.config.LEGENDS["c2wss"],
             )
             plot(
-                self.data.aod_c2w[3], self.data.rf_c2w[3], **core.config.LEGENDS["c2wn"]
+                convert_aod(self.data.aod_c2w[3]),
+                self.data.rf_c2w[3],
+                **core.config.LEGENDS["c2wn"],
             )
-            plot(self.data.aod_g16, self.data.rf_g16, **core.config.LEGENDS["greg"])
-            xlim = (-0.75, 18.75) if size == "large" else (0, 0.15 * 8 / 3)
-            ylim = (-85, 5) if size == "large" else (-3 * 8 / 3, 1 * 8 / 3)
+            plot(
+                convert_aod(self.data.aod_g16),
+                self.data.rf_g16,
+                **core.config.LEGENDS["greg"],
+            )
+            if os.environ["AOD"] == "exp":
+                xlim = (-0.1, 1.1) if size == "large" else (0, 0.15 * 8 / 3)
+                ylim = (-70, 5) if size == "large" else (-3 * 8 / 3, 1 * 8 / 3)
+            else:
+                xlim = (-0.75, 18.75) if size == "large" else (0, 0.15 * 8 / 3)
+                ylim = (-85, 5) if size == "large" else (-3 * 8 / 3, 1 * 8 / 3)
             ax_.set_xlim(xlim)
             ax_.set_ylim(ylim)
-            ax_.set_xlabel("Aerosol optical depth [1]")
-            ax_.set_ylabel("Radiative forcing $[\\mathrm{W/m^2}]$")
-            kwargs = {
-                "ncol": 2,
-                "loc": "upper right",
-                "framealpha": 0.3,
-                "edgecolor": "gray",
-                "fontsize": core.config.FONTSIZE,
-                "labelspacing": 0.3,
-                "handletextpad": 0.2,
-                "columnspacing": 0.3,
-            }
-            ax_.legend(**kwargs)
-        return fig3_a, fig3_b
+            ax_.set_xlabel("AOD [1]")
+            ax_.set_ylabel("ERF $[\\mathrm{W/m^2}]$")
+        return (fig3_a, fig3_b) if ax1 is None or ax2 is None else (ax1_, ax2_)
 
 
 def main(show_output: bool = False):
     """Run the main program."""
-    TMP = tempfile.TemporaryDirectory()
-    tmp_dir = pathlib.Path(TMP.name)
     save = True
+    plastik.FigureGrid().using()
+    fig, axs = plastik.figure_grid(rows=2, columns=1, using={"expand_top": 1.15})
     plotter = DoPlotting(show_output)
-    large, small = plotter.plot_aod_vs_rf_avg()
+    large, small = plotter.plot_aod_vs_rf_avg(axs[0], axs[1])
+    unique_labels: dict[str, mpl.lines.Line2D] = {}
+    for ax in fig.axes:
+        line, label = ax.get_legend_handles_labels()
+        for i, lab in enumerate(label):
+            if lab not in unique_labels:
+                unique_labels[lab] = line[i]
+    # Reorder
+    order = [
+        "STrop Peaks*",
+        "J05 Peak*",
+        "T Peak*",
+        "P Peak*",
+        "S3000",
+        "S1629",
+        "S400",
+        "S26",
+        "S1629N",
+        "G16",
+        " ",
+    ]
+    for o in order:
+        if o in unique_labels:
+            tmp = unique_labels.pop(o)
+            unique_labels[o] = tmp
+    fig.legend(
+        handles=list(unique_labels.values()),
+        labels=list(unique_labels.keys()),
+        ncols=3,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 1.015),
+        frameon=False,
+    )
     if save:
         SAVE_PATH = core.utils.if_save.create_savedir()
-        large.savefig(tmp_dir / "aod_vs_rf_avg_full.png")
-        small.savefig(tmp_dir / "aod_vs_rf_avg_inset.png")
-        cosmoplots.combine(
-            tmp_dir / "aod_vs_rf_avg_full.png",
-            tmp_dir / "aod_vs_rf_avg_inset.png",
-        ).using(fontsize=8).in_grid(1, 2).save(SAVE_PATH / "figure2.png")
-        if (fig2 := (SAVE_PATH / "figure2.png")).exists():
+        fig.savefig(SAVE_PATH / "figure2")
+        if (fig2 := (SAVE_PATH / "figure2.pdf")).exists():
             print(f"Successfully saved figure 2 to {fig2.resolve()}")
     if show_output:
         plt.show()
     else:
         plt.close("all")
-    TMP.cleanup()
 
 
 if __name__ == "__main__":
