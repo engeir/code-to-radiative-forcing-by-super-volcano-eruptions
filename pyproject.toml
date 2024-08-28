@@ -5,8 +5,9 @@ description = "Code to download and analyse data for a paper"
 authors = [{ name = "engeir", email = "engeir@pm.me" }]
 license = { file = "MIT" }
 readme = "README.md"
+requires-python = ">=3.12"
 dependencies = [
-  "numpy>=2.0.1",
+  "numpy>=1.26.4",
   "matplotlib>=3.9.2",
   "scipy>=1.14.0",
   "cftime>=1.6.4",
@@ -20,11 +21,15 @@ dependencies = [
   "types-requests>=2.32.0.20240712",
   "gitpython>=3.1.43",
   "plastik>=0.6.2",
-  "volcano-base>=2.2.1",
+  "volcano-base>=2.3.2",
   "xarray==2024.2.0",
   "dask>=2024.8.0",
   "netcdf4>=1.7.1.post2",
+  "pyqt6>=6.7.1",
 ]
+
+# [tool.uv.sources]
+# volcano-base = { path = "../volcano-base" }
 
 [project.scripts]
 generate-figs = "paper1_code.scripts.gen_figs:main"
@@ -33,8 +38,7 @@ generate-fig2 = "paper1_code.scripts.gen_fig2:main"
 generate-fig3 = "paper1_code.scripts.gen_fig3:main"
 generate-fig4 = "paper1_code.scripts.gen_fig4:main"
 
-[tool.rye]
-universal = true
+[tool.uv]
 dev-dependencies = [
   "pyupgrade>=3.17.0",
   "pytest>=8.3.2",
@@ -47,6 +51,7 @@ dev-dependencies = [
   "jsonschema>=4.23.0",
   "pydoclint>=0.5.6",
 ]
+
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = ["setuptools"]

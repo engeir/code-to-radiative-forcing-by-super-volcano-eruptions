@@ -15,29 +15,29 @@ git clone https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-e
 cd code-to-radiative-forcing-by-super-volcano-eruptions || exit
 ```
 
-[Rye](rye.astral.sh) is used to install the dependencies, with installation instructions
-provided [here](https://rye.astral.sh/guide/installation/).
+[uv](https://docs.astral.sh/uv/) is used to install the dependencies, with installation
+instructions provided [here](https://docs.astral.sh/uv/getting-started/installation/).
 
-Provided Rye is available, the project can be installed with:
+Provided uv is available, the project can be installed with:
 
 ```bash
-rye sync
+uv sync
 ```
 
 ## Usage
 
 Every figure has its own executable. Figures are created by running: (see
-`grep "generate" <(rye run)` for a list of available commands)
+`grep "generate" <(uv run)` for a list of available commands)
 
 ```bash
-rye run generate-fig1
-rye run generate-fig2
-rye run generate-fig3
-rye run generate-fig4
+uv run generate-fig1
+uv run generate-fig2
+uv run generate-fig3
+uv run generate-fig4
 ```
 
 or:
 
 ```bash
-rye run generate-figs
+uv run generate-figs
 ```

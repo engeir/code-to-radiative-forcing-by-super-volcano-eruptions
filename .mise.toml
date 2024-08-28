@@ -1,16 +1,40 @@
-[tasks."install-poetry"]
-description = "Install poetry"
-run = "curl -sSL https://install.python-poetry.org | python3 -"
+[tasks."install-uv:unix"]
+description = "Install uv"
+run = "curl -LsSf https://astral.sh/uv/install.sh | sh"
+
+[tasks."install-uv:windows"]
+description = "Install uv on windows"
+run = 'powershell -c "irm https://astral.sh/uv/install.ps1 | iex"'
 
 [tasks.install]
 description = "Install dependencies"
-run = "poetry install"
+run = "uv sync"
 alias = "i"
 
-[tasks.run]
-description = "Run all scripts to generate figures"
-run = "poetry run generate-figs"
-alias = "r"
+[tasks."plot:fig1"]
+description = "Create figure 1"
+run = "uv run generate-fig1"
+sources = ["./src/paper1_code/scripts/gen_fig1.py"]
+outputs = ["./generated_files/figure1.pdf"]
+
+[tasks."plot:fig2"]
+description = "Create figure 2"
+run = "uv run generate-fig2"
+sources = ["./src/paper1_code/scripts/gen_fig2.py"]
+outputs = ["./generated_files/figure2.pdf"]
+
+[tasks."plot:fig3"]
+description = "Create figure 3"
+run = "uv run generate-fig3"
+sources = ["./src/paper1_code/scripts/gen_fig3.py"]
+outputs = ["./generated_files/figure3.pdf"]
+
+[tasks."plot:fig4"]
+description = "Create figure 4"
+run = "uv run generate-fig4"
+sources = ["./src/paper1_code/scripts/gen_fig4.py"]
+outputs = ["./generated_files/figure4.pdf"]
 
 [env]
 MISE_ENV = "development"
+AOD = "linear"           # Set to "exp" to compute AOD as 1-exp(-AOD)
