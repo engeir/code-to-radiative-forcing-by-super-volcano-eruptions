@@ -1,6 +1,5 @@
 """Script that generates plots for all figures."""
 
-
 from paper1_code.scripts import gen_fig1, gen_fig2, gen_fig3, gen_fig4
 
 
