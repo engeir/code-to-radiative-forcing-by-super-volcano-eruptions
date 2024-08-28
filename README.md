@@ -26,8 +26,7 @@ uv sync
 
 ## Usage
 
-Every figure has its own executable. Figures are created by running: (see
-`grep "generate" <(uv run)` for a list of available commands)
+Every figure has its own executable. Figures are created by running:
 
 ```bash
 uv run generate-fig1
