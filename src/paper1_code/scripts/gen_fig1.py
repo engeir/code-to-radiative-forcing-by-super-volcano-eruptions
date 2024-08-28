@@ -1,12 +1,10 @@
 """Script that generates plots for figure 1."""
 
-import pathlib
-import tempfile
-from typing import Literal
+from typing import Literal, overload
 
-import cosmoplots
 import matplotlib as mpl
 import numpy as np
+import plastik
 import scipy
 from matplotlib import patches as mpatches
 from matplotlib import pyplot as plt
@@ -63,42 +61,46 @@ class DoPlotting:
         self.s_c = core.config.LEGENDS["c2ws"]["c"]
         self.ss_c = core.config.LEGENDS["c2wss"]["c"]
 
-    def _plot(  # noqa: PLR0913, PLR0915
+    @overload
+    def _plot(
         self,
-        medium: tuple[float, np.ndarray],
-        plus: tuple[float, np.ndarray],
-        strong: tuple[float, np.ndarray],
-        superstrong: tuple[float, np.ndarray],
+        simulations: list[tuple[float, np.ndarray]],
+        style: Literal["plot", "semilogy", "loglog"],
+        ax: mpl.axes.Axes,
+    ) -> mpl.axes.Axes: ...
+    @overload
+    def _plot(
+        self,
+        simulations: list[tuple[float, np.ndarray]],
+        style: Literal["plot", "semilogy", "loglog"],
+    ) -> mpl.figure.Figure: ...
+    @overload
+    def _plot(
+        self,
+        simulations: list[tuple[float, np.ndarray]],
+    ) -> mpl.figure.Figure: ...
+    def _plot(
+        self,
+        simulations: list[tuple[float, np.ndarray]],
         style: Literal["plot", "semilogy", "loglog"] = "plot",
-    ) -> mpl.figure.Figure:
+        ax: mpl.axes.Axes | None = None,
+    ) -> mpl.figure.Figure | mpl.axes.Axes:
         # Percentiles
         low = np.linspace(MIN_PERCENTILE, 50, num=1, endpoint=False)
         high = np.linspace(50, MAX_PERCENTILE, num=1 + 1)[1:]
-        ax = plt.figure().gca()
-        getattr(ax, style)()
-        ax.set_xlabel(r"Time after eruption $[\mathrm{yr}]$")
-        if self.version == "temp":
-            ax.set_ylabel("Normalised \ntemperature anomaly $[1]$")
-            ax.set_ylim((-0.6, 1.7))
-            ax1 = ax.inset_axes((0.2, 0.6, 0.33, 0.37))
-            ax1.set_ylim((-0.5, 1.5))
-        elif self.version == "rf":
-            ax.set_ylabel("Normalised \nradiative forcing anomaly $[1]$")
-            ax.set_ylim((-0.5, 1.5))
-            ax1 = ax.inset_axes((0.2, 0.5, 0.33, 0.47))
-            ax1.set_ylim((-0.5, 1.5))
-        elif self.version == "aod":
-            ax.set_ylabel("Normalised \naerosol optical depth anomaly $[1]$")
-            ax1 = ax.inset_axes((0.2, 0.3, 0.33, 0.67))
+        ax_ = plt.figure().gca() if ax is None else ax
+        getattr(ax_, style)()
+        ax_.set_xlabel(r"Time after eruption $[\mathrm{yr}]$")
+        ax_, ax1 = self._plot_create_axis_labels(ax_)
         getattr(ax1, style)()
         if style != "plot":
-            ax.set_ylim((1e-3, 3))
+            ax_.set_ylim((1e-3, 3))
         if style == "loglog":
             # Find peak, set time = 0
-            idm = int(np.argmax(medium[1]))
-            idp = int(np.argmax(plus[1]))
-            ids = int(np.argmax(strong[1]))
-            idss = int(np.argmax(superstrong[1]))
+            idm = int(np.argmax(simulations[0][1]))
+            idp = int(np.argmax(simulations[1][1]))
+            ids = int(np.argmax(simulations[2][1]))
+            idss = int(np.argmax(simulations[3][1]))
         else:
             idm = 0
             idp = 0
@@ -123,38 +125,40 @@ class DoPlotting:
             raise ValueError("Time arrays are not equal.")
         x_ = self.data.medium[0].time.data[idm:]
         x_ -= x_[0]
-        medium_scaled = medium[1][idm:]
-        plus_scaled = plus[1][idp:]
-        strong_scaled = strong[1][ids:]
-        superstrong_scaled = superstrong[1][idss:]
+        medium_scaled = simulations[0][1][idm:]
+        plus_scaled = simulations[1][1][idp:]
+        strong_scaled = simulations[2][1][ids:]
+        superstrong_scaled = simulations[3][1][idss:]
         a = 0.7
         for p1, p2 in zip(
-            np.percentile(self.data.medium, low, axis=0) / medium[0],
-            np.percentile(self.data.medium, high, axis=0) / medium[0],
+            np.percentile(self.data.medium, low, axis=0) / simulations[0][0],
+            np.percentile(self.data.medium, high, axis=0) / simulations[0][0],
             strict=True,
         ):
-            ax.fill_between(x_, p1[idm:], p2[idm:], alpha=a, color=self.m_c, ec=None)
+            ax_.fill_between(x_, p1[idm:], p2[idm:], alpha=a, color=self.m_c, ec=None)
             ax1.fill_between(x_, p1[idm:], p2[idm:], alpha=a, color=self.m_c, ec=None)
         for p1, p2 in zip(
-            np.percentile(self.data.plus, low, axis=0) / plus[0],
-            np.percentile(self.data.plus, high, axis=0) / plus[0],
+            np.percentile(self.data.plus, low, axis=0) / simulations[1][0],
+            np.percentile(self.data.plus, high, axis=0) / simulations[1][0],
             strict=True,
         ):
-            ax.fill_between(x_, p1[idp:], p2[idp:], alpha=a, color=self.mp_c, ec=None)
+            ax_.fill_between(x_, p1[idp:], p2[idp:], alpha=a, color=self.mp_c, ec=None)
             ax1.fill_between(x_, p1[idp:], p2[idp:], alpha=a, color=self.mp_c, ec=None)
         for p1, p2 in zip(
-            np.percentile(self.data.strong, low, axis=0) / strong[0],
-            np.percentile(self.data.strong, high, axis=0) / strong[0],
+            np.percentile(self.data.strong, low, axis=0) / simulations[2][0],
+            np.percentile(self.data.strong, high, axis=0) / simulations[2][0],
             strict=True,
         ):
-            ax.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
+            ax_.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
             ax1.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
         for p1, p2 in zip(
-            np.percentile(self.data.superstrong, low, axis=0) / superstrong[0],
-            np.percentile(self.data.superstrong, high, axis=0) / superstrong[0],
+            np.percentile(self.data.superstrong, low, axis=0) / simulations[3][0],
+            np.percentile(self.data.superstrong, high, axis=0) / simulations[3][0],
             strict=True,
         ):
-            ax.fill_between(x_, p1[idss:], p2[idss:], alpha=a, color=self.ss_c, ec=None)
+            ax_.fill_between(
+                x_, p1[idss:], p2[idss:], alpha=a, color=self.ss_c, ec=None
+            )
             ax1.fill_between(
                 x_, p1[idss:], p2[idss:], alpha=a, color=self.ss_c, ec=None
             )
@@ -164,30 +168,36 @@ class DoPlotting:
         ax1.xaxis.set_minor_locator(ticker.MultipleLocator(0.25))
 
         # Combine shading and line labels
-        plt.legend(
+        ax_.legend(
             [
                 (
                     mpatches.Patch(facecolor=self.ss_c, alpha=1.0, linewidth=0),
-                    ax.plot(x_, superstrong_scaled, "--", c="k")[0],
+                    ax_.plot(x_, superstrong_scaled, "--", c="k")[0],
                 ),
                 (
                     mpatches.Patch(facecolor=self.s_c, alpha=1.0, linewidth=0),
-                    ax.plot(x_, strong_scaled, "--", c="k")[0],
+                    ax_.plot(x_, strong_scaled, "--", c="k")[0],
                 ),
                 (
                     mpatches.Patch(facecolor=self.mp_c, alpha=1.0, linewidth=0),
-                    ax.plot(x_, plus_scaled, ":", c="k")[0],
+                    ax_.plot(x_, plus_scaled, ":", c="k")[0],
                 ),
                 (
                     mpatches.Patch(facecolor=self.m_c, alpha=1.0, linewidth=0),
-                    ax.plot(x_, medium_scaled, c="k")[0],
+                    ax_.plot(x_, medium_scaled, c="k")[0],
                 ),
             ],
             [
-                r"C2W$\uparrow\uparrow$, $C" + f" = {superstrong[0]:.2f}" + r"$",
-                r"C2W$\uparrow$, $C" + f" = {strong[0]:.2f}" + r"$",
-                f"C2W$-$, $C = {plus[0]:.2f}$",
-                r"C2W$\downarrow$, $C" + f" = {medium[0]:.2f}" + r"$",
+                f"{core.config.LEGENDS['c2wss']['label']}, $C"
+                + f" = {simulations[3][0]:.2f}"
+                + r"$",
+                f"{core.config.LEGENDS['c2ws']['label']}, $C"
+                + f" = {simulations[2][0]:.2f}"
+                + r"$",
+                f"{core.config.LEGENDS['c2wmp']['label']}, $C = {simulations[1][0]:.2f}$",
+                f"{core.config.LEGENDS['c2wm']['label']}, $C"
+                + f" = {simulations[0][0]:.2f}"
+                + r"$",
             ],
             loc="upper right",
             handler_map={
@@ -203,11 +213,39 @@ class DoPlotting:
         ax1.plot(x_, plus_scaled, ":", c="k")
         ax1.plot(x_, strong_scaled, "--", c="k")
         ax1.plot(x_, superstrong_scaled, "--", c="k")
-        return plt.gcf()
+        return plt.gcf() if ax is None else ax_
 
+    def _plot_create_axis_labels(
+        self, ax_: mpl.axes.Axes
+    ) -> tuple[mpl.axes.Axes, mpl.axes.Axes]:
+        if self.version == "temp":
+            ax_.set_ylabel("Normalised \nGMST anomaly $[1]$")
+            ax_.set_ylim((-0.6, 1.7))
+            ax1 = ax_.inset_axes((0.2, 0.6, 0.33, 0.37))
+            ax1.set_ylim((-0.5, 1.5))
+        elif self.version == "rf":
+            ax_.set_ylabel("Normalised \nERF anomaly $[1]$")
+            ax_.set_ylim((-0.5, 1.5))
+            ax1 = ax_.inset_axes((0.2, 0.5, 0.33, 0.47))
+            ax1.set_ylim((-0.5, 1.5))
+        elif self.version == "aod":
+            ax_.set_ylabel("Normalised \nAOD anomaly $[1]$")
+            ax1 = ax_.inset_axes((0.2, 0.3, 0.33, 0.67))
+        return ax_, ax1
+
+    @overload
     def waveform_max(
-        self, style: Literal["plot", "semilogy", "loglog"] = "plot"
-    ) -> mpl.figure.Figure:
+        self, style: Literal["plot", "semilogy", "loglog"], ax: mpl.axes.Axes
+    ) -> mpl.axes.Axes: ...
+    @overload
+    def waveform_max(
+        self, style: Literal["plot", "semilogy", "loglog"]
+    ) -> mpl.figure.Figure: ...
+    def waveform_max(
+        self,
+        style: Literal["plot", "semilogy", "loglog"],
+        ax: mpl.axes.Axes | None = None,
+    ) -> mpl.figure.Figure | mpl.axes.Axes:
         """Compare shape of TREFHT variable from medium and strong eruption simulations.
 
         The seasonal effects are removed by finding the median across four realisations.
@@ -218,12 +256,17 @@ class DoPlotting:
         ----------
         style : Literal["plot", "semilogy", "loglog"]
             The axis style of the plot
+        ax : mpl.axes.Axes | None
+            The axes that should be used for the plotting, otherwise a new figure is
+            created.
 
         Returns
         -------
-        mpl.figure.Figure
-            The figure object that is created by the function
+        mpl.figure.Figure | mpl.axes.Axes
+            The figure object that is created by the function, or the updated axes.
         """
+        if self.version == "aod":
+            self._convert_aod()
         # Find median values
         medium_med = np.median(self.data.medium, axis=0)
         plus_med = np.median(self.data.plus, axis=0)
@@ -244,42 +287,54 @@ class DoPlotting:
         strong_scaled = strong_med / strong_const
         superstrong_scaled = superstrong_med / superstrong_const
         return self._plot(
-            (medium_const, medium_scaled),
-            (plus_const, plus_scaled),
-            (strong_const, strong_scaled),
-            (superstrong_const, superstrong_scaled),
-            style=style,
+            [
+                (medium_const, medium_scaled),
+                (plus_const, plus_scaled),
+                (strong_const, strong_scaled),
+                (superstrong_const, superstrong_scaled),
+            ],
+            style,
+            ax=ax,  # type: ignore[arg-type]
         )
+
+    def _convert_aod(self):
+        _medium = self.data.medium[:]
+        for i, _m in enumerate(_medium):
+            _medium[i].data = core.utils.time_series.convert_aod(_m.data)
+        self.data.medium = _medium
+        _plus = self.data.plus[:]
+        for i, _p in enumerate(_plus):
+            _plus[i].data = core.utils.time_series.convert_aod(_p.data)
+        _strong = self.data.strong[:]
+        self.data.plus = _plus
+        for i, _s in enumerate(_strong):
+            _strong[i].data = core.utils.time_series.convert_aod(_s.data)
+        self.data.strong = _strong
+        _superstrong = self.data.superstrong[:]
+        for i, _ss in enumerate(_superstrong):
+            _superstrong[i].data = core.utils.time_series.convert_aod(_ss.data)
+        self.data.superstrong = _superstrong
 
 
 def main(show_output: bool = False):
     """Run the main program."""
-    TMP = tempfile.TemporaryDirectory()
-    tmp_dir = pathlib.Path(TMP.name)
     save = True
+    fig, axs = plastik.figure_grid(rows=3, columns=1, using={"share_axes": "x"})
     plotter_temp = DoPlotting(show_output, "temp")
-    wmax_temp = plotter_temp.waveform_max()
+    plotter_temp.waveform_max(style="plot", ax=axs[2])
     plotter_aod = DoPlotting(show_output, "aod")
-    wmax_aod = plotter_aod.waveform_max()
+    plotter_aod.waveform_max(style="plot", ax=axs[0])
     plotter_rf = DoPlotting(show_output, "rf")
-    wmax_rf = plotter_rf.waveform_max()
+    plotter_rf.waveform_max(style="plot", ax=axs[1])
     if save:
         SAVE_PATH = core.utils.if_save.create_savedir()
-        wmax_aod.savefig(tmp_dir / "compare-waveform-max-aod")
-        wmax_rf.savefig(tmp_dir / "compare-waveform-max-rf")
-        wmax_temp.savefig(tmp_dir / "compare-waveform-max-temp")
-        cosmoplots.combine(
-            tmp_dir / "compare-waveform-max-aod.png",
-            tmp_dir / "compare-waveform-max-rf.png",
-            tmp_dir / "compare-waveform-max-temp.png",
-        ).using(fontsize=8).in_grid(1, 3).save(SAVE_PATH / "figure1.png")
-        if (fig1 := (SAVE_PATH / "figure1.png")).exists():
+        fig.savefig(SAVE_PATH / "figure1")
+        if (fig1 := (SAVE_PATH / "figure1.pdf")).exists():
             print(f"Successfully saved figure 1 to {fig1.resolve()}")
     if show_output:
         plt.show()
     else:
         plt.close("all")
-    TMP.cleanup()
 
 
 if __name__ == "__main__":
