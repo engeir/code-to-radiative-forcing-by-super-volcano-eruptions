@@ -256,7 +256,8 @@ def _get_so2_ob16_full_timeseries() -> tuple[np.ndarray, np.ndarray]:
     # Scale so that the unit is now in Tg (Otto-Bliesner et al. (2016)). (Tg of what?
     # Volcanic sulfate aerosol (H2SO4), which has atomic mass of 4+32+16*4 = 100,
     # whereas SO2 has atomic mass of 32+16*2 = 64. So we divide by 100/64 = 1.5625.)
-    avgs = avgs / avgs.max() * 257.9 / 50 * 32
+    # avgs = avgs / avgs.max() * 257.9 / 50 * 32
+    avgs *= 510e3  # kg/m^2 -> Tg / Earth surface
     return year, avgs
 
 

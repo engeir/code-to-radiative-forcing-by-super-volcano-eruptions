@@ -199,20 +199,24 @@ COLOR_DICTS: dict[Literal["accent", "category10", "dark2", "set1"], list] = {
 _C = COLOR_DICTS["category10"]
 _P = POINTS_DICTS
 _DATA_TYPES = Literal[
-    "P", "P100", "VT", "c2w", "c2wm", "c2wmp", "ob16",
-    "c2ws", "c2wss", "c2wn", "greg", "t10", "m20", "m20*"
+    "P", "P100", "VT", "c2w", "c2wm", "c2wmp", "ob16", "mcg24", "osi20",
+    "c2ws", "c2wss", "c2wn", "greg", "b20", "e13", "t10", "m20", "m20*"
 ]
 LEGENDS: dict[_DATA_TYPES, dict] = {
     "P": {"c": "#000000", "marker": _P["star"], "s": 35, "zorder": 5, "label": "P"},
     "P100": {"c": _C[6], "marker": _P["square"], "s": 15, "zorder": 5, "label": "J05"},
     "VT": {"c": "#000000", "marker": _P["plus"], "s": 35, "lw":1.5 ,"zorder": 5, "label": "T"},
-    "c2w": {"c": _C[0], "marker": _P["diamond"], "ms": 3, "zorder": 4, "label": "C2WTrop"},
-    "c2wm": {"c": _C[0], "marker": _P["triangle_down"], "s": 9, "zorder": 3, "label": r"C2W$\downarrow$"},
-    "c2wmp": {"c": _C[1], "marker": _P["diamond"], "s": 9, "zorder": 3, "label": r"C2W$-$"},
-    "c2ws": {"c": _C[2], "marker": _P["triangle_up"], "s": 9, "zorder": 3, "label": r"C2W$\uparrow$"},
-    "c2wss": {"c": _C[6], "marker": _P["caretup"], "s": 9, "zorder": 3, "label": r"C2W$\uparrow\uparrow$"},
-    "c2wn": {"c": _C[5], "marker": _P["tri_up"], "s": 35, "zorder": 4, "label": r"C2WN$\uparrow$"},
+    "c2w": {"c": _C[0], "marker": _P["diamond"], "ms": 3, "zorder": 4, "label": "STrop"},
+    "c2wm": {"c": _C[0], "marker": _P["triangle_down"], "s": 9, "zorder": 3, "label": "S26"},
+    "c2wmp": {"c": _C[1], "marker": _P["diamond"], "s": 9, "zorder": 3, "label": "S400"},
+    "c2ws": {"c": _C[2], "marker": _P["triangle_up"], "s": 9, "zorder": 3, "label": "S1629"},
+    "c2wss": {"c": _C[6], "marker": _P["caretup"], "s": 9, "zorder": 3, "label": "S3000"},
+    "c2wn": {"c": _C[5], "marker": _P["tri_up"], "s": 35, "zorder": 4, "label": "S1629N"},
     "greg": {"c": _C[7], "marker": _P["x"], "s": 9, "zorder": -1, "label": "G16"},
+    "mcg24": {"c": _C[1], "marker": _P["tri_up"], "ms": 7, "zorder": 5, "label": "McG24"},
+    "osi20": {"c": _C[4], "marker": _P["diamond"], "ms": 3, "zorder": 5, "label": "Os20"},
+    "b20": {"c": _C[2], "marker": _P["triangle_up"], "ms": 3, "zorder": 5, "label": "B20"},
+    "e13": {"c": _C[5], "marker": _P["thin_diamond"], "ms": 3, "zorder": 5, "label": "E13"},
     "t10": {"c": _C[6], "marker": _P["circle"], "s": 15, "zorder": 5, "label": "T10"},
     "m20": {"c": _C[3], "marker": _P["thin_diamond"], "s": 9, "zorder": 6, "label": "M20"},
     "m20*": {"c": _C[3], "marker": _P["thin_diamond"], "s": 15, "zorder": 2, "label": "M20"},

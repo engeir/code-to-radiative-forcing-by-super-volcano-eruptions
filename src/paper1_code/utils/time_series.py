@@ -1,5 +1,6 @@
 """Functions that modify (lists of) xarray DataArrays."""
 
+import os
 from collections import Counter
 from typing import Literal, overload
 
@@ -8,6 +9,29 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import xarray as xr
+
+
+@overload
+def convert_aod(aod: xr.DataArray) -> xr.DataArray: ...
+
+
+@overload
+def convert_aod(aod: np.ndarray) -> np.ndarray: ...
+
+
+@overload
+def convert_aod(aod: float) -> float: ...
+
+
+@overload
+def convert_aod(aod: tuple[float, ...]) -> tuple[float, ...]: ...
+
+
+def convert_aod(
+    aod: xr.DataArray | np.ndarray | float | tuple[float, ...],
+) -> xr.DataArray | np.ndarray | float | tuple[float, ...]:
+    r"""Convert AOD to :math:`1-\exp(-\text{AOD})`."""
+    return 1 - np.exp(-np.array(aod)) if os.environ["AOD"] == "exp" else aod
 
 
 def shift_arrays(
