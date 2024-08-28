@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.12.0](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.11.0...v0.12.0) (2024-08-28)
+
+
+### Features
+
+* **figure:** re-write figure 1 with `figure_grid` and as PDF ([75b731b](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/75b731bcb676b667b11c18da9126a5c8f913c831))
+* **figure:** re-write figure 2 with `figure_grid` and as PDF ([79cf091](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/79cf09166687362e3cd8735ef5cfe8f3cb39cb34))
+* **figure:** re-write figure 3 with `figure_grid` and as PDF ([c84661b](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/c84661bb3be9260b0123f280e5220c2bc77b89cb))
+* **figure:** re-write figure 4 with `figure_grid` and as PDF ([c557130](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/c5571304c28dca48250c6a7efe54ac2584a481b3))
+
+
+### Miscellaneous
+
+* **core:** update labels and add optional aod conversion ([9c2f405](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/9c2f40526f82065e1991017bb561c06ca783d098))
+* **figure:** add plots of Reff, OH and SO2 burden ([0a8dd52](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/0a8dd52a64932a3ee3a9562ba547350230fff141))
+* fix empty lines and label names ([d4997a0](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/d4997a06ab46b929c3522a1ecaf429dae2c0bafa))
+
+
+### Build System
+
+* move from rye to uv and update deps ([5b5c2f0](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/5b5c2f0055c6a9bdeb88f5b47277d5859e79f678))
+
+
+### Documentation
+
+* uv doesn't provide a list scripts command like rye does... ([17b07a6](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/17b07a6e852d459427f963f443de35462afc15af))
+
 ## [0.11.0](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.10.6...v0.11.0) (2024-08-20)
 
 
