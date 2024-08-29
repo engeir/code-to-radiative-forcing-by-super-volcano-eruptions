@@ -29,8 +29,7 @@ def _temp_sub_mean(arrs: list[xr.DataArray]) -> list:
 def _find_shortest_end_time(arrs: list[xr.DataArray]) -> None:
     end = 100
     for arr in arrs:
-        if arr.time.data[-1] < end:
-            end = arr.time.data[-1]
+        end = min(arr.time.data[-1], end)
         print(arr.time.data[-1])
     print(f"The shortest end time was {end}")
 
@@ -45,8 +44,8 @@ def _compute_integral_ratio(
         for f, t in zip(pair[0], pair[1], strict=True):
             print(f.attrs["sim"], t.attrs["sim"])
             # Integrate and find the ratio
-            f_int = np.trapz(f.data, dx=1 / 12)  # type: ignore[attr-defined]
-            t_int = np.trapz(t.data, dx=1 / 12)  # type: ignore[attr-defined]
+            f_int = np.trapz(f.data, dx=1 / 12)
+            t_int = np.trapz(t.data, dx=1 / 12)
             ratios.append(f_int / t_int)
             print(f_int / t_int)
             print("#" * 50)
@@ -154,7 +153,7 @@ def plot_evolution(f, t) -> None:
     # Calculate the integral up to every point in the arrays
     integral = np.zeros_like(f_, dtype=float)
     for i in range(len(f_)):
-        integral[i] = np.trapz(f_[: i + 1]) / np.trapz(t_[: i + 1])  # type: ignore[attr-defined]
+        integral[i] = np.trapz(f_[: i + 1]) / np.trapz(t_[: i + 1])
     kappa = integral - integral[-1]
     plt.figure()
     plt.plot(f_, label="F")
