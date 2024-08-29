@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.12.1](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.12.0...v0.12.1) (2024-08-29)
+
+
+### Code Refactoring
+
+* **lint:** apply linter auto fixes ([680cd72](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/680cd723591be6f7c8ef847ed9892497bc125565))
+
+
+### Build System
+
+* **uv:** update old toml specifications for linters ([3b2f342](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/3b2f342acbb9d53443c7c5068570acabcebfd13d))
+
 ## [0.12.0](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.11.0...v0.12.0) (2024-08-28)
 
 
