@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.13.0](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.12.1...v0.13.0) (2024-08-31)
+
+
+### Features
+
+* **figure:** add evaluation of the Pearson coeff for figure 4 ([3b71c2d](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/3b71c2d882621c83781d3552780c19c5ab3adae8))
+
+
+### Styles
+
+* format files and fix permissions ([c896258](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/c896258a9769a1b33d6612951ae5e793acd6f8ba))
+
 ## [0.12.1](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.12.0...v0.12.1) (2024-08-29)
 
 
