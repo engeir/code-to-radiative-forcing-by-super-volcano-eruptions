@@ -8,6 +8,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import plastik
+import scipy.stats
 
 import paper1_code as core
 
@@ -100,6 +101,15 @@ class DoPlotting:
         ihl = self.data.so2[-1]
         ahl = self.data.aod[-1]
         ax_ = (fig5_a := plt.figure()).gca() if ax is None else ax
+        x_lin = np.linspace(30, 3000)
+        coeff = self.data.aod[-2] / 3000 ** (2 / 3)
+        ax_.plot(
+            x_lin,
+            coeff * x_lin ** (2 / 3),
+            ls="--",
+            c="grey",
+            label=r"$\propto\mathrm{SO_2}^{2/3}$",
+        )
         if os.environ["AOD"] == "exp":
             ax_.semilogy(
                 self.data.so2[:-1], self.data.aod[:-1], **core.config.LEGENDS["c2w"]
@@ -144,7 +154,7 @@ class DoPlotting:
         ax1.patch.set_alpha(0.3)
         ax_.indicate_inset_zoom(ax1)
         ax_.set_xlim((-150, 3500))
-        ax_.set_xlabel("Injected SO2 [Tg]")
+        ax_.set_xlabel(r"Injected $\mathrm{SO_2}$ [Tg]")
         ax_.set_ylabel("AOD [1]")
         if ax is None:
             kwargs = {
@@ -174,13 +184,6 @@ class DoPlotting:
         ihl = self.data.so2[-1]
         thl = self.data.rf[-1]
         ax_ = (fig5_b := plt.figure()).gca() if ax is None else ax
-        # Fit from Niemeier and Timreck (2015) (they use S, and not SO2, which has half
-        # the mass)
-        s = np.linspace(0, 3000 // 2, 10000)
-        warnings.simplefilter("ignore")
-        # Dividing by zero is fine...
-        rf = 65 * np.exp(-((2246 / s) ** (0.23)))
-        warnings.resetwarnings()
         ax_.plot(self.data.so2[:-1], self.data.rf[:-1], **core.config.LEGENDS["c2w"])
         ax_.scatter(ihl, thl, **core.config.LEGENDS["c2wn"])
         ax_.scatter(
@@ -199,6 +202,13 @@ class DoPlotting:
         )
         ax_.scatter(self.data.so2_j05, self.data.rf_j05, **core.config.LEGENDS["P100"])
         ax_.scatter(self.data.so2_t10, self.data.rf_t10, **core.config.LEGENDS["t10"])
+        # Fit from Niemeier and Timreck (2015) (they use S, and not SO2, which has half
+        # the mass)
+        s = np.linspace(0, 3000 // 2, 10000)
+        warnings.simplefilter("ignore")
+        # Dividing by zero is fine...
+        rf = 65 * np.exp(-((2246 / s) ** (0.23)))
+        warnings.resetwarnings()
         ax_.plot(s * 2, rf, "--", label="N15", c=ytt_leg["c"])
         # Inset
         x0, y0, width, height = 0.62, 0.1, 0.35, 0.4
@@ -226,11 +236,11 @@ class DoPlotting:
         ax1.scatter(self.data.so2_t10, self.data.rf_t10, **core.config.LEGENDS["t10"])
         ax1.plot(s * 2, rf, "--", label="N15", c=ytt_leg["c"])
         ax1.set_xlim((0, 190))
-        ax1.set_ylim((0, 20))
+        ax1.set_ylim((-2.2, 20))
         ax1.patch.set_alpha(0.8)
         ax_.indicate_inset_zoom(ax1)
         ax_.set_xlim((-150, 3500))
-        ax_.set_xlabel("Injected SO2 [Tg]")
+        ax_.set_xlabel(r"Injected $\mathrm{SO_2}$ [Tg]")
         ax_.set_ylabel("ERF $[\\mathrm{W/m^2}]$")
         if ax is None:
             kwargs = {
@@ -268,11 +278,11 @@ class DoPlotting:
         ax_1.plot(self.data.so2[:-1], self.data.temp[:-1], **core.config.LEGENDS["c2w"])
         self._plot_so2_temp_common_data(ax_1)
         ax_1.set_xlim((0, 190))
-        ax_1.set_ylim((0, 1.5))
+        ax_1.set_ylim((-0.4, 1.5))
         ax_1.patch.set_alpha(0.3)
         ax_.indicate_inset_zoom(ax_1)
         ax_.set_xlim((-150, 3500))
-        ax_.set_xlabel("Injected SO2 [Tg]")
+        ax_.set_xlabel(r"Injected $\mathrm{SO_2}$ [Tg]")
         ax_.set_ylabel("GMST [K]")
         if ax is None:
             kwargs = {
@@ -444,22 +454,23 @@ class DoPlotting:
         temp_m20 = self.data.temp_m20[np.argsort(self.data.rf_m20)]
         rf_m20 = self.data.rf_m20[np.argsort(self.data.rf_m20)]
         ax_ = (fig5_f := plt.figure()).gca() if ax is None else ax
-        ax_.plot(self.data.rf[:-1], self.data.temp[:-1], **core.config.LEGENDS["c2w"])
-        ax_.scatter(rf_hl, trefht_hl, **core.config.LEGENDS["c2wn"])
-        ax_.scatter(rf_lme, temp_lme, **core.config.LEGENDS["ob16"])
-        ax_.scatter(rf_m20, temp_m20, **core.config.LEGENDS["m20*"])
-        ax_.plot(self.data.rf_b20, self.data.temp_b20, **core.config.LEGENDS["b20"])
-        ax_.plot(
-            self.data.rf_mcg24, self.data.temp_mcg24, **core.config.LEGENDS["mcg24"]
+        ax_.axvline(x=65, c="grey", linewidth=0.5)
+        ax_.text(65, 2, r"$65\,\mathrm{W/m^{2}}$", ha="right")
+        ax_.axhline(y=10, c="grey", linewidth=0.5)
+        ax_.text(40, 10, r"$10\,\mathrm{K}$", va="bottom")
+        self._plot_rf_temp_data(
+            ax_, (rf_hl, trefht_hl), (rf_lme, temp_lme), (rf_m20, temp_m20)
         )
-        ax_.scatter(
-            self.data.rf_pinatubo, self.data.temp_pinatubo, **core.config.LEGENDS["P"]
+        x0, y0, width, height = 0.10, 0.55, 0.35, 0.4
+        ax1 = ax_.inset_axes((x0, y0, width, height))
+        self._plot_rf_temp_data(
+            ax1, (rf_hl, trefht_hl), (rf_lme, temp_lme), (rf_m20, temp_m20)
         )
-        ax_.scatter(
-            self.data.rf_tambora, self.data.temp_tambora, **core.config.LEGENDS["VT"]
-        )
-        ax_.scatter(self.data.rf_j05, self.data.temp_j05, **core.config.LEGENDS["P100"])
-        ax_.scatter(self.data.rf_t10, self.data.temp_t10, **core.config.LEGENDS["t10"])
+        ax1.set_xlim((-1.2, 19))
+        ax1.set_ylim((-0.4, 1.5))
+        # ax1.set_yticks([0, 1])
+        ax1.patch.set_alpha(0.3)
+        ax_.indicate_inset_zoom(ax1)
         ax_.set_xlabel("ERF $[\\mathrm{W/m^2}]$")
         ax_.set_ylabel("GMST [K]")
         if ax is None:
@@ -476,12 +487,160 @@ class DoPlotting:
             ax_.legend(**kwargs)
         return fig5_f if ax is None else ax_
 
+    def _plot_rf_temp_data(self, ax, hl, lme, m20):
+        rf_hl, trefht_hl = hl
+        rf_lme, temp_lme = lme
+        rf_m20, temp_m20 = m20
+        # ax.scatter(rf_m20, temp_m20, **core.config.LEGENDS["m20*"])
+        # ax.plot(self.data.rf_b20, self.data.temp_b20, **core.config.LEGENDS["b20"])
+        # ax.plot(
+        #     self.data.rf_osi20, self.data.temp_osi20, **core.config.LEGENDS["osi20"]
+        # )
+        # ax.scatter(
+        #     self.data.rf_pinatubo, self.data.temp_pinatubo, **core.config.LEGENDS["P"]
+        # )
+        # ax.scatter(
+        #     self.data.rf_tambora, self.data.temp_tambora, **core.config.LEGENDS["VT"]
+        # )
+        # --
+        ax.plot(self.data.rf[:-1], self.data.temp[:-1], **core.config.LEGENDS["c2w"])
+        ax.scatter(rf_hl, trefht_hl, **core.config.LEGENDS["c2wn"])
+        ax.scatter(rf_lme, temp_lme, **core.config.LEGENDS["ob16"])
+        ax.scatter(rf_m20, temp_m20, **core.config.LEGENDS["m20*"])
+        ax.plot(self.data.rf_b20, self.data.temp_b20, **core.config.LEGENDS["b20"])
+        ax.plot(
+            self.data.rf_mcg24, self.data.temp_mcg24, **core.config.LEGENDS["mcg24"]
+        )
+        ax.scatter(
+            self.data.rf_pinatubo, self.data.temp_pinatubo, **core.config.LEGENDS["P"]
+        )
+        ax.scatter(
+            self.data.rf_tambora, self.data.temp_tambora, **core.config.LEGENDS["VT"]
+        )
+        ax.scatter(self.data.rf_j05, self.data.temp_j05, **core.config.LEGENDS["P100"])
+        ax.scatter(self.data.rf_t10, self.data.temp_t10, **core.config.LEGENDS["t10"])
+
+    def compute_parsonr(self) -> None:
+        """Compute the Pearson coefficient across the data."""
+        # Compute Pearson stats
+        all_so2 = [
+            "so2",
+            "b20",
+            "e13",
+            "j05",
+            # "m20",
+            "mcg24",
+            "osi20",
+            "pinatubo",
+            "t10",
+            "tambora",
+            # "ob16",
+        ]
+        all_aod = [
+            "aod",
+            "b20",
+            "e13",
+            "j05",
+            "m20",
+            "osi20",
+            "pinatubo",
+            "t10",
+            "tambora",
+        ]
+        all_rf = [
+            "rf",
+            "b20",
+            "j05",
+            "m20",
+            "mcg24",
+            "pinatubo",
+            "t10",
+            "tambora",
+            "ob16",
+        ]
+        all_temp = [
+            "temp",
+            "b20",
+            "j05",
+            "mcg24",
+            "osi20",
+            "pinatubo",
+            "t10",
+            "tambora",
+            # "ob16",
+        ]
+        for p1, p2 in [
+            (all_so2, all_aod),
+            (all_so2, all_rf),
+            (all_so2, all_temp),
+            (all_aod, all_rf),
+            (all_aod, all_temp),
+            (all_rf, all_temp),
+        ]:
+            stat_x = np.asarray(getattr(self.data, p1[0]))
+            stat_y = np.asarray(getattr(self.data, p2[0]))
+            for p in p1[1:]:
+                if p in p2:
+                    stat_x = np.concatenate(
+                        (stat_x, np.atleast_1d(getattr(self.data, f"{p1[0]}_{p}")))
+                    )
+                    stat_y = np.concatenate(
+                        (stat_y, np.atleast_1d(getattr(self.data, f"{p2[0]}_{p}")))
+                    )
+            print(f"Pearson stat for {p1[0]} and {p2[0]}")
+            print(scipy.stats.pearsonr(stat_x, stat_y))
+            # Pearson stat for so2 and aod
+            # PearsonRResult(statistic=0.8437060024611898, pvalue=1.6865225745266298e-28
+            # )
+            # Pearson stat for so2 and rf
+            # PearsonRResult(statistic=0.8630374363178166, pvalue=2.209831508797848e-54)
+            # Pearson stat for so2 and temp
+            # PearsonRResult(statistic=0.9038021082142942, pvalue=1.2111539476056945e-38
+            # )
+            # Pearson stat for aod and rf
+            # PearsonRResult(statistic=0.9461188967143963, pvalue=2.4115781654637468e-46
+            # )
+            # Pearson stat for aod and temp
+            # PearsonRResult(statistic=0.9175665285140718, pvalue=5.565393422327253e-07)
+            # Pearson stat for rf and temp
+            # PearsonRResult(statistic=0.9833756226129937, pvalue=3.397860495926708e-72)
+            #
+            # Without OB16 on temp -----------------------------------------------------
+            #
+            # Pearson stat for so2 and temp
+            # PearsonRResult(statistic=0.7580531566458335, pvalue=4.3670026282896426e-05
+            # )
+            # Pearson stat for aod and temp
+            # PearsonRResult(statistic=0.9175665285140718, pvalue=5.565393422327253e-07)
+            # Pearson stat for rf and temp
+            # PearsonRResult(statistic=0.9863920572427461, pvalue=3.5549669850028345e-13
+            # )
+            #
+            # Without OB16 and M20 on all
+            #
+            # Pearson stat for so2 and aod
+            # PearsonRResult(statistic=0.670178976133733, pvalue=0.0016911770075485144)
+            # Pearson stat for so2 and rf
+            # PearsonRResult(statistic=0.7989343267365179, pvalue=0.0001197456980143273)
+            # Pearson stat for so2 and temp
+            # PearsonRResult(statistic=0.7580531566458335, pvalue=4.3670026282896426e-05
+            # )
+            # Pearson stat for aod and rf
+            # PearsonRResult(statistic=0.9461188967143963, pvalue=2.4115781654637468e-46
+            # )
+            # Pearson stat for aod and temp
+            # PearsonRResult(statistic=0.9175665285140718, pvalue=5.565393422327253e-07)
+            # Pearson stat for rf and temp
+            # PearsonRResult(statistic=0.9863920572427461, pvalue=3.5549669850028345e-13
+            # )
+
 
 def main(show_output: bool = False):
     """Run the main program."""
     save = True
     fig, axs = plastik.figure_grid(rows=3, columns=2, using={"expand_top": 1.05})
     plotter = DoPlotting(show_output)
+    plotter.compute_parsonr()
     plotter.plot_so2_vs_aod(axs[0])
     plotter.plot_so2_vs_rf(axs[1])
     plotter.plot_so2_vs_temp(axs[2])
@@ -509,6 +668,7 @@ def main(show_output: bool = False):
         "T",
         "P",
         "E13",
+        r"$\propto\mathrm{SO_2}^{2/3}$",
     ]
     for o in order:
         if o in unique_labels:
