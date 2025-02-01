@@ -53,14 +53,14 @@ def _save_output_files_to_npz(path) -> None:
         file_1 = file0 + str(i + 1) + file1 + "TREFHT" + file2_1
         data = xr.open_mfdataset([file_0, file_1])
         array = core.utils.time_series.mean_flatten(data["TREFHT"], dims=["lat", "lon"])
-        np.savez(path / f"TREFHT-00{i+1}", data=array.data, times=array.time.data)
+        np.savez(path / f"TREFHT-00{i + 1}", data=array.data, times=array.time.data)
     # RF forcing
     for i in range(5):
         file_0 = file0 + str(i + 1) + file1 + "FSNTOA" + file2_0
         file_1 = file0 + str(i + 1) + file1 + "FSNTOA" + file2_1
         data = xr.open_mfdataset([file_0, file_1])
         array = core.utils.time_series.mean_flatten(data["FSNTOA"], dims=["lat", "lon"])
-        np.savez(path / f"FSNTOA-00{i+1}", data=array.data, times=array.time.data)
+        np.savez(path / f"FSNTOA-00{i + 1}", data=array.data, times=array.time.data)
     # Control run for temperature.
     data = xr.open_mfdataset(
         [
@@ -80,7 +80,7 @@ def _download_so2_file(path) -> None:
     name = "IVI2LoadingLatHeight501-2000_L18_c20100518.nc"
     if (path / name).exists():
         print(
-            f"{path/name} already exists, so I skip this. Delete it first if you are"
+            f"{path / name} already exists, so I skip this. Delete it first if you are"
             " sure you want to download it again."
         )
         return

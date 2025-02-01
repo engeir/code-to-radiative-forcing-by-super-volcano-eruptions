@@ -5,7 +5,7 @@ description = "Code to download and analyse data for a paper"
 authors = [{ name = "engeir", email = "engeir@pm.me" }]
 license = { file = "MIT" }
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.13"
 dependencies = [
   "numpy>=1.26.4",
   "matplotlib>=3.9.2",

@@ -13,7 +13,15 @@ from matplotlib.legend_handler import HandlerLine2D
 
 import paper1_code as core
 
-CLR = ["#1f77b4", "#ff7f0e", "#2ca02c"]
+mpl.style.use(
+    [
+        "https://raw.githubusercontent.com/uit-cosmo/cosmoplots/main/cosmoplots/default.mplstyle",
+        "paper1_code.extra",
+        "paper1_code.jgr",
+        {"legend.handlelength": 1.65},
+    ],
+)
+
 MIN_PERCENTILE = 5
 MAX_PERCENTILE = 95
 
@@ -79,7 +87,7 @@ class DoPlotting:
         self,
         simulations: list[tuple[float, np.ndarray]],
     ) -> mpl.figure.Figure: ...
-    def _plot(
+    def _plot(  # noqa: PLR0915
         self,
         simulations: list[tuple[float, np.ndarray]],
         style: Literal["plot", "semilogy", "loglog"] = "plot",
@@ -162,17 +170,34 @@ class DoPlotting:
             ax1.fill_between(
                 x_, p1[idss:], p2[idss:], alpha=a, color=self.ss_c, ec=None
             )
-        ax1.set_xlim((-0.5, 3.5))
         ax1.patch.set_alpha(0.3)
         ax1.xaxis.set_major_locator(ticker.MultipleLocator(1))
         ax1.xaxis.set_minor_locator(ticker.MultipleLocator(0.25))
 
         # Combine shading and line labels
+        if self.version == "temp":
+            s26 = ""
+            s400 = ""
+            s1629 = ""
+            s3000 = ""
+            unit = r"Unit: $\mathrm{K}$"
+        elif self.version == "rf":
+            s26 = ""
+            s400 = ""
+            s1629 = ""
+            s3000 = ""
+            unit = r"Unit: $\mathrm{W/m^{2}}$"
+        elif self.version == "aod":
+            s26 = f"{core.config.LEGENDS['c2wm']['label']}, "
+            s400 = f"{core.config.LEGENDS['c2wmp']['label']}, "
+            s1629 = f"{core.config.LEGENDS['c2ws']['label']}, "
+            s3000 = f"{core.config.LEGENDS['c2wss']['label']}, "
+            unit = r"Unit: $1$"
         ax_.legend(
             [
                 (
                     mpatches.Patch(facecolor=self.ss_c, alpha=1.0, linewidth=0),
-                    ax_.plot(x_, superstrong_scaled, "--", c="k")[0],
+                    ax_.plot(x_, superstrong_scaled, "-.", c="k")[0],
                 ),
                 (
                     mpatches.Patch(facecolor=self.s_c, alpha=1.0, linewidth=0),
@@ -188,16 +213,10 @@ class DoPlotting:
                 ),
             ],
             [
-                f"{core.config.LEGENDS['c2wss']['label']}, $C"
-                + f" = {simulations[3][0]:.2f}"
-                + r"$",
-                f"{core.config.LEGENDS['c2ws']['label']}, $C"
-                + f" = {simulations[2][0]:.2f}"
-                + r"$",
-                f"{core.config.LEGENDS['c2wmp']['label']}, $C = {simulations[1][0]:.2f}$",
-                f"{core.config.LEGENDS['c2wm']['label']}, $C"
-                + f" = {simulations[0][0]:.2f}"
-                + r"$",
+                s3000 + f"${core.utils.misc.n_significant(simulations[3][0], 3)}$",
+                s1629 + f"${core.utils.misc.n_significant(simulations[2][0], 3)}$",
+                s400 + f"${core.utils.misc.n_significant(simulations[1][0], 3)}$",
+                s26 + f"${core.utils.misc.n_significant(simulations[0][0], 3)}$",
             ],
             loc="upper right",
             handler_map={
@@ -208,29 +227,36 @@ class DoPlotting:
             },
             framealpha=0.6,
             fontsize=core.config.FONTSIZE,
+            title=unit,
         )
         ax1.plot(x_, medium_scaled, c="k")
         ax1.plot(x_, plus_scaled, ":", c="k")
         ax1.plot(x_, strong_scaled, "--", c="k")
-        ax1.plot(x_, superstrong_scaled, "--", c="k")
+        ax1.plot(x_, superstrong_scaled, "-.", c="k")
         return plt.gcf() if ax is None else ax_
 
     def _plot_create_axis_labels(
         self, ax_: mpl.axes.Axes
     ) -> tuple[mpl.axes.Axes, mpl.axes.Axes]:
+        # length = 25
+        # ax_.set_xlim((-0.05 * length, 1.05 * length))
         if self.version == "temp":
             ax_.set_ylabel("Normalised \nGMST anomaly $[1]$")
-            ax_.set_ylim((-0.6, 1.7))
-            ax1 = ax_.inset_axes((0.2, 0.6, 0.33, 0.37))
-            ax1.set_ylim((-0.5, 1.5))
+            ax_.set_ylim((-0.4, 1.6))
+            ax1 = core.utils.misc.create_axes_inset(
+                ax_, (-0.5, 3.5, -0.3, 1.2), (0.3, 0.5, 0.33, 0.47)
+            )
         elif self.version == "rf":
             ax_.set_ylabel("Normalised \nERF anomaly $[1]$")
-            ax_.set_ylim((-0.5, 1.5))
-            ax1 = ax_.inset_axes((0.2, 0.5, 0.33, 0.47))
-            ax1.set_ylim((-0.5, 1.5))
+            ax_.set_ylim((-0.4, 1.6))
+            ax1 = core.utils.misc.create_axes_inset(
+                ax_, (-0.5, 3.5, -0.2, 1.3), (0.3, 0.5, 0.33, 0.47)
+            )
         elif self.version == "aod":
             ax_.set_ylabel("Normalised \nAOD anomaly $[1]$")
-            ax1 = ax_.inset_axes((0.2, 0.3, 0.33, 0.67))
+            ax1 = core.utils.misc.create_axes_inset(
+                ax_, (-0.5, 3.5, -0.03, 1.03), (0.3, 0.3, 0.33, 0.67)
+            )
         return ax_, ax1
 
     @overload
@@ -268,16 +294,29 @@ class DoPlotting:
         if self.version == "aod":
             self._convert_aod()
         # Find median values
-        medium_med = np.median(self.data.medium, axis=0)
-        plus_med = np.median(self.data.plus, axis=0)
-        strong_med = np.median(self.data.strong, axis=0)
-        superstrong_med = np.median(self.data.superstrong, axis=0)
+        # medium_med = np.median(self.data.medium, axis=0)
+        # plus_med = np.median(self.data.plus, axis=0)
+        # strong_med = np.median(self.data.strong, axis=0)
+        # superstrong_med = np.median(self.data.superstrong, axis=0)
+        medium_med = core.utils.time_series.get_median(
+            self.data.medium, xarray=True
+        ).data
+        plus_med = core.utils.time_series.get_median(self.data.plus, xarray=True).data
+        strong_med = core.utils.time_series.get_median(
+            self.data.strong, xarray=True
+        ).data
+        superstrong_med = core.utils.time_series.get_median(
+            self.data.superstrong, xarray=True
+        ).data
         extreme = (
             "max"
             if abs(self.data.medium[0].data.min()) < abs(self.data.medium[0].data.max())
             else "min"
         )
         filter_ = scipy.signal.savgol_filter
+        medium_const, plus_const, strong_const, superstrong_const, _ = (
+            core.load.cesm2.get_rf_c2w_peaks()
+        )
         medium_const = getattr(filter_(medium_med, self.n_year, 3), extreme)()
         plus_const = getattr(filter_(plus_med, self.n_year, 3), extreme)()
         strong_const = getattr(filter_(strong_med, self.n_year, 3), extreme)()

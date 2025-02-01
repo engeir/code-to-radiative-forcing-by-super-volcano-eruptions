@@ -16,7 +16,7 @@ def test_means() -> None:
         )
     arr = finder.load()[0]
     arr_ = core.utils.time_series.mean_flatten(arr, dims=["lat", "lon"]).compute()
-    assert f"{arr_.mean().data:.8f}" == f'{core.config.MEANS["TREFHT"]:.8f}'
+    assert f"{arr_.mean().data:.8f}" == f"{core.config.MEANS['TREFHT']:.8f}"
 
 
 if __name__ == "__main__":

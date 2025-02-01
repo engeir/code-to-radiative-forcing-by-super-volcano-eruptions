@@ -46,7 +46,7 @@ def get_m20(find_all_peaks: bool = False) -> tuple[np.ndarray, ...]:
     for arr in data[1:]:
         if str(arr.time.data[0]) != first:
             raise ValueError("Seasons do not start at the same date.")
-        if f"{str(arr.time.data[12])[:3]}0{str(arr.time.data[12])[3 + 1:]}" != first:
+        if f"{str(arr.time.data[12])[:3]}0{str(arr.time.data[12])[3 + 1 :]}" != first:
             raise ValueError("This is not same day, next year.")
 
     weighter = core.utils.time_series.weighted_season_avg

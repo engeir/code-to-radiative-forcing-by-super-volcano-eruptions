@@ -12,6 +12,16 @@ import paper1_code as core
 FINDER = FindFiles()
 
 
+def find_peak(arr: xr.DataArray, version: str) -> float:
+    """Find the peak of an array."""
+    match version:
+        case "savgol":
+            out = scipy.signal.savgol_filter(arr.data, 12, 3).max()
+        case "rolling":
+            out = arr.rolling(time=12, center=True).mean().max().data
+    return out
+
+
 def get_c2w_aod_rf(
     freq: Literal["y", "ses"] = "y",
 ) -> tuple[list[np.ndarray], list[np.ndarray], list[np.ndarray]]:
@@ -79,7 +89,7 @@ def _finalize_arrays(
     ss = list(xr.align(*ss))
     h = list(xr.align(*h))
     if remove_seasonality:
-        # Assume time series are centered at zero and all of the same kind.
+        # Assume time series are centred at zero and all of the same kind.
         sign = 1  # if abs(m[0].data.min()) < abs(m[0].data.max()) else -1
         for i, a in enumerate(m):
             a.data = a * sign
@@ -154,7 +164,7 @@ def get_aod_arrs(
     data = (
         FINDER.find(
             "e_fSST1850",
-            {f"ens{i+1}" for i in range(5)},
+            {f"ens{i + 1}" for i in range(5)},
             {"strong", "medium", "medium-plus", "strong-highlat", "size5000"},
             "AODVISstdn",
             "h0",
@@ -162,9 +172,9 @@ def get_aod_arrs(
         .sort("attr", "ensemble")
         .keep_most_recent()
     )
-    m = data.copy().keep("medium", {f"ens{i+2}" for i in range(4)}).load()
-    mp = data.copy().keep("medium-plus", {f"ens{i+2}" for i in range(4)}).load()
-    s = data.copy().keep("strong", {f"ens{i+2}" for i in range(4)}).load()
+    m = data.copy().keep("medium", {f"ens{i + 2}" for i in range(4)}).load()
+    mp = data.copy().keep("medium-plus", {f"ens{i + 2}" for i in range(4)}).load()
+    s = data.copy().keep("strong", {f"ens{i + 2}" for i in range(4)}).load()
     ss = data.copy().keep("size5000", {"ens2", "ens4"}).load()
     h = data.copy().keep("strong-highlat", {"ens1", "ens3"}).load()
     s = core.utils.time_series.mean_flatten(s, dims=["lat", "lon"])
@@ -240,7 +250,7 @@ def get_rf_arrs(
     data = (
         FINDER.find(
             "e_fSST1850",
-            {f"ens{i+1}" for i in range(5)},
+            {f"ens{i + 1}" for i in range(5)},
             {"strong", "medium", "medium-plus", "strong-highlat", "size5000"},
             {"FLNT", "FSNT"},
             "h0",
@@ -248,9 +258,9 @@ def get_rf_arrs(
         .sort("attr", "ensemble")
         .keep_most_recent()
     )
-    m = data.copy().keep("medium", {f"ens{i+2}" for i in range(4)}).load()
-    mp = data.copy().keep("medium-plus", {f"ens{i+2}" for i in range(4)}).load()
-    s = data.copy().keep("strong", {f"ens{i+2}" for i in range(4)}).load()
+    m = data.copy().keep("medium", {f"ens{i + 2}" for i in range(4)}).load()
+    mp = data.copy().keep("medium-plus", {f"ens{i + 2}" for i in range(4)}).load()
+    s = data.copy().keep("strong", {f"ens{i + 2}" for i in range(4)}).load()
     ss = data.copy().keep("size5000", {"ens2", "ens4"}).load()
     h = data.copy().keep("strong-highlat", {"ens1", "ens3"}).load()
     s = core.utils.time_series.mean_flatten(s, dims=["lat", "lon"])
@@ -280,6 +290,99 @@ def get_rf_arrs(
     for i, arr in enumerate(h):
         h[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
     # import matplotlib.pyplot as plt
+    #
+    # fig = plt.figure()
+    # fig.suptitle("Normal")
+    # [plt.plot(arr.time, arr) for arr in m + mp + s + ss + h]
+    return _finalize_arrays((m, mp, s, ss, h), shift, remove_seasonality)
+
+
+def get_rf_coupled_arrs(
+    remove_seasonality: bool = False, shift: int | None = None
+) -> tuple[
+    list[xr.DataArray],
+    list[xr.DataArray],
+    list[xr.DataArray],
+    list[xr.DataArray],
+    list[xr.DataArray],
+]:
+    """Return medium, medium-plus, strong and strong north arrays in lists."""
+    control_data = (
+        FINDER.find("e_BWma1850", "ens0", "control", "h0", ["FLNT", "FSNT"])
+        .sort("attr", "ensemble")
+        .keep_most_recent()
+    )
+    control = control_data.load()
+    control = core.utils.time_series.mean_flatten(control, dims=["lat", "lon"])
+
+    def difference_and_remove_control(arrs: list) -> list:
+        stop = len(arrs) // 2
+        for i, arr in enumerate(arrs):
+            if i > stop - 1:
+                arrs = arrs[:stop]
+                break
+            fsnt, flnt, ctrl_fsnt, ctrl_flnt = xr.align(
+                arrs[i + stop], arr, control[1], control[0]
+            )
+            flnt.data = fsnt.data - flnt.data - (ctrl_fsnt.data - ctrl_flnt.data)
+            flnt = flnt.assign_attrs(attr="RF")
+            arrs[i] = flnt
+        return arrs
+
+    def subtract_last_decade_mean(arrs: list, custom_decade: int = 120) -> list:
+        # Subtract the mean of the last decade
+        for i, arr in enumerate(arrs):
+            arr_ = arr[-custom_decade:]
+            arr.data = arr.data - arr_.mean().data
+            arrs[i] = arr
+        return arrs
+
+    data = (
+        FINDER.find(
+            "e_BWma1850",
+            {f"ens{i + 1}" for i in range(5)},
+            {"strong", "medium", "medium-plus", "strong-highlat", "size5000"},
+            {"FLNT", "FSNT"},
+            "h0",
+        )
+        .sort("attr", "ensemble")
+        .keep_most_recent()
+    )
+    m = data.copy().keep("medium", {f"ens{i + 2}" for i in range(4)}).load()
+    mp = data.copy().keep("medium-plus", {f"ens{i + 2}" for i in range(4)}).load()
+    s = data.copy().keep("strong", {f"ens{i + 2}" for i in range(4)}).load()
+    ss = data.copy().keep("size5000", {"ens2", "ens4"}).load()
+    h = data.copy().keep("strong-highlat", {"ens1", "ens3"}).load()
+    s = core.utils.time_series.mean_flatten(s, dims=["lat", "lon"])
+    ss = core.utils.time_series.mean_flatten(ss, dims=["lat", "lon"])
+    m = core.utils.time_series.mean_flatten(m, dims=["lat", "lon"])
+    mp = core.utils.time_series.mean_flatten(mp, dims=["lat", "lon"])
+    h = core.utils.time_series.mean_flatten(h, dims=["lat", "lon"])
+    # Remove control run
+    s = difference_and_remove_control(s)
+    ss = difference_and_remove_control(ss)
+    m = difference_and_remove_control(m)
+    mp = difference_and_remove_control(mp)
+    h = difference_and_remove_control(h)
+    s = subtract_last_decade_mean(s)
+    ss = subtract_last_decade_mean(ss)
+    m = subtract_last_decade_mean(m)
+    mp = subtract_last_decade_mean(mp)
+    h = subtract_last_decade_mean(h)
+    for i, arr in enumerate(s):
+        s[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
+    for i, arr in enumerate(ss):
+        ss[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
+    for i, arr in enumerate(mp):
+        mp[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
+    for i, arr in enumerate(m):
+        m[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
+    for i, arr in enumerate(h):
+        h[i] = arr.assign_coords(time=core.utils.time_series.dt2float(arr.time.data))
+    # import matplotlib.pyplot as plt
+    #
+    # fig = plt.figure()
+    # fig.suptitle("Coupled")
     # [plt.plot(arr.time, arr) for arr in m + mp + s + ss + h]
     return _finalize_arrays((m, mp, s, ss, h), shift, remove_seasonality)
 
@@ -298,7 +401,7 @@ def get_trefht_arrs(
     data = (
         FINDER.find(
             "e_BWma1850",
-            {f"ens{i+1}" for i in range(5)},
+            {f"ens{i + 1}" for i in range(5)},
             {"strong", "medium", "medium-plus", "strong-highlat", "size5000"},
             "TREFHT",
             "h0",
@@ -306,10 +409,10 @@ def get_trefht_arrs(
         .sort("sim", "attr", "ensemble")
         .keep_most_recent()
     )
-    s = data.copy().keep("strong", {f"ens{i+2}" for i in range(4)}).load()
+    s = data.copy().keep("strong", {f"ens{i + 2}" for i in range(4)}).load()
     ss = data.copy().keep("size5000", {"ens2", "ens4"}).load()
-    m = data.copy().keep("medium", {f"ens{i+2}" for i in range(4)}).load()
-    mp = data.copy().keep("medium-plus", {f"ens{i+2}" for i in range(4)}).load()
+    m = data.copy().keep("medium", {f"ens{i + 2}" for i in range(4)}).load()
+    mp = data.copy().keep("medium-plus", {f"ens{i + 2}" for i in range(4)}).load()
     h = data.copy().keep("strong-highlat", {"ens1", "ens3"}).load()
     s = core.utils.time_series.mean_flatten(s, dims=["lat", "lon"])
     ss = core.utils.time_series.mean_flatten(ss, dims=["lat", "lon"])
@@ -420,23 +523,34 @@ def get_so2_c2w_peaks() -> tuple[float, float, float, float, float]:
 def get_aod_c2w_peaks() -> tuple[float, float, float, float, float]:
     """Get the AOD peak from the CESM2 simulations."""
     m_, mp_, s_, ss_, h_ = get_aod_arrs(shift=0)
+    m_ = core.utils.time_series.shift_arrays(m_, daily=False)
+    mp_ = core.utils.time_series.shift_arrays(mp_, daily=False)
+    s_ = core.utils.time_series.shift_arrays(s_, daily=False)
+    ss_ = core.utils.time_series.shift_arrays(ss_, daily=False)
+    h_ = core.utils.time_series.shift_arrays(h_, daily=False)
     s = core.utils.time_series.get_median(s_, xarray=True)
     ss = core.utils.time_series.get_median(ss_, xarray=True)
     mp = core.utils.time_series.get_median(mp_, xarray=True)
     m = core.utils.time_series.get_median(m_, xarray=True)
     h = core.utils.time_series.get_median(h_, xarray=True)
+    v = "rolling"
     return (
-        scipy.signal.savgol_filter(m.data, 12, 3).max(),
-        scipy.signal.savgol_filter(mp.data, 12, 3).max(),
-        scipy.signal.savgol_filter(s.data, 12, 3).max(),
-        scipy.signal.savgol_filter(ss.data, 12, 3).max(),
-        scipy.signal.savgol_filter(h.data, 12, 3).max(),
+        find_peak(m, version=v),
+        find_peak(mp, version=v),
+        find_peak(s, version=v),
+        find_peak(ss, version=v),
+        find_peak(h, version=v),
     )
 
 
 def get_rf_c2w_peaks() -> tuple[float, float, float, float, float]:
     """Get the radiative forcing peak from the CESM2 simulations."""
     m_, mp_, s_, ss_, h_ = get_rf_arrs(shift=0)
+    m_ = core.utils.time_series.shift_arrays(m_, daily=False)
+    mp_ = core.utils.time_series.shift_arrays(mp_, daily=False)
+    s_ = core.utils.time_series.shift_arrays(s_, daily=False)
+    ss_ = core.utils.time_series.shift_arrays(ss_, daily=False)
+    h_ = core.utils.time_series.shift_arrays(h_, daily=False)
     s = core.utils.time_series.get_median(s_, xarray=True)
     ss = core.utils.time_series.get_median(ss_, xarray=True)
     mp = core.utils.time_series.get_median(mp_, xarray=True)
@@ -447,18 +561,53 @@ def get_rf_c2w_peaks() -> tuple[float, float, float, float, float]:
     mp.data *= -1
     m.data *= -1
     h.data *= -1
+
+    v = "rolling"
     return (
-        scipy.signal.savgol_filter(m.data, 12, 3).max(),
-        scipy.signal.savgol_filter(mp.data, 12, 3).max(),
-        scipy.signal.savgol_filter(s.data, 12, 3).max(),
-        scipy.signal.savgol_filter(ss.data, 12, 3).max(),
-        scipy.signal.savgol_filter(h.data, 12, 3).max(),
+        find_peak(m, version=v),
+        find_peak(mp, version=v),
+        find_peak(s, version=v),
+        find_peak(ss, version=v),
+        find_peak(h, version=v),
+    )
+
+
+def get_rf_coupled_c2w_peaks() -> tuple[float, float, float, float, float]:
+    """Get the radiative forcing peak from the CESM2 simulations."""
+    m_, mp_, s_, ss_, h_ = get_rf_coupled_arrs(shift=0)
+    m_ = core.utils.time_series.shift_arrays(m_, daily=False)
+    mp_ = core.utils.time_series.shift_arrays(mp_, daily=False)
+    s_ = core.utils.time_series.shift_arrays(s_, daily=False)
+    ss_ = core.utils.time_series.shift_arrays(ss_, daily=False)
+    h_ = core.utils.time_series.shift_arrays(h_, daily=False)
+    s = core.utils.time_series.get_median(s_, xarray=True)
+    ss = core.utils.time_series.get_median(ss_, xarray=True)
+    mp = core.utils.time_series.get_median(mp_, xarray=True)
+    m = core.utils.time_series.get_median(m_, xarray=True)
+    h = core.utils.time_series.get_median(h_, xarray=True)
+    s.data *= -1
+    ss.data *= -1
+    mp.data *= -1
+    m.data *= -1
+    h.data *= -1
+    v = "rolling"
+    return (
+        find_peak(m, version=v),
+        find_peak(mp, version=v),
+        find_peak(s, version=v),
+        find_peak(ss, version=v),
+        find_peak(h, version=v),
     )
 
 
 def get_trefht_c2w_peaks() -> tuple[float, float, float, float, float]:
     """Get the temperature peak from the CESM2 simulations."""
     m_, mp_, s_, ss_, h_ = get_trefht_arrs(shift=0)
+    m_ = core.utils.time_series.shift_arrays(m_, daily=False)
+    mp_ = core.utils.time_series.shift_arrays(mp_, daily=False)
+    s_ = core.utils.time_series.shift_arrays(s_, daily=False)
+    ss_ = core.utils.time_series.shift_arrays(ss_, daily=False)
+    h_ = core.utils.time_series.shift_arrays(h_, daily=False)
     s = core.utils.time_series.get_median(s_, xarray=True)
     ss = core.utils.time_series.get_median(ss_, xarray=True)
     mp = core.utils.time_series.get_median(mp_, xarray=True)
@@ -469,10 +618,11 @@ def get_trefht_c2w_peaks() -> tuple[float, float, float, float, float]:
     mp.data *= -1
     m.data *= -1
     h.data *= -1
+    v = "rolling"
     return (
-        scipy.signal.savgol_filter(m.data, 12, 3).max(),
-        scipy.signal.savgol_filter(mp.data, 12, 3).max(),
-        scipy.signal.savgol_filter(s.data, 12, 3).max(),
-        scipy.signal.savgol_filter(ss.data, 12, 3).max(),
-        scipy.signal.savgol_filter(h.data, 12, 3).max(),
+        find_peak(m, version=v),
+        find_peak(mp, version=v),
+        find_peak(s, version=v),
+        find_peak(ss, version=v),
+        find_peak(h, version=v),
     )

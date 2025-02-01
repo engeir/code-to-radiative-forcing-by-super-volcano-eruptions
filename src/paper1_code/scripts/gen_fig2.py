@@ -24,10 +24,10 @@ class SetupNeededData:
             core.load.pinatubo.get_aod_pinatubo(),
             core.load.pinatubo.get_rf_pinatubo(),
         )
-        self.aod_j05, self.rf_j05 = (
-            core.load.j05.get_aod_j05(),
-            core.load.j05.get_rf_j05(),
-        )
+        # self.aod_j05, self.rf_j05 = (
+        #     core.load.j05.get_aod_j05(),
+        #     core.load.j05.get_rf_j05(),
+        # )
         self.aod_t, self.rf_t = (
             core.load.tambora.get_aod_tambora(),
             core.load.tambora.get_rf_tambora(),
@@ -126,13 +126,13 @@ class DoPlotting:
                 for x in core.config.LEGENDS["P100"]
                 if x not in "label"
             }
-            plot(
-                convert_aod(self.data.aod_j05),
-                -self.data.rf_j05,
-                label="J05 Peak*",
-                **legend,
-            )
-            plot([], [], label=" ", c="none")
+            # plot(
+            #     convert_aod(self.data.aod_j05),
+            #     -self.data.rf_j05,
+            #     label="J05 Peak*",
+            #     **legend,
+            # )
+            # plot([], [], label=" ", c="none")
             legend = {
                 x: core.config.LEGENDS["P"][x]
                 for x in core.config.LEGENDS["P"]
@@ -173,7 +173,7 @@ def main(show_output: bool = False):
     """Run the main program."""
     save = True
     plastik.FigureGrid().using()
-    fig, axs = plastik.figure_grid(rows=2, columns=1, using={"expand_top": 1.15})
+    fig, axs = plastik.figure_grid(rows=2, columns=1, using={"expand_top": 1.10})
     plotter = DoPlotting(show_output)
     large, small = plotter.plot_aod_vs_rf_avg(axs[0], axs[1])
     unique_labels: dict[str, mpl.lines.Line2D] = {}
@@ -188,13 +188,12 @@ def main(show_output: bool = False):
         "J05 Peak*",
         "T Peak*",
         "P Peak*",
-        "S3000",
         "S1629",
         "S400",
         "S26",
+        "S3000",
         "S1629N",
         "G16",
-        " ",
     ]
     for o in order:
         if o in unique_labels:
