@@ -114,14 +114,14 @@ def _get_ob16_rf_temp_arrays() -> tuple[list[xr.DataArray], list[xr.DataArray]]:
     Returns
     -------
     tuple[list[xr.DataArray], list[xr.DataArray]]
-        The AOD and RF arrays in two lists
+        The SAOD and RF arrays in two lists
 
     Raises
     ------
     FileNotFoundError
         If the directory where all the files is not found.
     """
-    # Need AOD and RF seasonal and annual means, as well as an array of equal length
+    # Need SAOD and RF seasonal and annual means, as well as an array of equal length
     # with the corresponding time-after-eruption.
     path = core.config.DATA_DIR_ROOT / "cesm-lme"
     if not path.exists():

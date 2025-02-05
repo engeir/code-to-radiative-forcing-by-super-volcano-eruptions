@@ -27,7 +27,7 @@ def get_aod_t10() -> float:
     -----
     DOI: 10.1029/2010GL045464
     """
-    # A factor of 3-5 smaller than the Jones et al. 2005 AOD peak
+    # A factor of 3-5 smaller than the Jones et al. 2005 SAOD peak
     # 15 / 3.5 = 4.2857142857143
     return 4.286
 

@@ -37,4 +37,4 @@ outputs = ["./generated_files/figure4.pdf"]
 
 [env]
 MISE_ENV = "development"
-AOD = "linear"           # Set to "exp" to compute AOD as 1-exp(-AOD)
+SAOD = "linear"          # Set to "exp" to compute SAOD as 1-exp(-SAOD)

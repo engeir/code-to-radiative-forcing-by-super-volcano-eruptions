@@ -18,7 +18,7 @@ import paper1_code as core
 
 def get_m20(find_all_peaks: bool = False) -> tuple[np.ndarray, ...]:
     """Create samples from Marshall et al. 2020."""
-    # Need AOD and RF seasonal and annual means, as well as an array of equal length
+    # Need SAOD and RF seasonal and annual means, as well as an array of equal length
     # with the corresponding time-after-eruption.
     path = (
         core.config.DATA_DIR_ROOT
@@ -53,7 +53,7 @@ def get_m20(find_all_peaks: bool = False) -> tuple[np.ndarray, ...]:
     time, so2, aod, rf, temp = [], [], [], [], []
     if find_all_peaks:
         for arr in data:
-            # Find peak using savgol filter, then plot SO2 versus {AOD, ERF, T}.
+            # Find peak using savgol filter, then plot SO2 versus {SAOD, ERF, T}.
             rf_arr = scipy.signal.savgol_filter(
                 arr["effective_radiative_forcing"], 12, 3
             )

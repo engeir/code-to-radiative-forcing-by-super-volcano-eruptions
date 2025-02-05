@@ -253,7 +253,7 @@ class DoPlotting:
                 ax_, (-0.5, 3.5, -0.2, 1.3), (0.3, 0.5, 0.33, 0.47)
             )
         elif self.version == "aod":
-            ax_.set_ylabel("Normalised \nAOD anomaly $[1]$")
+            ax_.set_ylabel("Normalised \nSAOD anomaly $[1]$")
             ax1 = core.utils.misc.create_axes_inset(
                 ax_, (-0.5, 3.5, -0.03, 1.03), (0.3, 0.3, 0.33, 0.67)
             )

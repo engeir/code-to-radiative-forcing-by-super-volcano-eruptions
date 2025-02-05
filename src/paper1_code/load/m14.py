@@ -166,7 +166,7 @@ def get_trefht_m14() -> tuple[float, ...]:
 
 def _view_cava() -> None:
     plt.figure()
-    plt.suptitle("SO2-AOD")
+    plt.suptitle("SO2-SAOD")
     plt.scatter(
         ((1.91 * np.asarray(_get_cava_so2())) ** (2 / 3) * 0.02 - 0.028)
         / np.asarray(_get_cava_aod()),
@@ -176,7 +176,7 @@ def _view_cava() -> None:
     plt.suptitle("SO2-RF")
     plt.scatter(_get_cava_so2(), np.asarray(_get_cava_aod()))
     plt.figure()
-    plt.suptitle("AOD-RF")
+    plt.suptitle("SAOD-RF")
     plt.scatter(
         _get_cava_aod(), np.asarray(_get_cava_rf()) / -24 / np.asarray(_get_cava_aod())
     )

@@ -129,7 +129,7 @@ class DoPlotting:
         xlabel = kwargs.pop("xlabel", "Time after eruption $[\\mathrm{year}]$")
         ylabel = kwargs.pop(
             "ylabel",
-            "$\\text{ERF}/\\text{AOD}$ $[\\mathrm{W/m^2}]$",
+            "$\\text{ERF}/\\text{SAOD}$ $[\\mathrm{W/m^2}]$",
         )
         ax_.set_xlabel(xlabel)
         ax_.set_ylabel(ylabel)
@@ -192,7 +192,7 @@ class DoPlotting:
     def plot_ratio(
         self, with_m20_data: bool = False, ax: mpl.axes.Axes | None = None
     ) -> mpl.figure.Figure | mpl.axes.Axes:
-        """Plot ratio between AOD and RF during the first three years of the eruption."""
+        """Plot ratio between SAOD and RF during the first three years of the eruption."""
         return self._plot_ratio(
             self.data.aod,
             self.data.rf,
@@ -210,7 +210,7 @@ class DoPlotting:
     def plot_ratio_scaled(
         self, with_m20_data: bool = False, ax: mpl.axes.Axes | None = None
     ) -> mpl.figure.Figure | mpl.axes.Axes:
-        """Plot ratio between scaled AOD and RF during the first three years of the eruption."""
+        """Plot ratio between scaled SAOD and RF during the first three years of the eruption."""
         aod, rf = core.utils.time_series.normalize_peaks(
             (self.data.aod, "aod"), (self.data.rf, "rf")
         )
@@ -223,7 +223,7 @@ class DoPlotting:
         else:
             aod_m20, rf_m20 = None, None
         xlabel = "Time after eruption $[\\mathrm{year}]$"
-        ylabel = "Normalized ERF / \nNormalized AOD $[1]$"
+        ylabel = "Normalized ERF / \nNormalized SAOD $[1]$"
         return self._plot_ratio(
             aod,
             rf,

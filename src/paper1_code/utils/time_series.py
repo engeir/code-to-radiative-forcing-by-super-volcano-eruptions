@@ -30,8 +30,8 @@ def convert_aod(aod: tuple[float, ...]) -> tuple[float, ...]: ...
 def convert_aod(
     aod: xr.DataArray | np.ndarray | float | tuple[float, ...],
 ) -> xr.DataArray | np.ndarray | float | tuple[float, ...]:
-    r"""Convert AOD to :math:`1-\exp(-\text{AOD})`."""
-    return 1 - np.exp(-np.array(aod)) if os.environ["AOD"] == "exp" else aod
+    r"""Convert SAOD to :math:`1-\exp(-\text{SAOD})`."""
+    return 1 - np.exp(-np.array(aod)) if os.environ["SAOD"] == "exp" else aod
 
 
 def shift_arrays(
@@ -556,7 +556,7 @@ def normalize_peaks(*args: tuple[list | np.ndarray, str]) -> tuple[list, ...]:
     ----------
     *args : tuple[list | np.ndarray, str]
         Each tuple sent to `args` contains an array and a string describing if the array
-        is an AOD or RF array. But really the only difference is that is the string is
+        is an SAOD or RF array. But really the only difference is that is the string is
         `aod` we multiply by `1`, and if the string is `rf` we multiply by -1.
 
     Returns

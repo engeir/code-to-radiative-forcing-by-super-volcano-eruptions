@@ -25,7 +25,7 @@ def find_peak(arr: xr.DataArray, version: str) -> float:
 def get_c2w_aod_rf(
     freq: Literal["y", "ses"] = "y",
 ) -> tuple[list[np.ndarray], list[np.ndarray], list[np.ndarray]]:
-    """Return time, AOD and RF arrays with seasonal or annual means.
+    """Return time, SAOD and RF arrays with seasonal or annual means.
 
     Parameters
     ----------
@@ -35,7 +35,7 @@ def get_c2w_aod_rf(
     Returns
     -------
     tuple[list[np.ndarray], list[np.ndarray], list[np.ndarray]]
-        The time, AOD and RF arrays in lists of length four, representing the four
+        The time, SAOD and RF arrays in lists of length four, representing the four
         simulation cases "medium", "medium-plus", "strong" and "strong-highlat"
 
     Raises
@@ -521,7 +521,7 @@ def get_so2_c2w_peaks() -> tuple[float, float, float, float, float]:
 
 
 def get_aod_c2w_peaks() -> tuple[float, float, float, float, float]:
-    """Get the AOD peak from the CESM2 simulations."""
+    """Get the SAOD peak from the CESM2 simulations."""
     m_, mp_, s_, ss_, h_ = get_aod_arrs(shift=0)
     m_ = core.utils.time_series.shift_arrays(m_, daily=False)
     mp_ = core.utils.time_series.shift_arrays(mp_, daily=False)

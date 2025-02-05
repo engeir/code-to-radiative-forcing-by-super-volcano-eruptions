@@ -72,7 +72,7 @@ class DoPlotting:
         -------
         tuple[mpl.figure.Figure, mpl.figure.Figure, mpl.figure.Figure]
             The figures returned are
-            - AOD normalized
+            - SAOD normalized
             - RF normalized
             - TREFHT normalized
         """

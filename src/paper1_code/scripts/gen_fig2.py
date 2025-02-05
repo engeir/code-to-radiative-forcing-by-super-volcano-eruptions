@@ -45,25 +45,35 @@ class DoPlotting:
         self.print_summary = print_summary
         self.data = SetupNeededData()
 
-    def plot_gregory_paper_gradient_lines(
-        self, x, ax: mpl.axes.Axes, size: str
-    ) -> None:
+    def plot_gradient_lines(self, x, ax: mpl.axes.Axes, size: str) -> None:
         """Create the gradient lines from the Gregory et al. (2016) paper."""
         col = core.config.LEGENDS["greg"]["c"]
-        hadcm3_ca, ar5, hadcm3, hadgem2_amip = -26.6, -24.6, -19, -17
-        (l1,) = ax.plot(x, x * (hadcm3_ca), "--", c=col, zorder=-1)
-        (l2,) = ax.plot(x, x * (ar5), "--", c=col, zorder=-1)
+        # hadcm3_ca, ar5, hadcm3, hadgem2_amip = -26.6, -24.6, -19, -17
+        _, _, hadcm3, _ = -26.6, -24.6, -19, -17
+        # _, mp, s, *_ = (
+        #     np.array(self.data.rf_c2w_peak)
+        #     * (-1)
+        #     / convert_aod(np.array(self.data.aod_c2w_peak))
+        # )
+        # (l1,) = ax.plot(x, x * (hadcm3_ca), "--", c=col, zorder=-1)
+        # (l2,) = ax.plot(x, x * (ar5), "--", c=col, zorder=-1)
         (l3,) = ax.plot(x, x * (hadcm3), c=col, zorder=-1)
-        (l4,) = ax.plot(x, x * (hadgem2_amip), "--", c=col, zorder=-1)
-        ll1 = 7 if size == "large" else 0.24
-        ll2 = 7 if size == "large" else 0.28
+        # (l4,) = ax.plot(x, x * (hadgem2_amip), "--", c=col, zorder=-1)
+        # (l4,) = ax.plot(x, x * (mp), c=col, zorder=-1)
+        # (l5,) = ax.plot(x, x * (s), c=col, zorder=-1)
+        # ll1 = 7 if size == "large" else 0.24
+        # ll2 = 7 if size == "large" else 0.28
         ll3 = 2.5 if size == "large" else 0.33
-        ll4 = 7 if size == "large" else 0.32
+        # ll4 = 7 if size == "large" else 0.32
+        # ll4 = 5 if size == "large" else 0.33
+        # ll5 = 12 if size == "large" else 0.33
         lablab = labellines.labelLine
-        lablab(l1, ll1, outline_width=3, label=f"${hadcm3_ca}$", size=6)
-        lablab(l2, ll2, outline_width=3, label=f"${ar5}$", size=6)
+        # lablab(l1, ll1, outline_width=3, label=f"${hadcm3_ca}$", size=6)
+        # lablab(l2, ll2, outline_width=3, label=f"${ar5}$", size=6)
         lablab(l3, ll3, outline_width=3, label=f"${hadcm3}$", size=6)
-        lablab(l4, ll4, outline_width=3, label=f"${hadgem2_amip}$", size=6)
+        # lablab(l4, ll4, outline_width=3, label=f"${hadgem2_amip}$", size=6)
+        # lablab(l4, ll4, outline_width=3, label=f"${mp:.2f}$", size=6)
+        # lablab(l5, ll5, outline_width=3, label=f"${s:.2f}$", size=6)
 
     @overload
     def plot_aod_vs_rf_avg(
@@ -77,11 +87,11 @@ class DoPlotting:
         tuple[mpl.figure.Figure, mpl.figure.Figure]
         | tuple[mpl.axes.Axes, mpl.axes.Axes]
     ):
-        """Plot yearly mean RF against AOD."""
+        """Plot yearly mean RF against SAOD."""
         ax1_ = (fig3_a := plt.figure()).gca() if ax1 is None else ax1
         ax2_ = (fig3_b := plt.figure()).gca() if ax2 is None else ax2
         for size, ax_ in zip(["large", "small"], [ax1_, ax2_], strict=True):
-            self.plot_gregory_paper_gradient_lines(self.data.x_g16, ax_, size)
+            self.plot_gradient_lines(self.data.x_g16, ax_, size)
             plot = ax_.scatter
             plot(
                 convert_aod(np.array(self.data.aod_c2w_peak)),
@@ -156,15 +166,15 @@ class DoPlotting:
                 self.data.rf_g16,
                 **core.config.LEGENDS["greg"],
             )
-            if os.environ["AOD"] == "exp":
+            if os.environ["SAOD"] == "exp":
                 xlim = (-0.1, 1.1) if size == "large" else (0, 0.15 * 8 / 3)
                 ylim = (-70, 5) if size == "large" else (-3 * 8 / 3, 1 * 8 / 3)
             else:
                 xlim = (-0.75, 18.75) if size == "large" else (0, 0.15 * 8 / 3)
-                ylim = (-85, 5) if size == "large" else (-3 * 8 / 3, 1 * 8 / 3)
+                ylim = (-70, 5) if size == "large" else (-3 * 8 / 3, 1 * 8 / 3)
             ax_.set_xlim(xlim)
             ax_.set_ylim(ylim)
-            ax_.set_xlabel("AOD [1]")
+            ax_.set_xlabel("SAOD [1]")
             ax_.set_ylabel("ERF $[\\mathrm{W/m^2}]$")
         return (fig3_a, fig3_b) if ax1 is None or ax2 is None else (ax1_, ax2_)
 
