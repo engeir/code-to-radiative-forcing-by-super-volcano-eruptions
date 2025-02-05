@@ -111,7 +111,7 @@ class DoPlotting:
     def plot_so2_vs_aod(
         self, ax: mpl.axes.Axes | None = None
     ) -> mpl.figure.Figure | mpl.axes.Axes:
-        """Plot SO2 against AOD peaks."""
+        """Plot SO2 against SAOD peaks."""
         ihl = self.data.so2[-1]
         ahl = self.data.aod[-1]
         ax_ = (fig5_a := plt.figure()).gca() if ax is None else ax
@@ -124,7 +124,7 @@ class DoPlotting:
             c="grey",
             label=r"$\propto\mathrm{SO_2}^{2/3}$",
         )
-        if os.environ["AOD"] == "exp":
+        if os.environ["SAOD"] == "exp":
             ax_.semilogy(
                 self.data.so2[:-1], self.data.aod[:-1], **core.config.LEGENDS["c2w"]
             )
@@ -169,10 +169,10 @@ class DoPlotting:
         ax1.patch.set_alpha(0.8)
         ax_.set_xlim(xlim_so2)
         ax_.set_xlabel(r"Injected $\mathrm{SO_2}$ [Tg]")
-        ax_.set_ylabel("AOD [1]")
+        ax_.set_ylabel("SAOD [1]")
         if ax is None:
             kwargs = {
-                "loc": "upper right" if os.environ["AOD"] == "exp" else "upper left",
+                "loc": "upper right" if os.environ["SAOD"] == "exp" else "upper left",
                 "framealpha": 0.8,
                 "edgecolor": "gray",
                 "fontsize": core.config.FONTSIZE,
@@ -356,7 +356,7 @@ class DoPlotting:
     def plot_aod_vs_rf(
         self, ax: mpl.axes.Axes | None = None
     ) -> mpl.figure.Figure | mpl.axes.Axes:
-        """Plot AOD peaks against RF peaks."""
+        """Plot SAOD peaks against RF peaks."""
         c2w_leg = core.config.LEGENDS["c2w"].copy()
         c2w_leg["ls"] = "--"
         c2w_leg["marker"] = core.config.POINTS_DICTS["triangle_right"]
@@ -373,7 +373,7 @@ class DoPlotting:
         ax_.scatter(aod_m20, rf_m20, **core.config.LEGENDS["m20*"])
         ax_.plot(self.data.aod_b20, self.data.rf_b20, **core.config.LEGENDS["b20"])
         ax_.plot(self.data.aod_m14, self.data.rf_m14, **core.config.LEGENDS["m14"])
-        if os.environ["AOD"] == "exp":
+        if os.environ["SAOD"] == "exp":
             ax_1 = core.utils.misc.create_axes_inset(
                 ax_, (0, 0.65, 0, 19), (0.45, 0.52, 0.4, 0.4), "lr->lr", "ul->ul"
             )
@@ -388,7 +388,7 @@ class DoPlotting:
         ax_1.plot(self.data.aod_m14, self.data.rf_m14, **core.config.LEGENDS["m14"])
         ax_1.scatter(aod_m20, rf_m20, **core.config.LEGENDS["m20*"])
         ax_1.patch.set_alpha(0.8)
-        ax_.set_xlabel("AOD [1]")
+        ax_.set_xlabel("SAOD [1]")
         ax_.set_ylabel("ERF $[\\mathrm{W/m^2}]$")
         if ax is None:
             kwargs = {
@@ -426,7 +426,7 @@ class DoPlotting:
     def plot_aod_vs_temperature(
         self, ax: mpl.axes.Axes | None = None
     ) -> mpl.figure.Figure | mpl.axes.Axes:
-        """Plot AOD peaks against temperature peaks."""
+        """Plot SAOD peaks against temperature peaks."""
         aod_hl = self.data.aod[-1]
         trefht_hl = self.data.temp[-1]
         temp_m20 = self.data.temp_m20[np.argsort(self.data.aod_m20)]
@@ -439,7 +439,7 @@ class DoPlotting:
             self.data.aod_j05, self.data.temp_j05, **core.config.LEGENDS["P100"]
         )
         ax_.scatter(self.data.aod_t10, self.data.temp_t10, **core.config.LEGENDS["t10"])
-        if os.environ["AOD"] == "exp":
+        if os.environ["SAOD"] == "exp":
             ax_1 = core.utils.misc.create_axes_inset(
                 ax_, (0, 0.65, 0, 1.2), (0.45, 0.52, 0.4, 0.4), "lr->lr", "ul->ul"
             )
@@ -450,7 +450,7 @@ class DoPlotting:
         ax_1.plot(self.data.aod, self.data.temp, **core.config.LEGENDS["c2w"])
         self._plot_aod_temp_data(ax_1, aod_m20, temp_m20)
         ax_1.patch.set_alpha(0.8)
-        ax_.set_xlabel("AOD [1]")
+        ax_.set_xlabel("SAOD [1]")
         ax_.set_ylabel("GMST [K]")
         if ax is None:
             kwargs = {
@@ -680,30 +680,30 @@ def main(show_output: bool = False):
     # Reorder
     order = [
         # 1
-        "STrop",
-        "S1629N",
-        r"$\propto\mathrm{SO_2}^{2/3}$",
+        ["STrop", "lightblue"],
+        ["S1629N", "lightblue"],
+        [r"$\propto\mathrm{SO_2}^{2/3}$", "none"],
         # 2
-        "STrop$^{a}$",
-        "S1629N$^{a}$",
-        "T10$^{a}$",
+        ["STrop$^{a}$", "lightblue"],
+        ["S1629N$^{a}$", "lightblue"],
+        ["T10$^{a}$", "lightcoral"],
         # 3
-        "B20$^{a}$",
-        "OB16",
-        "M14$^{a}$",
+        ["B20$^{a}$", "lightblue"],
+        ["OB16", "lightblue"],
+        ["M14$^{a}$", "lightcoral"],
         # 4
-        "E13",
-        "M20",
-        "J05",
+        ["E13", "lightblue"],
+        ["M20", "lightgreen"],
+        ["J05", "lightgreen"],
         # 5
-        "McG24$^{a}$",
-        "Os20",
-        "R09",
+        ["McG24$^{a}$", "yellow"],
+        ["Os20", "yellow"],
+        ["R09", "yellow"],
         # 6
-        "T",
-        "P",
+        ["T", "none"],
+        ["P", "none"],
     ]
-    for o in order:
+    for o, _ in order:
         if o in unique_labels:
             tmp = unique_labels.pop(o)
             unique_labels[o] = tmp
@@ -715,6 +715,9 @@ def main(show_output: bool = False):
         bbox_to_anchor=(0.5, 1.005),
         frameon=False,
     )
+    legend = fig.legends[0]
+    for text, (_, c) in zip(legend.get_texts(), order, strict=True):
+        text.set_bbox(dict(facecolor=c, edgecolor="none", boxstyle="round,pad=0.1"))
     if save:
         SAVE_PATH = core.utils.if_save.create_savedir()
         fig.savefig(SAVE_PATH / "figure4")
