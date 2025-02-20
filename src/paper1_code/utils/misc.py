@@ -1,9 +1,41 @@
 """Handy functions that don't have a natural home."""
 
+import datetime
 import warnings
 
+import cftime
 import matplotlib as mpl
 from matplotlib.patches import ConnectionPatch
+
+
+def d2n(date: datetime.datetime | str) -> float:
+    """Convert a datetime to a number, using 2000-01-01 as the reference date.
+
+    Parameters
+    ----------
+    date : datetime.datetime | str
+        If a string, it must be on the format `YYYY-MM-DD`, otherwise use a
+        `datetime.datetime` object.
+
+    Returns
+    -------
+    float
+        The float representation of the date.
+
+    Raises
+    ------
+    ValueError
+        If the string representation is in an unknown format.
+    """
+    if isinstance(date, str):
+        date_fmt = 3
+        if len(out := date.split("-")) != date_fmt:
+            msg = "The datetime to float function expect strings as YYYY-MM-DD."
+            raise ValueError(msg)
+        y, m, d = int(out[0]), int(out[1]), int(out[2])
+        date = datetime.datetime(y, m, d, 0, 0, tzinfo=datetime.UTC)
+    unit = "days since 2000-01-01"
+    return cftime.date2num(date, units=unit, calendar="noleap", has_year_zero=True)
 
 
 def n_significant(number: float | str, significance: int) -> str:

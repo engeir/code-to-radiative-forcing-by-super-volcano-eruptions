@@ -96,7 +96,7 @@ class DoPlotting:
             plot(
                 convert_aod(np.array(self.data.aod_c2w_peak)),
                 np.array(self.data.rf_c2w_peak) * (-1),
-                label="STrop Peaks*",
+                label="C2W Peaks*",
                 c="none",
                 ec="red",
                 lw=1.5,
@@ -194,7 +194,7 @@ def main(show_output: bool = False):
                 unique_labels[lab] = line[i]
     # Reorder
     order = [
-        "STrop Peaks*",
+        "C2W Peaks*",
         "J05 Peak*",
         "T Peak*",
         "P Peak*",

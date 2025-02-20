@@ -69,6 +69,82 @@ class DoPlotting:
         self.s_c = core.config.LEGENDS["c2ws"]["c"]
         self.ss_c = core.config.LEGENDS["c2wss"]["c"]
 
+    def _std_shading(
+        self,
+        x_: np.ndarray,
+        sims: list[tuple[float, np.ndarray]],
+        ax_: mpl.axes.Axes,
+        ax1: mpl.axes.Axes,
+        peak_idxs: tuple[int, int, int, int],
+    ) -> None:
+        idm, idp, ids, idss = peak_idxs
+        a = 0.7
+        nth_std = 1
+        mm = np.mean(np.asarray(self.data.medium) / sims[0][0], axis=0)[idm:]
+        ms = np.std(np.asarray(self.data.medium) / sims[0][0], axis=0)[idm:] * nth_std
+        ax_.fill_between(x_, mm - ms, mm + ms, alpha=a, color=self.m_c, ec=None)
+        ax1.fill_between(x_, mm - ms, mm + ms, alpha=a, color=self.m_c, ec=None)
+        pm = np.mean(np.asarray(self.data.plus) / sims[1][0], axis=0)[idp:]
+        ps = np.std(np.asarray(self.data.plus) / sims[1][0], axis=0)[idp:] * nth_std
+        ax_.fill_between(x_, pm - ps, pm + ps, alpha=a, color=self.mp_c, ec=None)
+        ax1.fill_between(x_, pm - ps, pm + ps, alpha=a, color=self.mp_c, ec=None)
+        sm = np.mean(np.asarray(self.data.strong) / sims[2][0], axis=0)[ids:]
+        ss = np.std(np.asarray(self.data.strong) / sims[2][0], axis=0)[ids:] * nth_std
+        ax_.fill_between(x_, sm - ss, sm + ss, alpha=a, color=self.s_c, ec=None)
+        ax1.fill_between(x_, sm - ss, sm + ss, alpha=a, color=self.s_c, ec=None)
+        ssm = np.mean(np.asarray(self.data.superstrong) / sims[3][0], axis=0)[idss:]
+        sss = (
+            np.std(np.asarray(self.data.superstrong) / sims[3][0], axis=0)[idss:]
+            * nth_std
+        )
+        ax_.fill_between(x_, ssm - sss, ssm + sss, alpha=a, color=self.ss_c, ec=None)
+        ax1.fill_between(x_, ssm - sss, ssm + sss, alpha=a, color=self.ss_c, ec=None)
+
+    def _percentile_shading(
+        self,
+        x_: np.ndarray,
+        simulations: list[tuple[float, np.ndarray]],
+        ax_: mpl.axes.Axes,
+        ax1: mpl.axes.Axes,
+        peak_idxs: tuple[int, int, int, int],
+    ) -> None:
+        idm, idp, ids, idss = peak_idxs
+        low = np.linspace(MIN_PERCENTILE, 50, num=1, endpoint=False)
+        high = np.linspace(50, MAX_PERCENTILE, num=1 + 1)[1:]
+        a = 0.7
+        for p1, p2 in zip(
+            np.percentile(self.data.medium, low, axis=0) / simulations[0][0],
+            np.percentile(self.data.medium, high, axis=0) / simulations[0][0],
+            strict=True,
+        ):
+            ax_.fill_between(x_, p1[idm:], p2[idm:], alpha=a, color=self.m_c, ec=None)
+            ax1.fill_between(x_, p1[idm:], p2[idm:], alpha=a, color=self.m_c, ec=None)
+        for p1, p2 in zip(
+            np.percentile(self.data.plus, low, axis=0) / simulations[1][0],
+            np.percentile(self.data.plus, high, axis=0) / simulations[1][0],
+            strict=True,
+        ):
+            ax_.fill_between(x_, p1[idp:], p2[idp:], alpha=a, color=self.mp_c, ec=None)
+            ax1.fill_between(x_, p1[idp:], p2[idp:], alpha=a, color=self.mp_c, ec=None)
+        for p1, p2 in zip(
+            np.percentile(self.data.strong, low, axis=0) / simulations[2][0],
+            np.percentile(self.data.strong, high, axis=0) / simulations[2][0],
+            strict=True,
+        ):
+            ax_.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
+            ax1.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
+        for p1, p2 in zip(
+            np.percentile(self.data.superstrong, low, axis=0) / simulations[3][0],
+            np.percentile(self.data.superstrong, high, axis=0) / simulations[3][0],
+            strict=True,
+        ):
+            ax_.fill_between(
+                x_, p1[idss:], p2[idss:], alpha=a, color=self.ss_c, ec=None
+            )
+            ax1.fill_between(
+                x_, p1[idss:], p2[idss:], alpha=a, color=self.ss_c, ec=None
+            )
+
     @overload
     def _plot(
         self,
@@ -94,8 +170,6 @@ class DoPlotting:
         ax: mpl.axes.Axes | None = None,
     ) -> mpl.figure.Figure | mpl.axes.Axes:
         # Percentiles
-        low = np.linspace(MIN_PERCENTILE, 50, num=1, endpoint=False)
-        high = np.linspace(50, MAX_PERCENTILE, num=1 + 1)[1:]
         ax_ = plt.figure().gca() if ax is None else ax
         getattr(ax_, style)()
         ax_.set_xlabel(r"Time after eruption $[\mathrm{yr}]$")
@@ -137,39 +211,8 @@ class DoPlotting:
         plus_scaled = simulations[1][1][idp:]
         strong_scaled = simulations[2][1][ids:]
         superstrong_scaled = simulations[3][1][idss:]
-        a = 0.7
-        for p1, p2 in zip(
-            np.percentile(self.data.medium, low, axis=0) / simulations[0][0],
-            np.percentile(self.data.medium, high, axis=0) / simulations[0][0],
-            strict=True,
-        ):
-            ax_.fill_between(x_, p1[idm:], p2[idm:], alpha=a, color=self.m_c, ec=None)
-            ax1.fill_between(x_, p1[idm:], p2[idm:], alpha=a, color=self.m_c, ec=None)
-        for p1, p2 in zip(
-            np.percentile(self.data.plus, low, axis=0) / simulations[1][0],
-            np.percentile(self.data.plus, high, axis=0) / simulations[1][0],
-            strict=True,
-        ):
-            ax_.fill_between(x_, p1[idp:], p2[idp:], alpha=a, color=self.mp_c, ec=None)
-            ax1.fill_between(x_, p1[idp:], p2[idp:], alpha=a, color=self.mp_c, ec=None)
-        for p1, p2 in zip(
-            np.percentile(self.data.strong, low, axis=0) / simulations[2][0],
-            np.percentile(self.data.strong, high, axis=0) / simulations[2][0],
-            strict=True,
-        ):
-            ax_.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
-            ax1.fill_between(x_, p1[ids:], p2[ids:], alpha=a, color=self.s_c, ec=None)
-        for p1, p2 in zip(
-            np.percentile(self.data.superstrong, low, axis=0) / simulations[3][0],
-            np.percentile(self.data.superstrong, high, axis=0) / simulations[3][0],
-            strict=True,
-        ):
-            ax_.fill_between(
-                x_, p1[idss:], p2[idss:], alpha=a, color=self.ss_c, ec=None
-            )
-            ax1.fill_between(
-                x_, p1[idss:], p2[idss:], alpha=a, color=self.ss_c, ec=None
-            )
+        # self._percentile_shading(x_, simulations, ax_, ax1, (idm, idp, ids, idss))
+        self._std_shading(x_, simulations, ax_, ax1, (idm, idp, ids, idss))
         ax1.patch.set_alpha(0.3)
         ax1.xaxis.set_major_locator(ticker.MultipleLocator(1))
         ax1.xaxis.set_minor_locator(ticker.MultipleLocator(0.25))
@@ -294,20 +337,20 @@ class DoPlotting:
         if self.version == "aod":
             self._convert_aod()
         # Find median values
-        # medium_med = np.median(self.data.medium, axis=0)
-        # plus_med = np.median(self.data.plus, axis=0)
-        # strong_med = np.median(self.data.strong, axis=0)
-        # superstrong_med = np.median(self.data.superstrong, axis=0)
-        medium_med = core.utils.time_series.get_median(
-            self.data.medium, xarray=True
-        ).data
-        plus_med = core.utils.time_series.get_median(self.data.plus, xarray=True).data
-        strong_med = core.utils.time_series.get_median(
-            self.data.strong, xarray=True
-        ).data
-        superstrong_med = core.utils.time_series.get_median(
-            self.data.superstrong, xarray=True
-        ).data
+        medium_med = np.mean(self.data.medium, axis=0)
+        plus_med = np.mean(self.data.plus, axis=0)
+        strong_med = np.mean(self.data.strong, axis=0)
+        superstrong_med = np.mean(self.data.superstrong, axis=0)
+        # medium_med = core.utils.time_series.get_median(
+        #     self.data.medium, xarray=True
+        # ).data
+        # plus_med = core.utils.time_series.get_median(self.data.plus, xarray=True).data
+        # strong_med = core.utils.time_series.get_median(
+        #     self.data.strong, xarray=True
+        # ).data
+        # superstrong_med = core.utils.time_series.get_median(
+        #     self.data.superstrong, xarray=True
+        # ).data
         extreme = (
             "max"
             if abs(self.data.medium[0].data.min()) < abs(self.data.medium[0].data.max())

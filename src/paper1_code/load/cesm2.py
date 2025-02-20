@@ -3,23 +3,12 @@
 from typing import Literal
 
 import numpy as np
-import scipy
 import xarray as xr
 from volcano_base.load import FindFiles
 
 import paper1_code as core
 
 FINDER = FindFiles()
-
-
-def find_peak(arr: xr.DataArray, version: str) -> float:
-    """Find the peak of an array."""
-    match version:
-        case "savgol":
-            out = scipy.signal.savgol_filter(arr.data, 12, 3).max()
-        case "rolling":
-            out = arr.rolling(time=12, center=True).mean().max().data
-    return out
 
 
 def get_c2w_aod_rf(
@@ -535,11 +524,11 @@ def get_aod_c2w_peaks() -> tuple[float, float, float, float, float]:
     h = core.utils.time_series.get_median(h_, xarray=True)
     v = "rolling"
     return (
-        find_peak(m, version=v),
-        find_peak(mp, version=v),
-        find_peak(s, version=v),
-        find_peak(ss, version=v),
-        find_peak(h, version=v),
+        core.utils.time_series.find_peak(m, version=v),
+        core.utils.time_series.find_peak(mp, version=v),
+        core.utils.time_series.find_peak(s, version=v),
+        core.utils.time_series.find_peak(ss, version=v),
+        core.utils.time_series.find_peak(h, version=v),
     )
 
 
@@ -564,11 +553,11 @@ def get_rf_c2w_peaks() -> tuple[float, float, float, float, float]:
 
     v = "rolling"
     return (
-        find_peak(m, version=v),
-        find_peak(mp, version=v),
-        find_peak(s, version=v),
-        find_peak(ss, version=v),
-        find_peak(h, version=v),
+        core.utils.time_series.find_peak(m, version=v),
+        core.utils.time_series.find_peak(mp, version=v),
+        core.utils.time_series.find_peak(s, version=v),
+        core.utils.time_series.find_peak(ss, version=v),
+        core.utils.time_series.find_peak(h, version=v),
     )
 
 
@@ -592,11 +581,11 @@ def get_rf_coupled_c2w_peaks() -> tuple[float, float, float, float, float]:
     h.data *= -1
     v = "rolling"
     return (
-        find_peak(m, version=v),
-        find_peak(mp, version=v),
-        find_peak(s, version=v),
-        find_peak(ss, version=v),
-        find_peak(h, version=v),
+        core.utils.time_series.find_peak(m, version=v),
+        core.utils.time_series.find_peak(mp, version=v),
+        core.utils.time_series.find_peak(s, version=v),
+        core.utils.time_series.find_peak(ss, version=v),
+        core.utils.time_series.find_peak(h, version=v),
     )
 
 
@@ -620,9 +609,9 @@ def get_trefht_c2w_peaks() -> tuple[float, float, float, float, float]:
     h.data *= -1
     v = "rolling"
     return (
-        find_peak(m, version=v),
-        find_peak(mp, version=v),
-        find_peak(s, version=v),
-        find_peak(ss, version=v),
-        find_peak(h, version=v),
+        core.utils.time_series.find_peak(m, version=v),
+        core.utils.time_series.find_peak(mp, version=v),
+        core.utils.time_series.find_peak(s, version=v),
+        core.utils.time_series.find_peak(ss, version=v),
+        core.utils.time_series.find_peak(h, version=v),
     )

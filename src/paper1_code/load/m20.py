@@ -9,7 +9,6 @@ dataset.
 import datetime
 
 import numpy as np
-import scipy
 import volcano_base
 import xarray as xr
 
@@ -53,20 +52,20 @@ def get_m20(find_all_peaks: bool = False) -> tuple[np.ndarray, ...]:
     time, so2, aod, rf, temp = [], [], [], [], []
     if find_all_peaks:
         for arr in data:
-            # Find peak using savgol filter, then plot SO2 versus {SAOD, ERF, T}.
-            rf_arr = scipy.signal.savgol_filter(
-                arr["effective_radiative_forcing"], 12, 3
+            # Find peak using rolling mean or savgol filter, then plot SO2 versus {SAOD,
+            # ERF, T}.
+            peak_func = core.utils.time_series.find_peak
+            rf_arr = -peak_func(-arr["effective_radiative_forcing"], version="rolling")
+            temp_arr = peak_func(
+                arr["surface_temperature_adjustment"], version="rolling"
             )
-            temp_arr = scipy.signal.savgol_filter(
-                arr["surface_temperature_adjustment"], 12, 3
-            )
-            aod_arr = scipy.signal.savgol_filter(
-                arr["stratospheric_aerosol_optical_depth_at_550_nm"], 12, 3
+            aod_arr = peak_func(
+                arr["stratospheric_aerosol_optical_depth_at_550_nm"], version="rolling"
             )
             so2.append(arr.attrs["SO2 emission (Tg)"])
-            aod.append(aod_arr.max())
-            rf.append(rf_arr.min())
-            temp.append(temp_arr.max())
+            aod.append(aod_arr)
+            rf.append(rf_arr)
+            temp.append(temp_arr)
         return np.asarray(so2), np.asarray(aod), -np.asarray(rf), np.asarray(temp)
     tropical_limit = 10
     for arr in data:

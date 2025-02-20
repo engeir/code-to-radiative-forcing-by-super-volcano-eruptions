@@ -7,6 +7,7 @@ from typing import Literal, overload
 import cftime
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import scipy
 import xarray as xr
 
@@ -545,6 +546,20 @@ def weighted_season_avg(da: xr.DataArray) -> xr.DataArray:
     return obs_sum / ones_out
 
 
+def find_peak(arr: xr.DataArray | npt.NDArray, version: str) -> float:
+    """Find the peak of an array."""
+    match version:
+        case "savgol":
+            out = scipy.signal.savgol_filter(arr.data, 12, 3).max()
+        case "rolling":
+            if not isinstance(arr, xr.DataArray):
+                arr = xr.DataArray(
+                    arr, dims="time", coords={"time": np.arange(len(arr))}
+                )
+            out = arr.rolling(time=12, center=True).mean().max().data
+    return out
+
+
 def normalize_peaks(*args: tuple[list | np.ndarray, str]) -> tuple[list, ...]:
     """Normalize the input arrays.
 
@@ -565,7 +580,7 @@ def normalize_peaks(*args: tuple[list | np.ndarray, str]) -> tuple[list, ...]:
         However many tuples with arrays are sent in, as many lists are returned
     """
     out: list[list] = []
-    win_length = 12
+    win_length = 6
     for tup in args:
         arrs = []
         for i in range(len(tup[0])):
