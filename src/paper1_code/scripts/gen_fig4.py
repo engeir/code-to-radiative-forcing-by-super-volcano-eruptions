@@ -11,6 +11,14 @@ import scipy.stats
 
 import paper1_code as core
 
+mpl.style.use(
+    [
+        "https://raw.githubusercontent.com/uit-cosmo/cosmoplots/main/cosmoplots/default.mplstyle",
+        "paper1_code.extra",
+        "paper1_code.jgr",
+        {"legend.handlelength": 1.65},
+    ],
+)
 convert_aod = core.utils.time_series.convert_aod
 xlim_so2 = (-150, 3700)
 
@@ -272,7 +280,7 @@ class DoPlotting:
         ax1.patch.set_alpha(0.8)
         ax_.set_xlim(xlim_so2)
         ax_.set_xlabel(r"Injected $\mathrm{SO_2}$ [Tg]")
-        ax_.set_ylabel("ERF $[\\mathrm{W/m^2}]$")
+        ax_.set_ylabel("ERF $[\\si{W.m^{-2}}]$")
         if ax is None:
             kwargs = {
                 "loc": "upper left",
@@ -389,7 +397,7 @@ class DoPlotting:
         ax_1.scatter(aod_m20, rf_m20, **core.config.LEGENDS["m20*"])
         ax_1.patch.set_alpha(0.8)
         ax_.set_xlabel("SAOD [1]")
-        ax_.set_ylabel("ERF $[\\mathrm{W/m^2}]$")
+        ax_.set_ylabel("ERF $[\\si{W.m^{-2}}]$")
         if ax is None:
             kwargs = {
                 "loc": "upper left",
@@ -496,7 +504,7 @@ class DoPlotting:
         rf_m20 = self.data.rf_m20[np.argsort(self.data.rf_m20)]
         ax_ = (fig5_f := plt.figure()).gca() if ax is None else ax
         ax_.axvline(x=65, c="grey", linewidth=0.5)
-        ax_.text(65, 2, r"$65\,\mathrm{W/m^{2}}$", ha="right")
+        ax_.text(65, 2, r"$\SI{65}{W.m^{-2}}$", ha="right")
         ax_.axhline(y=10, c="grey", linewidth=0.5)
         ax_.text(40, 10, r"$10\,\mathrm{K}$", va="bottom")
         self._plot_rf_temp_data(
@@ -518,7 +526,7 @@ class DoPlotting:
         )
         # ax1.set_yticks([0, 1])
         ax1.patch.set_alpha(0.8)
-        ax_.set_xlabel("ERF $[\\mathrm{W/m^2}]$")
+        ax_.set_xlabel("ERF $[\\si{W.m^{-2}}]$")
         ax_.set_ylabel("GMST [K]")
         if ax is None:
             kwargs = {

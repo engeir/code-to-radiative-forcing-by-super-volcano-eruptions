@@ -1,7 +1,7 @@
 legend.framealpha : 0.5
 # Set keymap Q to close all plots
 keymap.quit_all : Q
-text.latex.preamble: \usepackage{amsmath}
+text.latex.preamble: \usepackage{amsmath,siunitx}
 
 lines.linewidth : 1.25
 legend.handlelength : 1.25

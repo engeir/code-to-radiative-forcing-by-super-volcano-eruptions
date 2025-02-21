@@ -129,7 +129,7 @@ class DoPlotting:
         xlabel = kwargs.pop("xlabel", "Time after eruption $[\\mathrm{year}]$")
         ylabel = kwargs.pop(
             "ylabel",
-            "$\\text{ERF}/\\text{SAOD}$ $[\\mathrm{W/m^2}]$",
+            "$\\text{ERF}/\\text{SAOD}$ $[\\mathrm{W.m^{-2}}]$",
         )
         ax_.set_xlabel(xlabel)
         ax_.set_ylabel(ylabel)

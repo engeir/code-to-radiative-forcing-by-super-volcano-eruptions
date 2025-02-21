@@ -11,6 +11,14 @@ import plastik
 
 import paper1_code as core
 
+mpl.style.use(
+    [
+        "https://raw.githubusercontent.com/uit-cosmo/cosmoplots/main/cosmoplots/default.mplstyle",
+        "paper1_code.extra",
+        "paper1_code.jgr",
+        {"legend.handlelength": 1.65},
+    ],
+)
 convert_aod = core.utils.time_series.convert_aod
 
 
@@ -175,7 +183,7 @@ class DoPlotting:
             ax_.set_xlim(xlim)
             ax_.set_ylim(ylim)
             ax_.set_xlabel("SAOD [1]")
-            ax_.set_ylabel("ERF $[\\mathrm{W/m^2}]$")
+            ax_.set_ylabel("ERF $[\\si{W.m^{-2}}]$")
         return (fig3_a, fig3_b) if ax1 is None or ax2 is None else (ax1_, ax2_)
 
 

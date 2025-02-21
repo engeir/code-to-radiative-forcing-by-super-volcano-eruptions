@@ -229,7 +229,7 @@ class DoPlotting:
             s400 = ""
             s1629 = ""
             s3000 = ""
-            unit = r"Unit: $\mathrm{W/m^{2}}$"
+            unit = r"Unit: $\si{W.m^{-2}}$"
         elif self.version == "aod":
             s26 = f"{core.config.LEGENDS['c2wm']['label']}, "
             s400 = f"{core.config.LEGENDS['c2wmp']['label']}, "
