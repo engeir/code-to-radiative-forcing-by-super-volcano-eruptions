@@ -1,5 +1,38 @@
 # Changelog
 
+## [1.0.0](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.13.0...v1.0.0) (2025-02-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* **main:** update to reflect the latest submitted manuscript
+
+### Features
+
+* big update for review 2 of the ms ([f002891](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/f002891e8b27f560e517bbd44f17bb72d2a50dd3))
+* **figure:** add colour indicating model family similarities ([177e12e](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/177e12ef0d523bbeb99d51b46c2ad42943ce7369))
+
+
+### Bug Fixes
+
+* **figures:** use the same normalisation in M20 as in STrop ([5b564bb](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/5b564bb6cbc10ee10ceb423e103391bf6e8f5611))
+
+
+### Miscellaneous
+
+* **unit:** adjust unit in figures ([7c68690](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/7c6869008f9605186f6416d5e61157f08a279f21))
+* upload small scripts to git ([70fd224](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/70fd224ee9f41efff39b534a6ed0304cb1e57a05))
+
+
+### Code Refactoring
+
+* **figure:** rename AOD to SAOD ([81d33e1](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/81d33e173791c62447f95da1ccd6f44fa4b5ee59))
+
+
+### Documentation
+
+* **main:** update to reflect the latest submitted manuscript ([062e53b](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/commit/062e53b399a3caae7034bd2023047ce9c2cb329f))
+
 ## [0.13.0](https://github.com/engeir/code-to-radiative-forcing-by-super-volcano-eruptions/compare/v0.12.1...v0.13.0) (2024-08-31)
 
 
