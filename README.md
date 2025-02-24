@@ -1,10 +1,10 @@
-# Accompanying code to "Radiative forcing by super-volcano eruptions"
+# Accompanying code to "Constraining the temperature response of large self-limiting volcanic eruptions"
 
 [![DOI](https://zenodo.org/badge/724130844.svg)](https://zenodo.org/badge/latestdoi/724130844)
 
 <sup>Latest version: v0.13.0</sup> <!-- x-release-please-version -->
 
-> Code to download and analyse data for a paper
+> Code to download and analyse data for a paper 1 of my PhD thesis.
 
 ## Install
 
