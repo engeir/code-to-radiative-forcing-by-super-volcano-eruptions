@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = "==3.12.*"
 
 [[package]]
@@ -666,7 +667,7 @@ requires-dist = [
     { name = "matplotlib-label-lines", specifier = ">=0.7.0" },
     { name = "nc-time-axis", specifier = ">=1.4.1" },
     { name = "netcdf4", specifier = ">=1.7.1.post2" },
-    { name = "numpy", specifier = ">=1.26.4" },
+    { name = "numpy", specifier = ">=2.2.2" },
     { name = "plastik", specifier = ">=0.6.2" },
     { name = "pyqt6", specifier = ">=6.7.1" },
     { name = "requests", specifier = ">=2.32.3" },

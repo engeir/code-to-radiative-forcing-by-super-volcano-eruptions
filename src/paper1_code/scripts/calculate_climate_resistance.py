@@ -44,8 +44,8 @@ def _compute_integral_ratio(
         for f, t in zip(pair[0], pair[1], strict=True):
             print(f.attrs["sim"], t.attrs["sim"])
             # Integrate and find the ratio
-            f_int = np.trapz(f.data, dx=1 / 12)
-            t_int = np.trapz(t.data, dx=1 / 12)
+            f_int = np.trapezoid(f.data, dx=1 / 12)
+            t_int = np.trapezoid(t.data, dx=1 / 12)
             ratios.append(f_int / t_int)
             print(f_int / t_int)
             print("#" * 50)
@@ -153,7 +153,7 @@ def plot_evolution(f, t) -> None:
     # Calculate the integral up to every point in the arrays
     integral = np.zeros_like(f_, dtype=float)
     for i in range(len(f_)):
-        integral[i] = np.trapz(f_[: i + 1]) / np.trapz(t_[: i + 1])
+        integral[i] = np.trapezoid(f_[: i + 1]) / np.trapezoid(t_[: i + 1])
     kappa = integral - integral[-1]
     plt.figure()
     plt.plot(f_, label="F")
@@ -177,6 +177,7 @@ def main():
         .keep_most_recent()
     )
     temp_m, temp_mp, temp_s = _get_temp_arrays(data)
+    time_m20, aod_m20, rf_m20 = core.load.m20.get_m20()
     m_, mp_, s_ = _get_forcing_arrays(data)
     plt.show()
     r = np.array(_compute_integral_ratio((m_, temp_m), (mp_, temp_mp), (s_, temp_s)))
