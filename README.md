@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/724130844.svg)](https://zenodo.org/badge/latestdoi/724130844)
 
-<sup>Latest version: v0.13.0</sup> <!-- x-release-please-version -->
+<sup>Latest version: v1.0.0</sup> <!-- x-release-please-version -->
 
 > Code to download and analyse data for a paper 1 of my PhD thesis.
 
